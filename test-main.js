@@ -16,19 +16,17 @@ require.config({
 	"baseUrl": "/base",
 
 	"paths": {
-		"jquery": "scripts/lib/jquery.min",
-		"underscore": "scripts/lib/lodash.min",
-		"backbone": "scripts/lib/backbone-min",
+		"jquery": "node_modules/jquery/dist/jquery.min",
+		"underscore": "node_modules/underscore/underscore-min",
+		"backbone": "node_modules/backbone/backbone-min",
 
-		"augmented": "scripts/core/augmented",
+		"augmented": "node_modules/augmentedjs/scripts/core/augmented",
 		"augmentedPresentation": "scripts/presentation/augmentedPresentation",
-		//"augmentedService": "scripts/service/service",
-		//"augmentedLegacy": "scripts/legacy/legacy",
 
 // 		"jasmine": "../lib/jasmine-2.x/jasmine",
 // 		"jasmine_html": "../lib/jasmine-2.x/jasmine-html",
 // 		"boot": "../lib/jasmine-2.x/boot",
-        "jasmineajax": "scripts/lib/mock-ajax"
+        //"jasmineajax": "scripts/lib/mock-ajax"
 
 	},
 	"shim": {
@@ -40,22 +38,7 @@ require.config({
 });
 
 //Define all of your specs here. These are RequireJS modules.
-var specs = [ "core/test/coreSpec",
-              "core/test/routerSpec",
-              "core/test/validationSpec",
-              "core/test/localStorageSpec",
-              "core/test/utilitySpec",
-              "core/test/ajaxSpec",
-              "core/test/applicationSpec",
-	        "core/test/securitySpec",
-	        "core/test/loggerSpec",
-	        "core/test/asyncQueueSpec",
-              "core/test/modelSpec",
-              "core/test/collectionSpec",
-              "core/test/viewSpec",
-              "core/test/transformerSpec",
-              "core/test/structureSpec",
-
+var specs = [
               "presentation/test/presentationSpec",
               "presentation/test/autoTableSpec",
               "presentation/test/applicationSpec",
@@ -66,15 +49,5 @@ var specs = [ "core/test/coreSpec",
               "presentation/test/viewControllerSpec",
               "presentation/test/dialogSpec",
               "presentation/test/autoFormSpec",
-              "presentation/test/dollar",
-/* moved
-              "service/test/entitySpec",
-              "service/test/collectionSpec",
-              "service/test/datasourceSpec",
-*/
-              "core/test/resourceBundleSpec"
-              // Deprecated
-			  //"legacy/test/applicationContextSpec",
-              //"legacy/test/polyfillSpec"
-
+              "presentation/test/dollar"
             ];

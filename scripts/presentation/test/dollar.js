@@ -24,7 +24,7 @@ define([
             var h1 = Augmented.$("html body article section#header header h1");
 			expect(h1).toBeDefined();
             expect(h1 instanceof Node).toBeTruthy();
-            expect(h1.innerText).toEqual("Augmented.js Test Suite");
+            expect(h1.innerText).toEqual("Augmented.js Presentation Test Suite");
 		});
 
 	});

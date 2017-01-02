@@ -1,6 +1,6 @@
 {
   "name": "augmentedjs-presentation",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "The Augmented.js Framework Presentation Module.",
   "main": "scripts/presentation/augmentedPresentation.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/Augmentedjs/augmented-presentation.git"
   },
   "keywords": [
-    "none"
+    "augmentedjs"
   ],
   "author": "Bob Warren <jedi.master@augmentedjs.com> (http://www.augmentedjs.com)",
   "license": "Apache-2.0",
