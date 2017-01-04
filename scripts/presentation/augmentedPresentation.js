@@ -13,7 +13,7 @@
  *
  * @requires augmentedjs
  * @module Augmented.Presentation
- * @version 1.1.0
+ * @version 1.1.1
  * @license Apache-2.0
  */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
      * The standard version property
      * @constant VERSION
      */
-    Augmented.Presentation.VERSION = "1.1.0";
+    Augmented.Presentation.VERSION = "1.1.1";
 
     /**
      * A private logger for use in the framework only
@@ -2879,8 +2879,8 @@
          */
         remove: function() {
             /* off to unbind the events */
+            this.undelegateEvents();
             this.off();
-            //this.off(this.el);
             this.stopListening();
             return this;
         },
