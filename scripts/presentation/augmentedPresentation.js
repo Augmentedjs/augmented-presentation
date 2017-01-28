@@ -13,7 +13,7 @@
  *
  * @requires augmentedjs
  * @module Augmented.Presentation
- * @version 1.1.1
+ * @version 1.1.2
  * @license Apache-2.0
  */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
      * The standard version property
      * @constant VERSION
      */
-    Augmented.Presentation.VERSION = "1.1.1";
+    Augmented.Presentation.VERSION = "1.1.2";
 
     /**
      * A private logger for use in the framework only
@@ -361,7 +361,8 @@
          * @memberof Augmented.Presentation.Mediator
     	 */
     	publish: function(channel) {
-    	    if (!this._channels[channel]) {
+    	    if (!channel || !this._channels[channel]) {
+                logger.warn("AUGMENTED: Mediator: channel '" + channel + "' doest exist.");
     		    return;
             }
 
