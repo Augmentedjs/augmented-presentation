@@ -19,8 +19,7 @@
   "author": "Bob Warren <jedi.master@augmentedjs.com> (http://www.augmentedjs.com)",
   "license": "Apache-2.0",
   "devDependencies": {
-    "augmentedjs": "^1.0.0",
-    "jasmine-core": "2.3.4",
+    "jasmine-core": "^2.4.0",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^0.2.3",
     "karma-firefox-launcher": "^0.1.7",
@@ -35,10 +34,10 @@
     "ink-docstrap": "*"
   },
   "dependencies": {
-    "augmentedjs": "^1.0.0"
+    "augmentedjs": "^1.4.4"
   },
   "browserDependencies": {
-    "augmentedjs": "^1.0.0"
+    "augmentedjs": "^1.4.0"
   },
   "bugs": {
     "url": "https://github.com/Augmentedjs/augmented-presentation/issues"

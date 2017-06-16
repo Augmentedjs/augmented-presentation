@@ -43,7 +43,7 @@
      * A private logger for use in the framework only
      * @private
      */
-    let logger = Augmented.Logger.LoggerFactory.getLogger(Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
+    var logger = Augmented.Logger.LoggerFactory.getLogger(Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
 
     /*
      * Mediator View
