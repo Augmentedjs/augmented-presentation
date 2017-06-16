@@ -1,7 +1,93 @@
-/**
- * AugmentedPresentation.js - The Presentation Core UI Component and package<br/>
- * The <b>Presentation</b> extension adds extensive abilities to the presentation layer.<br/>
- * This extension adds:<br/>
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Augmented.js Source: augmentedPresentation.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Augmented.js</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Augmented.D.html">Augmented.D</a></li><li><a href="Augmented.Presentation.html">Augmented.Presentation</a></li><li><a href="Augmented.Presentation.Dom.html">Augmented.Presentation.Dom</a></li><li><a href="Augmented.Presentation.Widget.html">Augmented.Presentation.Widget</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Augmented.module_Presentation.html">Augmented.Presentation</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Augmented.Presentation.AlertDialogView.html">Augmented.Presentation.AlertDialogView</a></li><li><a href="Augmented.Presentation.Application.html">Augmented.Presentation.Application</a></li><li><a href="Augmented.Presentation.AutomaticForm.html">Augmented.Presentation.AutomaticForm</a></li><li><a href="Augmented.Presentation.AutomaticTable.html">Augmented.Presentation.AutomaticTable</a></li><li><a href="Augmented.Presentation.AutoTable.html">Augmented.Presentation.AutoTable</a></li><li><a href="Augmented.Presentation.BigDataTable.html">Augmented.Presentation.BigDataTable</a></li><li><a href="Augmented.Presentation.Colleague.html">Augmented.Presentation.Colleague</a></li><li><a href="Augmented.Presentation.ConfirmationDialogView.html">Augmented.Presentation.ConfirmationDialogView</a></li><li><a href="Augmented.Presentation.DecoratorView.html">Augmented.Presentation.DecoratorView</a></li><li><a href="Augmented.Presentation.DialogView.html">Augmented.Presentation.DialogView</a></li><li><a href="Augmented.Presentation.DirectDOMAutomaticTable.html">Augmented.Presentation.DirectDOMAutomaticTable</a></li><li><a href="Augmented.Presentation.EditableBigDataTable.html">Augmented.Presentation.EditableBigDataTable</a></li><li><a href="Augmented.Presentation.EditableLocalStorageTable.html">Augmented.Presentation.EditableLocalStorageTable</a></li><li><a href="Augmented.Presentation.EditableTable.html">Augmented.Presentation.EditableTable</a></li><li><a href="Augmented.Presentation.LocalStorageTable.html">Augmented.Presentation.LocalStorageTable</a></li><li><a href="Augmented.Presentation.Mediator.html">Augmented.Presentation.Mediator</a></li><li><a href="Augmented.Presentation.Spreadsheet.html">Augmented.Presentation.Spreadsheet</a></li><li><a href="Augmented.Presentation.ViewController.html">Augmented.Presentation.ViewController</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: augmentedPresentation.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * AugmentedPresentation.js - The Presentation Core UI Component and package&lt;br/>
+ * The &lt;b>Presentation&lt;/b> extension adds extensive abilities to the presentation layer.&lt;br/>
+ * This extension adds:&lt;br/>
  * Mediator patterned PubSub Views
  * Enhanced Application Object
      - PubSub mediation and bootstrapping for Application objects
@@ -19,7 +105,7 @@
 (function(moduleFactory) {
     if (typeof exports === 'object') {
 	    module.exports = moduleFactory(require('augmentedjs'));
-    } else if (typeof define === 'function' && define.amd) {
+    } else if (typeof define === 'function' &amp;&amp; define.amd) {
 	    define(['augmented'], moduleFactory);
     } else {
 	    window.Augmented.Presentation = moduleFactory(window.Augmented);
@@ -63,7 +149,7 @@
     var undelegateEvents = Augmented.View.prototype.undelegateEvents;
 
     /**
-     * Colleague View - The 'child' view.<br/>
+     * Colleague View - The 'child' view.&lt;br/>
      * Allow to define convention-based subscriptions
      * as an 'subscriptions' hash on a view. Subscriptions
      * can then be easily setup and cleaned.
@@ -98,14 +184,14 @@
     });
 
     /**
-     * Mediator View - The mediator in the Mediator Pattern<br/>
+     * Mediator View - The mediator in the Mediator Pattern&lt;br/>
      * The mediator defines the interface for communication between colleague views.
      * Loose coupling between colleague objects is achieved by having colleagues communicate
      * with the Mediator, rather than with each other.
-     * <pre>
-     * [Mediator]<-----[Colleague]
+     * &lt;pre>
+     * [Mediator]&lt;-----[Colleague]
      *     ^-----------[Colleague]
-     * </pre>
+     * &lt;/pre>
      * @constructor Mediator
      * @name Augmented.Presentation.Mediator
      * @memberof Augmented.Presentation
@@ -199,7 +285,7 @@
             this.unsetSubscriptions(subscriptions);
 
             var i = 0, l = subscriptions.length;
-            for (i = 0; i < l; i++) {
+            for (i = 0; i &lt; l; i++) {
                 var subscription = subscriptions[i];
                 var once = false;
                 if (subscription.$once) {
@@ -226,7 +312,7 @@
             }
 
             var i = 0, l = subscriptions.length;
-            for (i = 0; i < l; i++) {
+            for (i = 0; i &lt; l; i++) {
                 var subscription = subscriptions[i];
                 var once = false;
                 if (subscription.$once) {
@@ -369,7 +455,7 @@
     	    var args = [].slice.call(arguments, 1), subscription;
             var i = 0, l = this._channels[channel].length;
 
-    	    for (i = 0; i < l; i++) {
+    	    for (i = 0; i &lt; l; i++) {
         		subscription = this._channels[channel][i];
                 if (subscription) {
                     if (subscription.fn) {
@@ -402,10 +488,10 @@
             var id = (identifier) ? identifier : this._defaultIdentifier;
 
     	    var subscription, i = 0;
-    	    for (i = 0; i < this._channels[channel].length; i++) {
+    	    for (i = 0; i &lt; this._channels[channel].length; i++) {
                 subscription = this._channels[channel][i];
                 if (subscription) {
-                    if (subscription.identifier === id && subscription.context === context) {
+                    if (subscription.identifier === id &amp;&amp; subscription.context === context) {
                     // originally compared function callbacks, but we don't always pass one so use identifier
             		    this._channels[channel].splice(i, 1);
             		    i--;
@@ -491,7 +577,7 @@
     });
 
     /**
-     * Presentation Application - extension of Augmented.Application</br/>
+     * Presentation Application - extension of Augmented.Application&lt;/br/>
      * Add registration of mediators to the application, breadcrumbs, and stylesheet registration
      * @constructor Augmented.Presentation.Application
      * @memberof Augmented.Presentation
@@ -509,7 +595,7 @@
          * @memberof Augmented.Presentation.Application
          */
         this.initialize = function() {
-            if (this.Stylesheets && this.Stylesheets.length > 0) {
+            if (this.Stylesheets &amp;&amp; this.Stylesheets.length > 0) {
                 this.attachStylesheets();
             }
         };
@@ -581,7 +667,7 @@
             // create a shadow DOM
                 shaddowDom = document.createDocumentFragment(),
                 i = 0, l = this.Stylesheets.length, link = null;
-            for (i = 0; i < l; i++) {
+            for (i = 0; i &lt; l; i++) {
                 link = document.createElement("link");
                 link.type = "text/css";
                 link.rel = "stylesheet";
@@ -669,7 +755,7 @@
         }
 
         var i, d, dkey, dobj, html = "", l = data.length, t;
-        for (i = 0; i < l; i++) {
+        for (i = 0; i &lt; l; i++) {
             d = data[i];
             for (dkey in d) {
                 if (d.hasOwnProperty(dkey)) {
@@ -689,17 +775,17 @@
     };
 
     var defaultTableCompile = function(name, desc, columns, data, lineNumbers, sortKey, editable) {
-        var html = "<table " + tableDataAttributes.name + "=\"" + name + "\" " + tableDataAttributes.description + "=\"" + desc + "\">";
+        var html = "&lt;table " + tableDataAttributes.name + "=\"" + name + "\" " + tableDataAttributes.description + "=\"" + desc + "\">";
         if (name) {
-            html = html + "<caption";
+            html = html + "&lt;caption";
             if (desc) {
                 html = html + " title=\"" + desc + "\"";
             }
-            html = html + ">" + name + "</caption>";
+            html = html + ">" + name + "&lt;/caption>";
         }
-        html = html + "<thead>";
+        html = html + "&lt;thead>";
         html = html + defaultTableHeader(columns, lineNumbers, sortKey);
-        html = html + "</thead><tbody>";
+        html = html + "&lt;/thead>&lt;tbody>";
         if (data) {
             if (editable) {
                 html = html + editableTableBody(data, columns, lineNumbers, sortKey);
@@ -707,70 +793,70 @@
                 html = html + defaultTableBody(data, columns, lineNumbers, sortKey);
             }
         }
-        html = html + "</tbody></table>";
+        html = html + "&lt;/tbody>&lt;/table>";
         return html;
     };
 
     var defaultTableHeader = function(columns, lineNumbers, sortKey) {
         var html = "";
         if (columns) {
-            html = html + "<tr>";
+            html = html + "&lt;tr>";
             if (lineNumbers) {
-                html = html + "<th " + tableDataAttributes.name + "=\"lineNumber\">#</th>";
+                html = html + "&lt;th " + tableDataAttributes.name + "=\"lineNumber\">#&lt;/th>";
             }
             var key, obj;
             for (key in columns) {
                 if (columns.hasOwnProperty(key)) {
                     obj = columns[key];
-                    html = html + "<th " + tableDataAttributes.name + "=\"" + key + "\" " + tableDataAttributes.description + "=\"" + obj.description + "\" " + tableDataAttributes.type + "=\"" + obj.type + "\"";
+                    html = html + "&lt;th " + tableDataAttributes.name + "=\"" + key + "\" " + tableDataAttributes.description + "=\"" + obj.description + "\" " + tableDataAttributes.type + "=\"" + obj.type + "\"";
                     if (sortKey === key) {
                         html = html + " class=\"" + tableDataAttributes.sortClass + "\"";
                     }
-                    html = html + ">" + key + "</th>";
+                    html = html + ">" + key + "&lt;/th>";
                 }
             }
-            html = html + "</tr>";
+            html = html + "&lt;/tr>";
         }
         return html;
     };
 
     var defaultTableBody = function(data, columns, lineNumbers, sortKey) {
         var i, d, dkey, dobj, html = "", l = data.length, t;
-        for (i = 0; i < l; i++) {
+        for (i = 0; i &lt; l; i++) {
             d = data[i];
-            html = html + "<tr>";
+            html = html + "&lt;tr>";
             if (lineNumbers) {
-                html = html + "<td class=\"label number\">" + (i+1) + "</td>";
+                html = html + "&lt;td class=\"label number\">" + (i+1) + "&lt;/td>";
             }
             for (dkey in d) {
                 if (d.hasOwnProperty(dkey)) {
                     dobj = d[dkey];
                     t = (typeof dobj);
-                    html = html + "<td " + tableDataAttributes.type + "=\"" + t + "\" class=\"" + t;
+                    html = html + "&lt;td " + tableDataAttributes.type + "=\"" + t + "\" class=\"" + t;
                     if (sortKey === dkey) {
                         html = html + " " + tableDataAttributes.sortClass;
                     }
-                    html = html + "\">" + dobj + "</td>";
+                    html = html + "\">" + dobj + "&lt;/td>";
                 }
             }
-            html = html + "</tr>";
+            html = html + "&lt;/tr>";
         }
         return html;
     };
 
     var editableTableBody = function(data, columns, lineNumbers, sortKey) {
         var i, d, dkey, dobj, html = "", l = data.length, t;
-        for (i = 0; i < l; i++) {
+        for (i = 0; i &lt; l; i++) {
             d = data[i];
-            html = html + "<tr>";
+            html = html + "&lt;tr>";
             if (lineNumbers) {
-                html = html + "<td class=\"label number\">" + (i+1) + "</td>";
+                html = html + "&lt;td class=\"label number\">" + (i+1) + "&lt;/td>";
             }
             for (dkey in d) {
                 if (d.hasOwnProperty(dkey)) {
                     dobj = d[dkey];
                     t = (typeof dobj);
-                    html = html + "<td " + tableDataAttributes.type + "=\"" + t + "\" class=\"" + t;
+                    html = html + "&lt;td " + tableDataAttributes.type + "=\"" + t + "\" class=\"" + t;
                     if (sortKey === dkey) {
                         html = html + " " + tableDataAttributes.sortClass;
                     }
@@ -784,48 +870,48 @@
                         myType = "radio";
                     }
 
-                    html = html + "<input type=\"" + myType + "\" " +
+                    html = html + "&lt;input type=\"" + myType + "\" " +
                         (dobj === true ? "checked=\"checked\"" : "") +
                         " value=\"" + dobj + "\"" +
                         tableDataAttributes.name + "=\"" + dkey + "\" " +
-                        tableDataAttributes.index + "=\"" + i + "\"/></td>";
+                        tableDataAttributes.index + "=\"" + i + "\"/>&lt;/td>";
                 }
             }
-            html = html + "</tr>";
+            html = html + "&lt;/tr>";
         }
         return html;
     };
 
     /*
-     * << First | < Previous | # | Next > | Last >>
+     * &lt;&lt; First | &lt; Previous | # | Next > | Last >>
     */
     var defaultPaginationControl = function(currentPage, totalPages) {
-            return "<div class=\"paginationControl\">" +
-                    "<span class=\"first\"><< First</span>" +
-                    "<span class=\"previous\">< Previous</span>" +
-                    "<span class=\"current\">" + currentPage + " of " + totalPages + "</span>" +
-                    "<span class=\"next\">Next ></span>" +
-                    "<span class=\"last\">Last >></span></div>";
+            return "&lt;div class=\"paginationControl\">" +
+                    "&lt;span class=\"first\">&lt;&lt; First&lt;/span>" +
+                    "&lt;span class=\"previous\">&lt; Previous&lt;/span>" +
+                    "&lt;span class=\"current\">" + currentPage + " of " + totalPages + "&lt;/span>" +
+                    "&lt;span class=\"next\">Next >&lt;/span>" +
+                    "&lt;span class=\"last\">Last >>&lt;/span>&lt;/div>";
     };
 
     var formatValidationMessages = function(messages) {
         var html = "";
-        if (messages && messages.length > 0) {
-            html = html + "<ul class=\"errors\">";
+        if (messages &amp;&amp; messages.length > 0) {
+            html = html + "&lt;ul class=\"errors\">";
             var i = 0, l = messages.length;
-            for (i = 0; i < l; i++) {
+            for (i = 0; i &lt; l; i++) {
                 var ii = 0, ll = messages[i].errors.length;
-                for (ii = 0; ii < ll; ii++) {
-                    html = html + "<li>" + messages[i].errors[ii] + "</li>";
+                for (ii = 0; ii &lt; ll; ii++) {
+                    html = html + "&lt;li>" + messages[i].errors[ii] + "&lt;/li>";
                 }
             }
-            html = html + "</ul>";
+            html = html + "&lt;/ul>";
         }
         return html;
     };
 
     /**
-     * Augmented.Presentation.AutomaticTable<br/>
+     * Augmented.Presentation.AutomaticTable&lt;br/>
      * Creates a table automatically via a schema for defintion and a uri/json for data
      * @constructor Augmented.Presentation.AutomaticTable
      * @extends Augmented.Presentation.Colleague
@@ -859,7 +945,7 @@
          * @param {string} key The key to sort by
          */
         sortBy: function(key) {
-            if (key && ( (this.editable) || (!this.editable && this.sortKey !== key))) {
+            if (key &amp;&amp; ( (this.editable) || (!this.editable &amp;&amp; this.sortKey !== key))) {
                 this.sortKey = key;
                 this.collection.sortByKey(key);
                 this.refresh();
@@ -989,9 +1075,9 @@
          * @param {any} value The value to set
          */
         editCell: function(row, col, value) {
-            if (row && col) {
+            if (row &amp;&amp; col) {
                 var model = this.collection.at(row), name = this.columns[col];
-                if (model && name) {
+                if (model &amp;&amp; name) {
                     model.set(name, value);
                 }
             }
@@ -1006,10 +1092,10 @@
          * @param {number} col2 The 'to' column
          */
         copyCell: function(row1, col1, row2, col2) {
-            if (row1 && col1 && row2 && col2) {
+            if (row1 &amp;&amp; col1 &amp;&amp; row2 &amp;&amp; col2) {
                 var model1 = this.collection.at(row1), name1 = this.columns[col1],
                     model2 = this.collection.at(row);
-                if (model1 && name1 && model2) {
+                if (model1 &amp;&amp; name1 &amp;&amp; model2) {
                     model2.set(name1, value1);
                 }
             }
@@ -1089,11 +1175,11 @@
                 if (options.paginationAPI) {
                     this.paginationAPI = options.paginationAPI;
                 }
-                if (!this.collection && this.paginationAPI) {
+                if (!this.collection &amp;&amp; this.paginationAPI) {
                     this.collection = Augmented.PaginationFactory.getPaginatedCollection(this.paginationAPI);
                     this.paginationAPI = this.collection.paginationAPI;
                     this.localStorage = false;
-                } else if (!this.collection && this.localStorage) {
+                } else if (!this.collection &amp;&amp; this.localStorage) {
                     this.collection = new Augmented.LocalStorageCollection();
                 } else if (!this.collection) {
                     this.collection = new Augmented.Collection();
@@ -1107,7 +1193,7 @@
                         var parsedSchema = null;
                         try {
                             parsedSchema = JSON.parse(options.schema);
-                            if (parsedSchema && Augmented.isObject(parsedSchema)) {
+                            if (parsedSchema &amp;&amp; Augmented.isObject(parsedSchema)) {
                                 this.schema = parsedSchema;
                             }
                         } catch(e) {
@@ -1130,7 +1216,7 @@
                     this.collection.url = options.uri;
                 }
 
-                if (options.data && (Array.isArray(options.data))) {
+                if (options.data &amp;&amp; (Array.isArray(options.data))) {
                     this.populate(options.data);
                 }
 
@@ -1150,13 +1236,13 @@
                     this.editable = options.editable;
                 }
 
-                if (options.localStorageKey && !options.uri) {
+                if (options.localStorageKey &amp;&amp; !options.uri) {
                     this.localStorageKey = options.localStorageKey;
                     this.uri = null;
                 }
             }
 
-            if (this.collection && this.uri) {
+            if (this.collection &amp;&amp; this.uri) {
                 this.collection.url = this.uri;
             }
             if (this.collection) {
@@ -1278,7 +1364,7 @@
          * @param {array} source The source data array
          */
         populate: function(source) {
-            if (source && Array.isArray(source)) {
+            if (source &amp;&amp; Array.isArray(source)) {
                 this.sortKey = null;
                 this.data = source;
                 this.collection.reset(this.data);
@@ -1318,7 +1404,7 @@
                     e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
                     var tbody = e.querySelector("tbody"), thead = e.querySelector("thead"), h;
                     if (e) {
-                        if (this._columns && (Object.keys(this._columns).length > 0)){
+                        if (this._columns &amp;&amp; (Object.keys(this._columns).length > 0)){
                             if (this.sortable) {
                                 this.unbindSortableColumnEvents();
                             }
@@ -1328,7 +1414,7 @@
                         }
                         thead.innerHTML = h;
 
-                        if (this.collection && (this.collection.length > 0)){
+                        if (this.collection &amp;&amp; (this.collection.length > 0)){
                             if (this.editable) {
                                 h = editableTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey);
                             } else {
@@ -1363,7 +1449,7 @@
                     logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
                 }
             } else {
-                this.template = "<progress>Please wait.</progress>" + this.compileTemplate() + "<p class=\"message\"></p>";
+                this.template = "&lt;progress>Please wait.&lt;/progress>" + this.compileTemplate() + "&lt;p class=\"message\">&lt;/p>";
                 this.showProgressBar(true);
 
                 if (this.el) {
@@ -1416,14 +1502,14 @@
             var myEl = (typeof this.el === 'string') ? this.el : this.el.localName;
             var cells = [].slice.call(document.querySelectorAll(myEl + " table tr td input"));
             var i=0, l=cells.length;
-            for(i=0; i < l; i++) {
+            for(i=0; i &lt; l; i++) {
                 cells[i].addEventListener("change", this.saveCell.bind(this), false);
             }
             // bind the select boxes as well
             cells = [].slice.call(document.querySelectorAll(myEl + " table tr td select"));
             i=0;
             l=cells.length;
-            for(i=0; i < l; i++) {
+            for(i=0; i &lt; l; i++) {
                 cells[i].addEventListener("change", this.saveCell.bind(this), false);
             }
         },
@@ -1435,14 +1521,14 @@
             var myEl = (typeof this.el === 'string') ? this.el : this.el.localName;
             var cells = [].slice.call(document.querySelectorAll(myEl + " table tr td input"));
             var i=0, l=cells.length;
-            for(i=0; i < l; i++) {
+            for(i=0; i &lt; l; i++) {
                 cells[i].removeEventListener("change", this.saveCell, false);
             }
             // unbind the select boxes as well
             cells = [].slice.call(document.querySelectorAll(myEl + " table tr td select"));
             i=0;
             l=cells.length;
-            for(i=0; i < l; i++) {
+            for(i=0; i &lt; l; i++) {
                 cells[i].removeEventListener("change", this.saveCell, false);
             }
         },
@@ -1545,7 +1631,7 @@
          * @private
          */
         unbindSortableColumnEvents: function()  {
-            if (this.el && this.sortable) {
+            if (this.el &amp;&amp; this.sortable) {
                 var list;
                 if (typeof this.el === 'string') {
                     list = document.querySelectorAll(this.el + " table tr th");
@@ -1553,7 +1639,7 @@
                     list = document.querySelectorAll(this.el.localName + " table tr th");
                 }
                 var i = 0, l = list.length;
-                for (i = 0; i < l; i++) {
+                for (i = 0; i &lt; l; i++) {
                     list[i].removeEventListener("click", this.sortByHeaderEvent, false);
                 }
             }
@@ -1562,7 +1648,7 @@
          * @private
          */
         bindSortableColumnEvents: function()  {
-            if (this.el && this.sortable) {
+            if (this.el &amp;&amp; this.sortable) {
                 var list;
                 if (typeof this.el === 'string') {
                     list = document.querySelectorAll(this.el + " table tr th");
@@ -1570,7 +1656,7 @@
                     list = document.querySelectorAll(this.el.localName + " table tr th");
                 }
                 var i = 0, l = list.length;
-                for (i = 0; i < l; i++) {
+                for (i = 0; i &lt; l; i++) {
                     if (list[i].getAttribute(tableDataAttributes.name) === "lineNumber") {
                         // Do I need to do something?
                     } else {
@@ -1658,7 +1744,7 @@
          */
         validate: function() {
             var messages = (this.collection) ? this.collection.validate() : null;
-            if (!this.collection.isValid() && messages && messages.messages) {
+            if (!this.collection.isValid() &amp;&amp; messages &amp;&amp; messages.messages) {
                 this.showMessage(formatValidationMessages(messages.messages));
             } else {
                 this.showMessage("");
@@ -1744,7 +1830,7 @@
 
     var directDOMTableBody = function(el, data, columns, lineNumbers, sortKey) {
         var i, d, dkey, dobj, l = data.length, t, td, tn, tr, cobj;
-        for (i = 0; i < l; i++) {
+        for (i = 0; i &lt; l; i++) {
             d = data[i];
             tr = document.createElement("tr");
 
@@ -1781,7 +1867,7 @@
     var directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey) {
         var i, d, dkey, dobj, l = data.length, t, td, tn, tr, input, cobj, ln;
         ln = lineNumbers;
-        for (i = 0; i < l; i++) {
+        for (i = 0; i &lt; l; i++) {
             d = data[i];
             tr = document.createElement("tr");
 
@@ -1815,7 +1901,7 @@
                         if (Array.isArray(dobj)) {
                             var iii = 0, lll = dobj.length, option, tOption;
                             input = document.createElement("select");
-                            for (iii = 0; iii < lll; iii++) {
+                            for (iii = 0; iii &lt; lll; iii++) {
                                 option = document.createElement("option");
                                 option.setAttribute("value", dobj[iii]);
                                 tOption = document.createTextNode(dobj[iii]);
@@ -1837,10 +1923,10 @@
                         input = document.createElement("input");
                         input.setAttribute("type", "number");
                         input.value = dobj;
-                    } else if (t === "string" && cobj.enum) {
+                    } else if (t === "string" &amp;&amp; cobj.enum) {
                         input = document.createElement("select");
                         var iiii = 0, llll = cobj.enum.length, option2, tOption2;
-                        for (iiii = 0; iiii < llll; iiii++) {
+                        for (iiii = 0; iiii &lt; llll; iiii++) {
                             option2 = document.createElement("option");
                             option2.setAttribute("value", cobj.enum[iiii]);
                             tOption2 = document.createTextNode(cobj.enum[iiii]);
@@ -1850,15 +1936,15 @@
                             option2.appendChild(tOption2);
                             input.appendChild(option2);
                         }
-                    } else if (t === "string" && (cobj.format === "email")) {
+                    } else if (t === "string" &amp;&amp; (cobj.format === "email")) {
                         input = document.createElement("input");
                         input.setAttribute("type", "email");
                         input.value = dobj;
-                    } else if (t === "string" && (cobj.format === "uri")) {
+                    } else if (t === "string" &amp;&amp; (cobj.format === "uri")) {
                         input = document.createElement("input");
                         input.setAttribute("type", "url");
                         input.value = dobj;
-                    } else if (t === "string" && (cobj.format === "date-time")) {
+                    } else if (t === "string" &amp;&amp; (cobj.format === "date-time")) {
                         input = document.createElement("input");
                         input.setAttribute("type", "datetime");
                         input.value = dobj;
@@ -1868,7 +1954,7 @@
                         input.value = dobj;
                     }
 
-                    if (t === "string" && cobj.pattern) {
+                    if (t === "string" &amp;&amp; cobj.pattern) {
                         input.setAttribute("pattern", cobj.pattern);
                     }
 
@@ -1880,11 +1966,11 @@
                         input.setAttribute("max", cobj.maximum);
                     }
 
-                    if (t === "string" && cobj.minlength) {
+                    if (t === "string" &amp;&amp; cobj.minlength) {
                         input.setAttribute("minlength", cobj.minlength);
                     }
 
-                    if (t === "string" && cobj.maxlength) {
+                    if (t === "string" &amp;&amp; cobj.maxlength) {
                         input.setAttribute("maxlength", cobj.maxlength);
                     }
 
@@ -1901,7 +1987,7 @@
     };
 
     /*
-     * << First | < Previous | # | Next > | Last >>
+     * &lt;&lt; First | &lt; Previous | # | Next > | Last >>
     */
     var directDOMPaginationControl = function(el, currentPage, totalPages) {
         var d, n, t;
@@ -1910,13 +1996,13 @@
 
         n = document.createElement("span");
         n.classList.add("first");
-        t = document.createTextNode("<< First");
+        t = document.createTextNode("&lt;&lt; First");
         n.appendChild(t);
         d.appendChild(n);
 
         n = document.createElement("span");
         n.classList.add("previous");
-        t = document.createTextNode("< Previous");
+        t = document.createTextNode("&lt; Previous");
         n.appendChild(t);
         d.appendChild(n);
 
@@ -1942,8 +2028,8 @@
     };
 
     /**
-     * Augmented.Presentation.DirectDOMAutomaticTable<br/>
-     * Uses direct DOM methods vs cached HTML<br/>
+     * Augmented.Presentation.DirectDOMAutomaticTable&lt;br/>
+     * Uses direct DOM methods vs cached HTML&lt;br/>
      * Creates a table automatically via a schema for defintion and a uri/json for data
      * @constructor Augmented.Presentation.DirectDOMAutomaticTable
      * @extends Augmented.Presentation.AutomaticTable
@@ -1991,7 +2077,7 @@
                         if (this.editable) {
                             this.unbindCellChangeEvents();
                         }
-                        if (this._columns && (Object.keys(this._columns).length > 0)){
+                        if (this._columns &amp;&amp; (Object.keys(this._columns).length > 0)){
 
                             while (thead.hasChildNodes()) {
                                 thead.removeChild(thead.lastChild);
@@ -2003,7 +2089,7 @@
                             }
                         }
 
-                        if (this.collection && (this.collection.length > 0)){
+                        if (this.collection &amp;&amp; (this.collection.length > 0)){
                             while (tbody.hasChildNodes()) {
                                 tbody.removeChild(tbody.lastChild);
                             }
@@ -2154,7 +2240,7 @@
 
     /**
      * Augmented.Presentation.Spreadsheet
-     * Instance class preconfigured for editing for use as a Spreadsheet.<br/>
+     * Instance class preconfigured for editing for use as a Spreadsheet.&lt;br/>
      * If a propery for length is not specified, it will buffer 10 lines for editing.
      * @constructor Augmented.Presentation.Spreadsheet
      * @extends Augmented.Presentation.AutomaticTable
@@ -2187,7 +2273,7 @@
 
             if (this.collection) {
                 this.collection.reset();
-            } else if (!this.collection && this.localStorage) {
+            } else if (!this.collection &amp;&amp; this.localStorage) {
                 this.collection = new Augmented.LocalStorageCollection();
             } else if (!this.collection) {
                 this.collection = new Augmented.Collection();
@@ -2203,7 +2289,7 @@
                         var parsedSchema = null;
                         try {
                             parsedSchema = JSON.parse(options.schema);
-                            if (parsedSchema && Augmented.isObject(parsedSchema)) {
+                            if (parsedSchema &amp;&amp; Augmented.isObject(parsedSchema)) {
                                 this.schema = parsedSchema;
                             }
                         } catch(e) {
@@ -2226,7 +2312,7 @@
                     this.collection.url = options.uri;
                 }
 
-                if (options.data && (Array.isArray(options.data))) {
+                if (options.data &amp;&amp; (Array.isArray(options.data))) {
                     this.populate(options.data);
                 }
 
@@ -2238,13 +2324,13 @@
                     this.lineNumbers = options.lineNumbers;
                 }
 
-                if (options.localStorageKey && !options.uri) {
+                if (options.localStorageKey &amp;&amp; !options.uri) {
                     this.localStorageKey = options.localStorageKey;
                     this.uri = null;
                 }
             }
 
-            if (this.collection && this.uri) {
+            if (this.collection &amp;&amp; this.uri) {
                 this.collection.url = this.uri;
             }
             if (this.collection) {
@@ -2275,7 +2361,7 @@
 
                 var i = 0;
 
-                for (i = 0; i < this.columns; i++) {
+                for (i = 0; i &lt; this.columns; i++) {
                     this.schema.properties[String.fromCharCode(65 + i)] = {
                         "description": "",
                         "type": "string"
@@ -2295,12 +2381,12 @@
             return this.isInitalized;
         },
         _generate: function() {
-            if (this.schema && this.schema.properties) {
+            if (this.schema &amp;&amp; this.schema.properties) {
                 var i = 0, ii = 0, keys = Object.keys(this.schema.properties), l = keys.length, obj = {};
                 this.data = [];
-                for (ii = 0; ii < this.rows; ii++) {
+                for (ii = 0; ii &lt; this.rows; ii++) {
                     obj = {};
-                    for (i = 0; i < l; i++) {
+                    for (i = 0; i &lt; l; i++) {
                         obj[keys[i]] = ""; /*this._makeUpData(
                             this.schema.properties[keys[i]].type,
                             this.schema.properties[keys[i]].format,
@@ -2345,7 +2431,7 @@
             return window.innerWidth;
         },
         /**
-         * Sets the value of an element<br/>
+         * Sets the value of an element&lt;br/>
          * Will detect the correct method to do so by element type
          * @method setValue
          * @param {Node} el Element or string of element selector
@@ -2357,14 +2443,14 @@
             if (el) {
                 value = (value) ? value : "";
                 var myEl = this.selector(el);
-                if (myEl && (myEl.nodeType === 1) && (myEl.nodeName === "select" || myEl.nodeName === "SELECT")) {
+                if (myEl &amp;&amp; (myEl.nodeType === 1) &amp;&amp; (myEl.nodeName === "select" || myEl.nodeName === "SELECT")) {
                     // Select box
                     logger.debug("Select box (not supported) set to - " + value);
-                } else if (myEl && (myEl.nodeType === 1) &&
+                } else if (myEl &amp;&amp; (myEl.nodeType === 1) &amp;&amp;
                     (myEl.nodeName === "input" || myEl.nodeName === "INPUT" ||
                      myEl.nodeName === "textarea" || myEl.nodeName === "TEXTAREA")) {
                     myEl.value = value;
-                } else if (myEl && (myEl.nodeType === 1)) {
+                } else if (myEl &amp;&amp; (myEl.nodeType === 1)) {
                     if (onlyText){
                         myEl.innerText = value;
                     } else {
@@ -2374,7 +2460,7 @@
             }
         },
         /**
-         * Gets the value of an element<br/>
+         * Gets the value of an element&lt;br/>
          * Will detect the correct method to do so by element type
          * @method getValue
          * @param {Node} el Element or string of element selector
@@ -2385,19 +2471,19 @@
             if (el) {
                 var myEl = this.selector(el);
 
-                if (myEl && (myEl.nodeType === 1) &&
+                if (myEl &amp;&amp; (myEl.nodeType === 1) &amp;&amp;
                         (myEl.nodeName === "input" || myEl.nodeName === "INPUT" ||
                         myEl.nodeName === "textarea" || myEl.nodeName === "TEXTAREA" ||
                         myEl.nodeName === "select" || myEl.nodeName === "SELECT")) {
                     return myEl.value;
-                } else if (myEl && (myEl.nodeType === 1)) {
+                } else if (myEl &amp;&amp; (myEl.nodeType === 1)) {
                     return myEl.innerHTML;
                 }
             }
             return null;
         },
         /**
-         * Selector function<br/>
+         * Selector function&lt;br/>
          * Supports full query selection
          * @method selector
          * @param {string} query Element or string of element selector
@@ -2411,7 +2497,7 @@
             return null;
         },
         /**
-         * Selectors function<br/>
+         * Selectors function&lt;br/>
          * Supports full query selection
          * @method selectors
          * @param {string} query Element or string of element selector
@@ -2425,7 +2511,7 @@
             return null;
         },
         /**
-         * Query function<br/>
+         * Query function&lt;br/>
          * Supports full query selection but acts like jQuery
          * @method query
          * @param {string} query Element or string of element selector
@@ -2533,7 +2619,7 @@
          */
         injectTemplate: function(template, mount) {
             var t = this.selector(template), el = this.selector(mount);
-            if (t && el) {
+            if (t &amp;&amp; el) {
                 var clone = document.importNode(t.content, true);
                 el.appendChild(clone);
             }
@@ -2541,7 +2627,7 @@
     };
 
     /**
-     * Augmented jQuery-like selectors usinge native selectors</br/>
+     * Augmented jQuery-like selectors usinge native selectors&lt;/br/>
      * Will return a nodelist for all selections unless only one is found.
      * @method $
      * @memberof Augmented
@@ -2577,13 +2663,13 @@
                 list.setAttribute("id", id);
             }
 
-            if (binding && id) {
+            if (binding &amp;&amp; id) {
                 list.setAttribute("data-" + binding, id);
             }
 
-            if (data && Array.isArray(data)) {
+            if (data &amp;&amp; Array.isArray(data)) {
                 l = data.length;
-                for (i = 0; i < l; i++) {
+                for (i = 0; i &lt; l; i++) {
                     li = document.createElement("li");
                     li.setAttribute("data-index", i);
                     t = document.createTextNode(String(data[i]));
@@ -2608,14 +2694,14 @@
                 list.setAttribute("id", id);
             }
 
-            if (binding && id) {
+            if (binding &amp;&amp; id) {
                 list.setAttribute("data-" + binding, id);
             }
 
-            if (data && Augmented.isObject(data)) {
+            if (data &amp;&amp; Augmented.isObject(data)) {
                 keys = Object.keys(data);
                 l = keys.length;
-                for (i = 0; i < l; i++) {
+                for (i = 0; i &lt; l; i++) {
                     dt = document.createElement("dt");
                     t = document.createTextNode(String(keys[i]));
                     dt.appendChild(t);
@@ -2645,13 +2731,13 @@
                 list.setAttribute("id", id);
             }
 
-            if (binding && id) {
+            if (binding &amp;&amp; id) {
                 list.setAttribute("data-" + binding, id);
             }
 
-            if (data && Array.isArray(data)) {
+            if (data &amp;&amp; Array.isArray(data)) {
                 l = data.length;
-                for (i = 0; i < l; i++) {
+                for (i = 0; i &lt; l; i++) {
                     o = document.createElement("option");
                     o.value = String(data[i]);
                     list.appendChild(o);
@@ -2681,7 +2767,7 @@
                 if (Array.isArray(dobj)) {
                     var iii = 0, lll = dobj.length, option, tOption;
                     input = document.createElement("select");
-                    for (iii = 0; iii < lll; iii++) {
+                    for (iii = 0; iii &lt; lll; iii++) {
                         option = document.createElement("option");
                         option.setAttribute("value", dobj[iii]);
                         tOption = document.createTextNode(dobj[iii]);
@@ -2703,10 +2789,10 @@
                 input = document.createElement("input");
                 input.setAttribute("type", "number");
                 input.value = dobj;
-            } else if (t === "string" && cobj.enum) {
+            } else if (t === "string" &amp;&amp; cobj.enum) {
                 input = document.createElement("select");
                 var iiii = 0, llll = cobj.enum.length, option2, tOption2;
-                for (iiii = 0; iiii < llll; iiii++) {
+                for (iiii = 0; iiii &lt; llll; iiii++) {
                     option2 = document.createElement("option");
                     option2.setAttribute("value", cobj.enum[iiii]);
                     tOption2 = document.createTextNode(cobj.enum[iiii]);
@@ -2716,15 +2802,15 @@
                     option2.appendChild(tOption2);
                     input.appendChild(option2);
                 }
-            } else if (t === "string" && (cobj.format === "email")) {
+            } else if (t === "string" &amp;&amp; (cobj.format === "email")) {
                 input = document.createElement("input");
                 input.setAttribute("type", "email");
                 input.value = dobj;
-            } else if (t === "string" && (cobj.format === "uri")) {
+            } else if (t === "string" &amp;&amp; (cobj.format === "uri")) {
                 input = document.createElement("input");
                 input.setAttribute("type", "url");
                 input.value = dobj;
-            } else if (t === "string" && (cobj.format === "date-time")) {
+            } else if (t === "string" &amp;&amp; (cobj.format === "date-time")) {
                 input = document.createElement("input");
                 input.setAttribute("type", "datetime");
                 input.value = dobj;
@@ -2734,7 +2820,7 @@
                 input.value = dobj;
             }
 
-            if (t === "string" && cobj.pattern) {
+            if (t === "string" &amp;&amp; cobj.pattern) {
                 input.setAttribute("pattern", cobj.pattern);
             }
 
@@ -2746,11 +2832,11 @@
                 input.setAttribute("max", cobj.maximum);
             }
 
-            if (t === "string" && cobj.minlength) {
+            if (t === "string" &amp;&amp; cobj.minlength) {
                 input.setAttribute("minlength", cobj.minlength);
             }
 
-            if (t === "string" && cobj.maxlength) {
+            if (t === "string" &amp;&amp; cobj.maxlength) {
                 input.setAttribute("maxlength", cobj.maxlength);
             }
 
@@ -2767,7 +2853,7 @@
                 input.setAttribute("id", id);
             }
 
-            if (binding && name) {
+            if (binding &amp;&amp; name) {
                 input.setAttribute("data-" + binding, name);
             }
 
@@ -2788,22 +2874,22 @@
     };
 
     /**
-     * Augmented.Presentation.DecoratorView<br/>
+     * Augmented.Presentation.DecoratorView&lt;br/>
      * An MVVM view designed around decorating the DOM with bindings.
      * This concept is designed to decouple the view from the backend contract.
-     * Although this is achieved via views in general, the idea is:<br/>
-     * <blockquote>As a Javascript Developer, I'd like the ability to decorate HTML and control view rendering without the use of CSS selectors</blockquote>
-     * <em>Important to note: This view <strong>gives up</strong> it's template and events!
-     * This is because all events and templates are used on the DOM directly.</em><br/>
-     * To add custom events, use customEvents instead of 'events'<br/>
-     * supported annotations:<br/>
-     * <ul>
-     * <li>data-click</li>
-     * <li>data-function</li>
-     * <li>data-style</li>
-     * <li>data-append-template</li>
-     * <li>data-prepend-template</li>
-     * </ul>
+     * Although this is achieved via views in general, the idea is:&lt;br/>
+     * &lt;blockquote>As a Javascript Developer, I'd like the ability to decorate HTML and control view rendering without the use of CSS selectors&lt;/blockquote>
+     * &lt;em>Important to note: This view &lt;strong>gives up&lt;/strong> it's template and events!
+     * This is because all events and templates are used on the DOM directly.&lt;/em>&lt;br/>
+     * To add custom events, use customEvents instead of 'events'&lt;br/>
+     * supported annotations:&lt;br/>
+     * &lt;ul>
+     * &lt;li>data-click&lt;/li>
+     * &lt;li>data-function&lt;/li>
+     * &lt;li>data-style&lt;/li>
+     * &lt;li>data-append-template&lt;/li>
+     * &lt;li>data-prepend-template&lt;/li>
+     * &lt;/ul>
      * @constructor Augmented.Presentation.DecoratorView
      * @memberof Augmented.Presentation
      * @extends Augmented.Presentation.Colleague
@@ -2843,7 +2929,7 @@
         },
         _click: function(event) {
             var func = event.currentTarget.getAttribute(decoratorAttributeEnum.click);
-            if (func && this[func]) {
+            if (func &amp;&amp; this[func]) {
                 this._executeFunctionByName(func, this, event);
             }/* else {
                 logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
@@ -2852,7 +2938,7 @@
         },
         _func: function(event) {
             var func = event.currentTarget.getAttribute(decoratorAttributeEnum.func);
-            if (func && this[func]) {
+            if (func &amp;&amp; this[func]) {
                 this._executeFunctionByName(func, this, event);
             } /*else {
                 logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
@@ -2892,7 +2978,7 @@
             var args = Array.prototype.slice.call(arguments, 2);
             var namespaces = functionName.split(".");
             var func = namespaces.pop();
-            for (var i = 0; i < namespaces.length; i++) {
+            for (var i = 0; i &lt; namespaces.length; i++) {
                 context = context[namespaces[i]];
             }
             return context[func].apply(context, args);
@@ -2926,8 +3012,8 @@
                 // html
                 var currentHTML = mount.innerHTML;
                 mount.innerHTML = currentHTML + template;
-            } else if ((template.nodeType && template.nodeName) &&
-                template.nodeType > 0 && !(template.nodeName === "template" || template.nodeName === "TEMPLATE")) {
+            } else if ((template.nodeType &amp;&amp; template.nodeName) &amp;&amp;
+                template.nodeType > 0 &amp;&amp; !(template.nodeName === "template" || template.nodeName === "TEMPLATE")) {
                 // DOM
                 mount.appendChild(template);
             } else if (template instanceof DocumentFragment  || template.nodeName === "template" || template.nodeName === "TEMPLATE") {
@@ -2963,11 +3049,11 @@
          * @param {string} id The identifier (not id attribute) of the element
          * @memberof Augmented.Presentation.DecoratorView
          * @example
-         * from HTML: <div data-myMountedView="something" id="anything"></div>
+         * from HTML: &lt;div data-myMountedView="something" id="anything">&lt;/div>
          * from JavaScript: var el = this.boundElement("something");
          */
         boundElement: function(id) {
-            if (this.el && id) {
+            if (this.el &amp;&amp; id) {
                 return this.el.querySelector("[" + this.bindingAttribute() + "=" + id + "]");
             }
             return null;
@@ -2997,13 +3083,13 @@
          */
         syncAllBoundElements: function() {
             var elements = this.el.querySelectorAll("[" + this.bindingAttribute() + "]");
-            if (elements && elements.length > 0) {
+            if (elements &amp;&amp; elements.length > 0) {
                 var i = 0, l = elements.length, event = new UIEvent("change", {
                     "view": window,
                     "bubbles": true,
                     "cancelable": true
                 });
-                for (i = 0; i < l; i++) {
+                for (i = 0; i &lt; l; i++) {
                     elements[i].dispatchEvent(event);
                 }
             }
@@ -3120,7 +3206,7 @@
             var attr = this.model.attributes;
             if (attr) {
                 var i = 0, keys = Object.keys(attr), l = keys.length;
-                for (i = 0; i < l; i++) {
+                for (i = 0; i &lt; l; i++) {
                     this._syncData(keys[i]);
                 }
             }
@@ -3187,7 +3273,7 @@
          */
         removeAllViews: function() {
             var i = 0, l = this._views.length;
-            for (i = 0; i < l; i++) {
+            for (i = 0; i &lt; l; i++) {
                 this._views[i].remove();
             }
             this._views.splice(0);
@@ -3249,7 +3335,7 @@
          * @memberof Augmented.Presentation.DialogView
          */
         template: function() {
-            return "<div class=\"blur\"><dialog class=\"" + this.style + "\"><h1>" + this.title + "</h1>" + this.body + this._getButtonGroup() + "</dialog></div>";
+            return "&lt;div class=\"blur\">&lt;dialog class=\"" + this.style + "\">&lt;h1>" + this.title + "&lt;/h1>" + this.body + this._getButtonGroup() + "&lt;/dialog>&lt;/div>";
         },
         /**
          * setBody - sets the body content of the dialog
@@ -3261,13 +3347,13 @@
             this.body = body;
         },
         _getButtonGroup: function() {
-            var html = "<div class=\"buttonGroup\">", i = 0, keys = Object.keys(this.buttons), l = (keys) ? keys.length: 0;
+            var html = "&lt;div class=\"buttonGroup\">", i = 0, keys = Object.keys(this.buttons), l = (keys) ? keys.length: 0;
 
-            for (i = 0; i < l; i++) {
-                html = html + "<button data-" + this.name + "=\"" + this.buttons[keys[i]] + "\"data-click=\"" + this.buttons[keys[i]] + "\">" + keys[i] + "</button>";
+            for (i = 0; i &lt; l; i++) {
+                html = html + "&lt;button data-" + this.name + "=\"" + this.buttons[keys[i]] + "\"data-click=\"" + this.buttons[keys[i]] + "\">" + keys[i] + "&lt;/button>";
             }
 
-            return html + "</div>";
+            return html + "&lt;/div>";
         },
         /**
          * render - render the dialog
@@ -3357,7 +3443,7 @@
             fs.appendChild(lg);
         }
 
-        for (i = 0; i < l; i++) {
+        for (i = 0; i &lt; l; i++) {
             req = (required.indexOf(keys[i]) !== -1);
             lb = document.createElement("label");
             lb.setAttribute("for", keys[i]);
@@ -3460,7 +3546,7 @@
                         var parsedSchema = null;
                         try {
                             parsedSchema = JSON.parse(options.schema);
-                            if (parsedSchema && Augmented.isObject(parsedSchema)) {
+                            if (parsedSchema &amp;&amp; Augmented.isObject(parsedSchema)) {
                                 this.schema = parsedSchema;
                             }
                         } catch(e) {
@@ -3481,19 +3567,19 @@
                     this.uri = options.uri;
                 }
 
-                if (options.data && (Augmented.isObject(options.data))) {
+                if (options.data &amp;&amp; (Augmented.isObject(options.data))) {
                     this.model.set(options.data);
                 }
             }
 
-            if (this.model && this.uri) {
+            if (this.model &amp;&amp; this.uri) {
                 this.model.url = this.uri;
             }
             if (this.model) {
                 this.model.crossOrigin = this.crossOrigin;
             }
             if (this.schema) {
-                if (this.schema.title && (!this.name)) {
+                if (this.schema.title &amp;&amp; (!this.name)) {
                     this.name = this.schema.title;
                 }
                 if (this.schema.description) {
@@ -3606,7 +3692,7 @@
          */
         validate: function() {
             var messages = (this.model) ? this.model.validate() : null;
-            if (!this.model.isValid() && messages && messages.messages) {
+            if (!this.model.isValid() &amp;&amp; messages &amp;&amp; messages.messages) {
                 this.showMessage(formatValidationMessages(messages.messages));
             } else {
                 this.showMessage("");
@@ -3686,3 +3772,136 @@
 
     return Augmented.Presentation;
 }));
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+		on Fri Jun 16th 2017
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

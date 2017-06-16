@@ -58,7 +58,7 @@ require(["augmented", "augmentedPresentation", "boot"], function(Augmented) {
     app.start();
 
     Augmented.Presentation.Dom.setValue("h2#augmented",
-        "<span class=\"version\">Version " + Augmented.VERSION +
+        "<span class=\"version\">Version " + Augmented.Presentation.VERSION +
         " (" + Augmented.codename + ")</span>&emsp;<span class=\"release\">Release (" +
         Augmented.releasename + ")</span>");
 
