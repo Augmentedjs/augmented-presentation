@@ -2309,8 +2309,7 @@
                     this.data.push(obj);
                 }
             }
-        },
-
+        }
     });
 
 
@@ -2357,14 +2356,12 @@
             if (el) {
                 value = (value) ? value : "";
                 var myEl = this.selector(el);
-
-                if (myEl && (myEl.nodeType === 1) &&
-                        (myEl.nodeName === "input" || myEl.nodeName === "INPUT" ||
-                         myEl.nodeName === "textarea" || myEl.nodeName === "TEXTAREA")
-                         /* TODO: Check if setting a select value is used.  If it is, change the API to something else.
-                         ||
-                         myEl.nodeName === "select" || myEl.nodeName === "SELECT")*/
-                    ) {
+                if (myEl && (myEl.nodeType === 1) && (myEl.nodeName === "select" || myEl.nodeName === "SELECT")) {
+                    // Select box
+                    logger.debug("Select box (not supported) set to - " + value);
+                } else if (myEl && (myEl.nodeType === 1) &&
+                    (myEl.nodeName === "input" || myEl.nodeName === "INPUT" ||
+                     myEl.nodeName === "textarea" || myEl.nodeName === "TEXTAREA")) {
                     myEl.value = value;
                 } else if (myEl && (myEl.nodeType === 1)) {
                     if (onlyText){
