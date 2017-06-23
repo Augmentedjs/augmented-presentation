@@ -13,7 +13,7 @@
  *
  * @requires augmentedjs
  * @module Augmented.Presentation
- * @version 1.1.4
+ * @version 1.2.0
  * @license Apache-2.0
  */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
      * The standard version property
      * @constant VERSION
      */
-    Augmented.Presentation.VERSION = "1.1.4";
+    Augmented.Presentation.VERSION = "1.2.0";
 
     /**
      * A private logger for use in the framework only
@@ -3406,7 +3406,6 @@
          * The model property
          * @property {Augmented.Model} model The model property
          * @memberof Augmented.Presentation.AutomaticForm
-         * @private
          */
         model: null,
         /**
@@ -3436,7 +3435,7 @@
         _required: [],
 
         /**
-        * Initialize the form view
+         * Initialize the form view
          * @method initialize
          * @memberof Augmented.Presentation.AutomaticForm
          * @param {object} options The view options
@@ -3683,6 +3682,158 @@
             this.model.set(data);
         }
     });
+
+/*
+    <section id="hamburger" class="wrapper" data-header="hamburger">
+        <section class="material-design-hamburger" data-header="hamburgerClickRegion">
+            <div class="material-design-hamburger__icon" data-header="hamburgerIcon" data-click="hamburger">
+                <i class="material-icons md-light">menu</i>
+            </div>
+        </section>
+        <section class="menu menu--off" data-header="hamburgerMenu">
+            <div>Augmented.js</div>
+            <div id="createProject" data-header="create" data-click="create"><i class="material-icons md-dark">create</i>Create Project</div>
+            <div id="openProject" data-header="open" data-click="open"><i class="material-icons md-dark">cloud_download</i>Open Project</div>
+            <div id="saveProject" data-header="save" data-click="save"><i class="material-icons md-dark">save</i>Save Project</div>
+            <div id="compileProject" data-header="compiler" data-click="compile"><i class="material-icons md-dark">publish</i>Compile Project</div>
+            <div class="spacer"></div>
+            <div id="about" data-header="about" data-click="about"><i class="material-icons md-dark">info</i>About</div>
+        </section>
+    </section>
+*/
+
+    // data structure = { id: "itemID", "click": "event", "icon": "web", "title": "something", "spacer": false }
+    var buildMenuItems = function(name, data) {
+        var items = "";
+        if (name && data && data.length !== 0) {
+            var i = 0, l = data.length;
+            for (i = 0; i < l; i++) {
+                if (items[i].spacer) {
+                    items = items + "<div class=\"spacer\"></div>";
+                } else {
+                    items = items + "<div id=\"" + data[i].id + "\" data-" + name + "\" data-click=\"" + data[i].click + "\" <i class=\"material-icons md-dark\">" + data[i].icon + "</i>" + data[i].title + "</div>";
+                }
+            }
+        }
+        return items;
+    };
+
+    Augmented.Presentation.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
+        /**
+         * The title property
+         * @property {string} title The title property
+         * @memberof Augmented.Presentation.HamburgerMenu
+         */
+        title: "",
+        /**
+         * The model property
+         * @property {Augmented.Model} model The model property
+         * @memberof Augmented.Presentation.HamburgerMenu
+         */
+        model: null,
+        /**
+         * The initialized property
+         * @property {boolean} isInitalized The initialized property
+         * @memberof Augmented.Presentation.HamburgerMenu
+         */
+        isInitalized: false,
+        /**
+         * The menuitems property
+         * @property {array} menuItems The initialized property
+         * @memberof Augmented.Presentation.HamburgerMenu
+         */
+        menuItems: [],
+        addItem: function(id, click, icon, title, spacer) {
+            this.menuItems.push({ "id": id, "click": click, "icon": icon, "title": title, "spacer": spacer });
+        },
+        /**
+         * Initialize the Hamburger menu view
+         * @method initialize
+         * @memberof Augmented.Presentation.HamburgerMenu
+         * @param {object} options The view options
+         * @returns {boolean} Returns true on success of initalization
+         */
+        initialize: function(options) {
+            this.init();
+
+            if (this.model) {
+                this.model.clear();
+            } else {
+                this.model = new Augmented.Model();
+            }
+            if (options) {
+                if (options.el) {
+                    this.el = options.el;
+                }
+                if (options.data && (Augmented.isObject(options.data))) {
+                    this.model.set(options.data);
+                }
+                if (options.title && (Augmented.isString(options.title))) {
+                    this.title = options.title;
+                }
+                if (options.menuItems && (Augmented.isObject(options.menuItems))) {
+                    this.menuItems = options.menuItems;
+                }
+            }
+            return this.isInitalized;
+        },
+        /**
+         * Render the Hamburger Menu
+         * @method render Renders the Hamburger
+         * @memberof Augmented.Presentation.HamburgerMenu
+         * @returns {object} Returns the view context ('this')
+         */
+         render: function() {
+            if (!this.isInitalized) {
+                logger.warn("AUGMENTED: Hamburger Can't render yet, not initialized!");
+                return this;
+            }
+
+            this.template = null;//"notused";
+
+            if (this.el) {
+                var e = Augmented.Presentation.Dom.selector(this.el);
+                if (e) {
+                    // the menu
+                    //menu =
+                    //e.appendChild(menu);
+                    // TODO: convert this to DOM
+                    e.innerHTML = '<section id="hamburger" class="wrapper" data-' + this.name + '="hamburger">' +
+                        '<section class="material-design-hamburger" data-' + this.name + '="hamburgerClickRegion">' +
+                            '<div class="material-design-hamburger__icon" data-' + this.name + '="hamburgerIcon" data-click="hamburger">' +
+                                '<i class="material-icons md-light">menu</i>' +
+                            '</div></section>' +
+                        '<section class="menu menu--off" data-' + this.name + '="hamburgerMenu">' +
+                            '<div>' + this.title + '</div>' +
+                            buildMenuItems(this.name, this.menuItems) +
+                        '</section></section>';
+                }
+            } else if (this.$el) {
+                logger.warn("AUGMENTED: Hamburger doesn't support jquery, sorry, not rendering.");
+
+                return;
+            } else {
+                logger.warn("AUGMENTED: Hamburger no element anchor, not rendering.");
+
+                return;
+            }
+
+            this.delegateEvents();
+
+            this.syncAllBoundElements();
+            return this;
+         },
+         // toggles the hamburger
+         hamburger: function() {
+             if (!this.modal) {
+                 var menu = this.boundElement("hamburgerMenu");
+                 var r = this.boundElement("hamburgerClickRegion");
+                 r.classList.toggle("model");
+                 menu.classList.toggle("menu--on");
+             }
+         },
+    });
+
 
     return Augmented.Presentation;
 }));

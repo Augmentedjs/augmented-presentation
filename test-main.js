@@ -19,15 +19,8 @@ require.config({
 		"jquery": "node_modules/jquery/dist/jquery.min",
 		"underscore": "node_modules/underscore/underscore-min",
 		"backbone": "node_modules/backbone/backbone-min",
-
 		"augmented": "node_modules/augmentedjs/scripts/core/augmented",
-		"augmentedPresentation": "scripts/presentation/augmentedPresentation",
-
-// 		"jasmine": "../lib/jasmine-2.x/jasmine",
-// 		"jasmine_html": "../lib/jasmine-2.x/jasmine-html",
-// 		"boot": "../lib/jasmine-2.x/boot",
-        //"jasmineajax": "scripts/lib/mock-ajax"
-
+		"augmentedPresentation": "scripts/presentation/augmentedPresentation"
 	},
 	"shim": {
 
@@ -49,5 +42,6 @@ var specs = [
               "presentation/test/viewControllerSpec",
               "presentation/test/dialogSpec",
               "presentation/test/autoFormSpec",
-              "presentation/test/dollar"
+              "presentation/test/dollarSpec",
+              "presentation/test/hamburgerMenuSpec"
             ];
