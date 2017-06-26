@@ -1966,7 +1966,8 @@
         theme: "material",
 
         setTheme: function(theme) {
-            var e = document.querySelector(this.el + " > table");
+            var el = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
+            var e = el.querySelector("table");
             if (e) {
                 e.setAttribute("class", theme);
             }
