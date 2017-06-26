@@ -13,7 +13,7 @@
  *
  * @requires augmentedjs
  * @module Augmented.Presentation
- * @version 1.2.0
+ * @version 1.2.1
  * @license Apache-2.0
  */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
      * The standard version property
      * @constant VERSION
      */
-    Augmented.Presentation.VERSION = "1.2.0";
+    Augmented.Presentation.VERSION = "1.2.1";
 
     /**
      * A private logger for use in the framework only
@@ -1963,11 +1963,14 @@
     Augmented.Presentation.AutomaticTable =
         Augmented.Presentation.DirectDOMAutomaticTable =
             AbstractAutoTable.extend({
+        theme: "material",
+
         setTheme: function(theme) {
             var e = document.querySelector(this.el + " > table");
             if (e) {
                 e.setAttribute("class", theme);
             }
+            this.theme = theme;
         },
         compileTemplate: function() {
             return "";
@@ -2070,6 +2073,9 @@
             }
 
             this.showProgressBar(false);
+
+            this.setTheme(this.theme);
+
             return this;
         }
     });
