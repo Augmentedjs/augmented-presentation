@@ -13,7 +13,7 @@
  *
  * @requires augmentedjs
  * @module Augmented.Presentation
- * @version 1.2.1
+ * @version 1.2.2
  * @license Apache-2.0
  */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
      * The standard version property
      * @constant VERSION
      */
-    Augmented.Presentation.VERSION = "1.2.1";
+    Augmented.Presentation.VERSION = "1.2.2";
 
     /**
      * A private logger for use in the framework only
@@ -3715,7 +3715,7 @@
         if (name && data && data.length !== 0) {
             var i = 0, l = data.length;
             for (i = 0; i < l; i++) {
-                if (items[i].spacer) {
+                if (data[i].spacer) {
                     items = items + "<div class=\"spacer\"></div>";
                 } else {
                     items = items + "<div id=\"" + data[i].id + "\" data-" + name + "\" data-click=\"" + data[i].click + "\" <i class=\"material-icons md-dark\">" + data[i].icon + "</i>" + data[i].title + "</div>";
@@ -3725,6 +3725,12 @@
         return items;
     };
 
+    /**
+     * A Hamburger Menu View
+     * @constructor Augmented.Presentation.HamburgerMenu
+     * @memberof Augmented.Presentation
+     * @extends Augmented.Presentation.DecoratorView
+     */
     Augmented.Presentation.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
         /**
          * The title property
