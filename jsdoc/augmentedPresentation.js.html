@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Augmented.D.html">Augmented.D</a></li><li><a href="Augmented.Presentation.html">Augmented.Presentation</a></li><li><a href="Augmented.Presentation.Dom.html">Augmented.Presentation.Dom</a></li><li><a href="Augmented.Presentation.Widget.html">Augmented.Presentation.Widget</a></li>
+					<li><a href="Augmented.D.html">Augmented.D</a></li><li><a href="Augmented.Presentation.html">Augmented.Presentation</a></li><li><a href="Augmented.Presentation.Component.html">Augmented.Presentation.Component</a></li><li><a href="Augmented.Presentation.Component.Component.html">Augmented.Presentation.Component.Component</a></li><li><a href="Augmented.Presentation.Dom.html">Augmented.Presentation.Dom</a></li><li><a href="Augmented.Presentation.Widget.html">Augmented.Presentation.Widget</a></li>
 				</ul>
 			</li>
 			
@@ -99,7 +99,7 @@
  *
  * @requires augmentedjs
  * @module Augmented.Presentation
- * @version 1.1.4
+ * @version 1.2.2
  * @license Apache-2.0
  */
 (function(moduleFactory) {
@@ -123,13 +123,13 @@
      * The standard version property
      * @constant VERSION
      */
-    Augmented.Presentation.VERSION = "1.1.4";
+    Augmented.Presentation.VERSION = "1.2.2";
 
     /**
      * A private logger for use in the framework only
      * @private
      */
-    let logger = Augmented.Logger.LoggerFactory.getLogger(Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
+    var logger = Augmented.Logger.LoggerFactory.getLogger(Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
 
     /*
      * Mediator View
@@ -2049,11 +2049,15 @@
     Augmented.Presentation.AutomaticTable =
         Augmented.Presentation.DirectDOMAutomaticTable =
             AbstractAutoTable.extend({
+        theme: "material",
+
         setTheme: function(theme) {
-            var e = document.querySelector(this.el + " > table");
+            var el = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
+            var e = el.querySelector("table");
             if (e) {
                 e.setAttribute("class", theme);
             }
+            this.theme = theme;
         },
         compileTemplate: function() {
             return "";
@@ -2156,6 +2160,9 @@
             }
 
             this.showProgressBar(false);
+
+            this.setTheme(this.theme);
+
             return this;
         }
     });
@@ -3492,7 +3499,6 @@
          * The model property
          * @property {Augmented.Model} model The model property
          * @memberof Augmented.Presentation.AutomaticForm
-         * @private
          */
         model: null,
         /**
@@ -3522,7 +3528,7 @@
         _required: [],
 
         /**
-        * Initialize the form view
+         * Initialize the form view
          * @method initialize
          * @memberof Augmented.Presentation.AutomaticForm
          * @param {object} options The view options
@@ -3770,6 +3776,189 @@
         }
     });
 
+/*
+    &lt;section id="hamburger" class="wrapper" data-header="hamburger">
+        &lt;section class="material-design-hamburger" data-header="hamburgerClickRegion">
+            &lt;div class="material-design-hamburger__icon" data-header="hamburgerIcon" data-click="hamburger">
+                &lt;i class="material-icons md-light">menu&lt;/i>
+            &lt;/div>
+        &lt;/section>
+        &lt;section class="menu menu--off" data-header="hamburgerMenu">
+            &lt;div>Augmented.js&lt;/div>
+            &lt;div id="createProject" data-header="create" data-click="create">&lt;i class="material-icons md-dark">create&lt;/i>Create Project&lt;/div>
+            &lt;div id="openProject" data-header="open" data-click="open">&lt;i class="material-icons md-dark">cloud_download&lt;/i>Open Project&lt;/div>
+            &lt;div id="saveProject" data-header="save" data-click="save">&lt;i class="material-icons md-dark">save&lt;/i>Save Project&lt;/div>
+            &lt;div id="compileProject" data-header="compiler" data-click="compile">&lt;i class="material-icons md-dark">publish&lt;/i>Compile Project&lt;/div>
+            &lt;div class="spacer">&lt;/div>
+            &lt;div id="about" data-header="about" data-click="about">&lt;i class="material-icons md-dark">info&lt;/i>About&lt;/div>
+        &lt;/section>
+    &lt;/section>
+*/
+
+    // data structure = { id: "itemID", "click": "event", "icon": "web", "title": "something", "spacer": false }
+    var buildMenuItems = function(name, data) {
+      var items = "";
+      if (name &amp;&amp; data &amp;&amp; Array.isArray(data) &amp;&amp; data.length !== 0) {
+          var i = 0, l = data.length;
+          for (i = 0; i &lt; l; i++) {
+              if (items[i].spacer) {
+                  items = items + '&lt;div class="spacer">&lt;/div>';
+              } else {
+                  items = items + '&lt;div id="' + data[i].id + '" data-' + name + '" data-click="' + data[i].click + '">&lt;i class="material-icons md-dark">' + data[i].icon + '&lt;/i>' + data[i].title + '&lt;/div>';
+              }
+          }
+      }
+      return items;
+    };
+
+    /**
+     * Component Namespace - Larger UI components (larger than widgets for example)
+     * @namespace Component
+     * @memberof Augmented.Presentation
+     */
+    Augmented.Presentation.Component = {};
+
+    /**
+     * HamburgerMenu - Hamburger Menu UI component
+     * @namespace Component
+     * @memberof Augmented.Presentation.Component
+     */
+    Augmented.Presentation.Component.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
+        /**
+         * The title property
+         * @property {string} title The title property
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         */
+        title: "",
+        /**
+         * The model property
+         * @property {Augmented.Model} model The model property
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         */
+        model: null,
+        /**
+         * The initialized property
+         * @property {boolean} isInitalized The initialized property
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         */
+        isInitalized: false,
+        /**
+         * The menuitems property
+         * @property {array} menuItems The initialized property
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         */
+        menuItems: [],
+        /**
+         * @method addItem - Adds an item to the menu
+         * @param id {string} The id of the itemID
+         * @param click {string} The bound click method to call
+         * @param icon {string} The icon name (webfont)
+         * @param title {string} The title of the itemID
+         * @param spacer {boolean} Sets a spacer item vs text (not clickable)
+         * @example addItem({"itemID", "event", "web", "something", false });
+         * @example addItem({"space", null, null, null, true });
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         */
+        addItem: function(id, click, icon, title, spacer) {
+            this.menuItems.push({ "id": id, "click": click, "icon": icon, "title": title, "spacer": spacer });
+        },
+        /**
+         * @method addSpacer - Adds a spacer item to the menu
+         * @example addSpacer();
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         */
+        addSpacer: function() {
+          this.menuItems.push({ "id": null, "click": null, "icon": null, "title": null, "spacer": true });
+        },
+        /**
+         * Initialize the Hamburger menu view
+         * @method initialize
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         * @param {object} options The view options
+         * @returns {boolean} Returns true on success of initalization
+         */
+        initialize: function(options) {
+            this.init();
+
+            if (this.model) {
+                this.model.clear();
+            } else {
+                this.model = new Augmented.Model();
+            }
+            if (options) {
+                if (options.el) {
+                    this.el = options.el;
+                }
+                if (options.data &amp;&amp; (Augmented.isObject(options.data))) {
+                    this.model.set(options.data);
+                }
+                if (options.title &amp;&amp; (Augmented.isString(options.title))) {
+                    this.title = options.title;
+                }
+                if (options.menuItems &amp;&amp; (Augmented.isObject(options.menuItems))) {
+                    this.menuItems = options.menuItems;
+                }
+            }
+            return this.isInitalized;
+        },
+        /**
+         * Render the Hamburger Menu
+         * @method render Renders the Hamburger
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         * @returns {object} Returns the view context ('this')
+         */
+         render: function() {
+            if (!this.isInitalized) {
+                logger.warn("AUGMENTED: Hamburger Can't render yet, not initialized!");
+                return this;
+            }
+
+            this.template = null;//"notused";
+
+            if (this.el) {
+                var e = Augmented.Presentation.Dom.selector(this.el);
+                if (e) {
+                    // the menu
+                    //menu =
+                    //e.appendChild(menu);
+                    // TODO: convert this to DOM
+                    e.innerHTML = '&lt;section id="hamburger" class="wrapper" data-' + this.name + '="hamburger">' +
+                        '&lt;section class="material-design-hamburger" data-' + this.name + '="hamburgerClickRegion">' +
+                            '&lt;div class="material-design-hamburger__icon" data-' + this.name + '="hamburgerIcon" data-click="hamburger">' +
+                                '&lt;i class="material-icons md-light">menu&lt;/i>' +
+                            '&lt;/div>&lt;/section>' +
+                        '&lt;section class="menu menu--off" data-' + this.name + '="hamburgerMenu">' +
+                            '&lt;div>' + this.title + '&lt;/div>' +
+                            buildMenuItems(this.name, this.menuItems) +
+                        '&lt;/section>&lt;/section>';
+                }
+            } else if (this.$el) {
+                logger.warn("AUGMENTED: Hamburger doesn't support jquery, sorry, not rendering.");
+
+                return;
+            } else {
+                logger.warn("AUGMENTED: Hamburger no element anchor, not rendering.");
+
+                return;
+            }
+
+            this.delegateEvents();
+
+            this.syncAllBoundElements();
+            return this;
+         },
+         // toggles the hamburger
+         hamburger: function() {
+             if (!this.modal) {
+                 var menu = this.boundElement("hamburgerMenu");
+                 var r = this.boundElement("hamburgerClickRegion");
+                 r.classList.toggle("model");
+                 menu.classList.toggle("menu--on");
+             }
+         },
+    });
+
+
     return Augmented.Presentation;
 }));
 </pre>
@@ -3813,7 +4002,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
 	
-		on Fri Jun 16th 2017
+		on Sun Jul 2nd 2017
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

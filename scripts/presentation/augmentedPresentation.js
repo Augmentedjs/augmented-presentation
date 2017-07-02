@@ -13,7 +13,7 @@
  *
  * @requires augmentedjs
  * @module Augmented.Presentation
- * @version 1.2.1
+ * @version 1.2.2
  * @license Apache-2.0
  */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
      * The standard version property
      * @constant VERSION
      */
-    Augmented.Presentation.VERSION = "1.2.1";
+    Augmented.Presentation.VERSION = "1.2.2";
 
     /**
      * A private logger for use in the framework only
@@ -3711,52 +3711,83 @@
 
     // data structure = { id: "itemID", "click": "event", "icon": "web", "title": "something", "spacer": false }
     var buildMenuItems = function(name, data) {
-        var items = "";
-        if (name && data && data.length !== 0) {
-            var i = 0, l = data.length;
-            for (i = 0; i < l; i++) {
-                if (items[i].spacer) {
-                    items = items + "<div class=\"spacer\"></div>";
-                } else {
-                    items = items + "<div id=\"" + data[i].id + "\" data-" + name + "\" data-click=\"" + data[i].click + "\" <i class=\"material-icons md-dark\">" + data[i].icon + "</i>" + data[i].title + "</div>";
-                }
-            }
-        }
-        return items;
+      var items = "";
+      if (name && data && Array.isArray(data) && data.length !== 0) {
+          var i = 0, l = data.length;
+          for (i = 0; i < l; i++) {
+              if (items[i].spacer) {
+                  items = items + '<div class="spacer"></div>';
+              } else {
+                  items = items + '<div id="' + data[i].id + '" data-' + name + '" data-click="' + data[i].click + '"><i class="material-icons md-dark">' + data[i].icon + '</i>' + data[i].title + '</div>';
+              }
+          }
+      }
+      return items;
     };
 
-    Augmented.Presentation.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
+    /**
+     * Component Namespace - Larger UI components (larger than widgets for example)
+     * @namespace Component
+     * @memberof Augmented.Presentation
+     */
+    Augmented.Presentation.Component = {};
+
+    /**
+     * HamburgerMenu - Hamburger Menu UI component
+     * @namespace Component
+     * @memberof Augmented.Presentation.Component
+     */
+    Augmented.Presentation.Component.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
         /**
          * The title property
          * @property {string} title The title property
-         * @memberof Augmented.Presentation.HamburgerMenu
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
          */
         title: "",
         /**
          * The model property
          * @property {Augmented.Model} model The model property
-         * @memberof Augmented.Presentation.HamburgerMenu
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
          */
         model: null,
         /**
          * The initialized property
          * @property {boolean} isInitalized The initialized property
-         * @memberof Augmented.Presentation.HamburgerMenu
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
          */
         isInitalized: false,
         /**
          * The menuitems property
          * @property {array} menuItems The initialized property
-         * @memberof Augmented.Presentation.HamburgerMenu
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
          */
         menuItems: [],
+        /**
+         * @method addItem - Adds an item to the menu
+         * @param id {string} The id of the itemID
+         * @param click {string} The bound click method to call
+         * @param icon {string} The icon name (webfont)
+         * @param title {string} The title of the itemID
+         * @param spacer {boolean} Sets a spacer item vs text (not clickable)
+         * @example addItem({"itemID", "event", "web", "something", false });
+         * @example addItem({"space", null, null, null, true });
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         */
         addItem: function(id, click, icon, title, spacer) {
             this.menuItems.push({ "id": id, "click": click, "icon": icon, "title": title, "spacer": spacer });
         },
         /**
+         * @method addSpacer - Adds a spacer item to the menu
+         * @example addSpacer();
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
+         */
+        addSpacer: function() {
+          this.menuItems.push({ "id": null, "click": null, "icon": null, "title": null, "spacer": true });
+        },
+        /**
          * Initialize the Hamburger menu view
          * @method initialize
-         * @memberof Augmented.Presentation.HamburgerMenu
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
          * @param {object} options The view options
          * @returns {boolean} Returns true on success of initalization
          */
@@ -3787,7 +3818,7 @@
         /**
          * Render the Hamburger Menu
          * @method render Renders the Hamburger
-         * @memberof Augmented.Presentation.HamburgerMenu
+         * @memberof Augmented.Presentation.Component.HamburgerMenu
          * @returns {object} Returns the view context ('this')
          */
          render: function() {
