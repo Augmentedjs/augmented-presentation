@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Augmented.D.html">Augmented.D</a></li><li><a href="Augmented.Presentation.html">Augmented.Presentation</a></li><li><a href="Augmented.Presentation.Component.html">Augmented.Presentation.Component</a></li><li><a href="Augmented.Presentation.Component.Component.html">Augmented.Presentation.Component.Component</a></li><li><a href="Augmented.Presentation.Dom.html">Augmented.Presentation.Dom</a></li><li><a href="Augmented.Presentation.Widget.html">Augmented.Presentation.Widget</a></li>
+					<li><a href="Augmented.D.html">Augmented.D</a></li><li><a href="Augmented.Presentation.html">Augmented.Presentation</a></li><li><a href="Augmented.Presentation.Component.html">Augmented.Presentation.Component</a></li><li><a href="Augmented.Presentation.Dom.html">Augmented.Presentation.Dom</a></li><li><a href="Augmented.Presentation.Widget.html">Augmented.Presentation.Widget</a></li>
 				</ul>
 			</li>
 			
@@ -47,7 +47,7 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Augmented.Presentation.AlertDialogView.html">Augmented.Presentation.AlertDialogView</a></li><li><a href="Augmented.Presentation.Application.html">Augmented.Presentation.Application</a></li><li><a href="Augmented.Presentation.AutomaticForm.html">Augmented.Presentation.AutomaticForm</a></li><li><a href="Augmented.Presentation.AutomaticTable.html">Augmented.Presentation.AutomaticTable</a></li><li><a href="Augmented.Presentation.AutoTable.html">Augmented.Presentation.AutoTable</a></li><li><a href="Augmented.Presentation.BigDataTable.html">Augmented.Presentation.BigDataTable</a></li><li><a href="Augmented.Presentation.Colleague.html">Augmented.Presentation.Colleague</a></li><li><a href="Augmented.Presentation.ConfirmationDialogView.html">Augmented.Presentation.ConfirmationDialogView</a></li><li><a href="Augmented.Presentation.DecoratorView.html">Augmented.Presentation.DecoratorView</a></li><li><a href="Augmented.Presentation.DialogView.html">Augmented.Presentation.DialogView</a></li><li><a href="Augmented.Presentation.DirectDOMAutomaticTable.html">Augmented.Presentation.DirectDOMAutomaticTable</a></li><li><a href="Augmented.Presentation.EditableBigDataTable.html">Augmented.Presentation.EditableBigDataTable</a></li><li><a href="Augmented.Presentation.EditableLocalStorageTable.html">Augmented.Presentation.EditableLocalStorageTable</a></li><li><a href="Augmented.Presentation.EditableTable.html">Augmented.Presentation.EditableTable</a></li><li><a href="Augmented.Presentation.LocalStorageTable.html">Augmented.Presentation.LocalStorageTable</a></li><li><a href="Augmented.Presentation.Mediator.html">Augmented.Presentation.Mediator</a></li><li><a href="Augmented.Presentation.Spreadsheet.html">Augmented.Presentation.Spreadsheet</a></li><li><a href="Augmented.Presentation.ViewController.html">Augmented.Presentation.ViewController</a></li>
+					<li><a href="Augmented.Presentation.AlertDialogView.html">Augmented.Presentation.AlertDialogView</a></li><li><a href="Augmented.Presentation.Application.html">Augmented.Presentation.Application</a></li><li><a href="Augmented.Presentation.AutomaticForm.html">Augmented.Presentation.AutomaticForm</a></li><li><a href="Augmented.Presentation.AutomaticTable.html">Augmented.Presentation.AutomaticTable</a></li><li><a href="Augmented.Presentation.AutoTable.html">Augmented.Presentation.AutoTable</a></li><li><a href="Augmented.Presentation.BigDataTable.html">Augmented.Presentation.BigDataTable</a></li><li><a href="Augmented.Presentation.Colleague.html">Augmented.Presentation.Colleague</a></li><li><a href="Augmented.Presentation.ConfirmationDialogView.html">Augmented.Presentation.ConfirmationDialogView</a></li><li><a href="Augmented.Presentation.DecoratorView.html">Augmented.Presentation.DecoratorView</a></li><li><a href="Augmented.Presentation.DialogView.html">Augmented.Presentation.DialogView</a></li><li><a href="Augmented.Presentation.DirectDOMAutomaticTable.html">Augmented.Presentation.DirectDOMAutomaticTable</a></li><li><a href="Augmented.Presentation.EditableBigDataTable.html">Augmented.Presentation.EditableBigDataTable</a></li><li><a href="Augmented.Presentation.EditableLocalStorageTable.html">Augmented.Presentation.EditableLocalStorageTable</a></li><li><a href="Augmented.Presentation.EditableTable.html">Augmented.Presentation.EditableTable</a></li><li><a href="Augmented.Presentation.HamburgerMenu.html">Augmented.Presentation.HamburgerMenu</a></li><li><a href="Augmented.Presentation.LocalStorageTable.html">Augmented.Presentation.LocalStorageTable</a></li><li><a href="Augmented.Presentation.Mediator.html">Augmented.Presentation.Mediator</a></li><li><a href="Augmented.Presentation.Spreadsheet.html">Augmented.Presentation.Spreadsheet</a></li><li><a href="Augmented.Presentation.ViewController.html">Augmented.Presentation.ViewController</a></li>
 				</ul>
 			</li>
 			
@@ -3797,31 +3797,32 @@
 
     // data structure = { id: "itemID", "click": "event", "icon": "web", "title": "something", "spacer": false }
     var buildMenuItems = function(name, data) {
-      var items = "";
-      if (name &amp;&amp; data &amp;&amp; Array.isArray(data) &amp;&amp; data.length !== 0) {
-          var i = 0, l = data.length;
-          for (i = 0; i &lt; l; i++) {
-              if (items[i].spacer) {
-                  items = items + '&lt;div class="spacer">&lt;/div>';
-              } else {
-                  items = items + '&lt;div id="' + data[i].id + '" data-' + name + '" data-click="' + data[i].click + '">&lt;i class="material-icons md-dark">' + data[i].icon + '&lt;/i>' + data[i].title + '&lt;/div>';
-              }
-          }
-      }
-      return items;
+        var items = "";
+        if (name &amp;&amp; data &amp;&amp; data.length !== 0) {
+            var i = 0, l = data.length;
+            for (i = 0; i &lt; l; i++) {
+                if (data[i].spacer) {
+                    items = items + "&lt;div class=\"spacer\">&lt;/div>";
+                } else {
+                    items = items + "&lt;div id=\"" + data[i].id + "\" data-" + name + "\" data-click=\"" + data[i].click + "\" &lt;i class=\"material-icons md-dark\">" + data[i].icon + "&lt;/i>" + data[i].title + "&lt;/div>";
+                }
+            }
+        }
+        return items;
     };
 
     /**
-     * Component Namespace - Larger UI components (larger than widgets for example)
-     * @namespace Component
+     * Component - Large UI Components
+     * @namespace Augmented.Presentation.Component
      * @memberof Augmented.Presentation
      */
     Augmented.Presentation.Component = {};
 
     /**
-     * HamburgerMenu - Hamburger Menu UI component
-     * @namespace Component
-     * @memberof Augmented.Presentation.Component
+     * A Hamburger Menu View
+     * @constructor Augmented.Presentation.HamburgerMenu
+     * @memberof Augmented.Presentation
+     * @extends Augmented.Presentation.DecoratorView
      */
     Augmented.Presentation.Component.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
         /**
