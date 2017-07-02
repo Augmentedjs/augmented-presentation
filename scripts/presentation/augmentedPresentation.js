@@ -3711,33 +3711,27 @@
 
     // data structure = { id: "itemID", "click": "event", "icon": "web", "title": "something", "spacer": false }
     var buildMenuItems = function(name, data) {
-      var items = "";
-      if (name && data && Array.isArray(data) && data.length !== 0) {
-          var i = 0, l = data.length;
-          for (i = 0; i < l; i++) {
-              if (items[i].spacer) {
-                  items = items + '<div class="spacer"></div>';
-              } else {
-                  items = items + '<div id="' + data[i].id + '" data-' + name + '" data-click="' + data[i].click + '"><i class="material-icons md-dark">' + data[i].icon + '</i>' + data[i].title + '</div>';
-              }
-          }
-      }
-      return items;
+        var items = "";
+        if (name && data && data.length !== 0) {
+            var i = 0, l = data.length;
+            for (i = 0; i < l; i++) {
+                if (data[i].spacer) {
+                    items = items + "<div class=\"spacer\"></div>";
+                } else {
+                    items = items + "<div id=\"" + data[i].id + "\" data-" + name + "\" data-click=\"" + data[i].click + "\" <i class=\"material-icons md-dark\">" + data[i].icon + "</i>" + data[i].title + "</div>";
+                }
+            }
+        }
+        return items;
     };
 
     /**
-     * Component Namespace - Larger UI components (larger than widgets for example)
-     * @namespace Component
+     * A Hamburger Menu View
+     * @constructor Augmented.Presentation.HamburgerMenu
      * @memberof Augmented.Presentation
+     * @extends Augmented.Presentation.DecoratorView
      */
-    Augmented.Presentation.Component = {};
-
-    /**
-     * HamburgerMenu - Hamburger Menu UI component
-     * @namespace Component
-     * @memberof Augmented.Presentation.Component
-     */
-    Augmented.Presentation.Component.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
+    Augmented.Presentation.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
         /**
          * The title property
          * @property {string} title The title property
