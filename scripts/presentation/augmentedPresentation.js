@@ -3715,7 +3715,7 @@
   */
   Augmented.Presentation.Component = {};
 
-  Augmented.Presentation.Component.Header = {};
+  Augmented.Presentation.Component.Header = Augmented.Presentation.DecoratorView.extend({});
 
   Augmented.Presentation.Component.NotificationCenter = {};
 
@@ -3811,10 +3811,11 @@
           this.menuItems = options.menuItems;
         }
       }
-      if (this.el && this.name && this.menuItems) {
+      if (this.el && this.name) {
         this.isInitalized = true;
       }
-
+      logger.debug("initialized " + this.isInitalized);
+      logger.debug("name " + this.name + " el " + this.el);
       return this.isInitalized;
     },
     /**
