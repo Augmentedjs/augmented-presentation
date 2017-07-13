@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.2.5
+* @version 1.2.6
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.2.5";
+  Augmented.Presentation.VERSION = "1.2.6";
 
   /**
   * A private logger for use in the framework only
@@ -3877,7 +3877,7 @@
         var e = Augmented.Presentation.Dom.selector(this.el);
         if (e) {
           // the menu
-          e.setAttribute("class", "wrapper");
+          Augmented.Presentation.Dom.addClass(e, "wrapper");
           e.setAttribute("data-" + this.name, "hamburger");
 
           e.innerHTML =
@@ -3973,7 +3973,8 @@
         var e = Augmented.Presentation.Dom.selector(this.el);
         if (e) {
           // the menu
-          e.setAttribute("class", "toolbar");
+          Augmented.Presentation.Dom.addClass(e, "toolbar");
+          //e.setAttribute("class", "toolbar");
           e.setAttribute("data-" + this.name, "toolbar");
           e.innerHTML = buildToolbarItems(this.name, this.menuItems);
         }
