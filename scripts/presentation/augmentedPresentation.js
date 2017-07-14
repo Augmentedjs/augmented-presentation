@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.2.4
+* @version 1.2.5
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,13 +37,14 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.2.4";
+  Augmented.Presentation.VERSION = "1.2.5";
 
   /**
   * A private logger for use in the framework only
   * @private
   */
-  var logger = Augmented.Logger.LoggerFactory.getLogger(Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
+  const _logger = Augmented.Logger.LoggerFactory.getLogger(
+        Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
 
   /*
   * Mediator View
@@ -63,37 +64,66 @@
   var undelegateEvents = Augmented.View.prototype.undelegateEvents;
 
   /**
-  * Colleague View - The 'child' view.<br/>
-  * Allow to define convention-based subscriptions
-  * as an 'subscriptions' hash on a view. Subscriptions
-  * can then be easily setup and cleaned.
-  *
-  * @constructor Augmented.Presentation.Colleague
-  * @name Augmented.Presentation.Colleague
-  * @memberof Augmented.Presentation
-  * @extends Augmented.View
-  */
+    * Colleague View - The 'child' view.<br/>
+    * Allow to define convention-based subscriptions
+    * as an 'subscriptions' hash on a view. Subscriptions
+    * can then be easily setup and cleaned.
+    *
+    * @constructor Augmented.Presentation.Colleague
+    * @name Augmented.Presentation.Colleague
+    * @memberof Augmented.Presentation
+    * @extends Augmented.View
+    */
   Augmented.Presentation.Colleague = Augmented.View.extend({
     _mediator: null,
 
+    /**
+      * Send a message to the mediator's queue
+      * @method sendMessage
+      * @param {string} message Message to send
+      * @param {object} data Data to send with message
+      * @memberof Augmented.Presentation.Colleague
+      */
     sendMessage: function(message, data) {
       if (this._mediator) {
         this._mediator.trigger(message, data);
       } else {
-        logger.warn("AUGMENTED: No mediator is available, talking to myself.");
+        _logger.warn("AUGMENTED: No mediator is available, talking to myself.");
       }
     },
 
-    setMediatorMessageQueue: function(e) {
+    /**
+      * Set the mediator to this colleague
+      * @method setMediatorMessageQueue
+      * @param {Augmented.Presentation.Mediator} mediator The mediator
+      * @memberof Augmented.Presentation.Colleague
+      */
+    setMediatorMessageQueue: function(mediator) {
       if (this._mediator) {
         // already registered, send a dismiss message
         this._mediator._dismissMe(this);
       }
-      this._mediator = e;
+      this._mediator = mediator;
     },
 
+    /**
+      * Remove the mediator from this colleague
+      * @method removeMediatorMessageQueue
+      * @memberof Augmented.Presentation.Colleague
+      */
     removeMediatorMessageQueue: function() {
       this._mediator = null;
+    },
+
+    /**
+      * Render the template
+      * @method renderTemplate
+      * @memberof Augmented.Presentation.Colleague
+      */
+    renderTemplate: function() {
+      if (this.el && this.template) {
+        Augmented.Presentation.Dom.setValue(this.el, this.template);
+      }
     }
   });
 
@@ -1111,7 +1141,7 @@
                 this.schema = parsedSchema;
               }
             } catch(e) {
-              logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
+              _logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
             }
             if (!this.schema) {
               this.retrieveSchema(options.schema);
@@ -1200,7 +1230,7 @@
           that.initialize(options);
         },
         failure: function(data, status) {
-          logger.warn("AUGMENTED: AutoTable Failed to fetch schema!");
+          _logger.warn("AUGMENTED: AutoTable Failed to fetch schema!");
         }
       });
     },
@@ -1256,7 +1286,7 @@
         var failHandler = function() {
           view.showProgressBar(false);
           view.showMessage("AutomaticTable save failed!");
-          logger.warn("AUGMENTED: AutomaticTable save failed!");
+          _logger.warn("AUGMENTED: AutomaticTable save failed!");
         };
 
         this.collection.save({
@@ -1344,7 +1374,7 @@
 
           }
         } else if (this.$el) {
-          logger.debug("AUGMENTED: AutoTable using jQuery to render.");
+          _logger.debug("AUGMENTED: AutoTable using jQuery to render.");
           if (this.sortable) {
             this.unbindSortableColumnEvents();
           }
@@ -1360,7 +1390,7 @@
           }
           this.$el("tbody").html(jh);
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
       } else {
         this.template = "<progress>Please wait.</progress>" + this.compileTemplate() + "<p class=\"message\"></p>";
@@ -1374,7 +1404,7 @@
         } else if (this.$el) {
           this.$el.html(this.template);
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
 
         if (this.renderPaginationControl) {
@@ -1798,7 +1828,7 @@
           cobj = (columns[dkey]) ? columns[dkey] : {};
           dobj = d[dkey];
 
-          //logger.debug("column type: " + JSON.stringify(cobj));
+          //_logger.debug("column type: " + JSON.stringify(cobj));
 
           t = (typeof dobj);
 
@@ -1978,7 +2008,7 @@
     },
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
         return this;
       }
       var e;
@@ -2023,9 +2053,9 @@
             }
           }
         } else if (this.$el) {
-          logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
       } else {
         this.template = "notused";
@@ -2054,9 +2084,9 @@
             e.appendChild(n);
           }
         } else if (this.$el) {
-          logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
 
         if (this.renderPaginationControl) {
@@ -2214,7 +2244,7 @@
                 this.schema = parsedSchema;
               }
             } catch(e) {
-              logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
+              _logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
             }
             if (!this.schema) {
               this.retrieveSchema(options.schema);
@@ -2366,7 +2396,7 @@
         var myEl = this.selector(el);
         if (myEl && (myEl.nodeType === 1) && (myEl.nodeName === "select" || myEl.nodeName === "SELECT")) {
           // Select box
-          logger.debug("Select box (not supported) set to - " + value);
+          _logger.debug("Select box (not supported) set to - " + value);
         } else if (myEl && (myEl.nodeType === 1) &&
         (myEl.nodeName === "input" || myEl.nodeName === "INPUT" ||
         myEl.nodeName === "textarea" || myEl.nodeName === "TEXTAREA")) {
@@ -2846,14 +2876,14 @@
       }
       this.model.set(( (key) ? key : event.currentTarget.name ), val);
       this._func(event);
-      logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
+      _logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
     },
     _click: function(event) {
       var func = event.currentTarget.getAttribute(decoratorAttributeEnum.click);
       if (func && this[func]) {
         this._executeFunctionByName(func, this, event);
       }/* else {
-        logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
+        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
       }*/
       this._func(event);
     },
@@ -2862,7 +2892,7 @@
       if (func && this[func]) {
         this._executeFunctionByName(func, this, event);
       } /*else {
-        logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
+        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
       }*/
     },
     /**
@@ -3470,7 +3500,7 @@
                 this.schema = parsedSchema;
               }
             } catch(e) {
-              logger.warn("AUGMENTED: AutoForm parsing string schema failed.  URI perhaps?");
+              _logger.warn("AUGMENTED: AutoForm parsing string schema failed.  URI perhaps?");
             }
             if (!this.schema) {
               this._retrieveSchema(options.schema);
@@ -3542,7 +3572,7 @@
           that.initialize(options);
         },
         failure: function(data, status) {
-          logger.warn("AUGMENTED: AutoForm Failed to fetch schema!");
+          _logger.warn("AUGMENTED: AutoForm Failed to fetch schema!");
         }
       });
     },
@@ -3636,7 +3666,7 @@
     */
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: AutoForm Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: AutoForm Can't render yet, not initialized!");
         return this;
       }
 
@@ -3663,11 +3693,11 @@
           e.appendChild(n);
         }
       } else if (this.$el) {
-        logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
+        _logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
         this.showProgressBar(false);
         return;
       } else {
-        logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
+        _logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
         this.showProgressBar(false);
         return;
       }

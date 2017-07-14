@@ -1,6 +1,6 @@
 {
   "name": "augmentedjs-presentation",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "The Augmented.js Framework Presentation Module.",
   "main": "scripts/presentation/augmentedPresentation.js",
   "scripts": {
@@ -23,9 +23,6 @@
   },
   "dependencies": {
     "augmentedjs": "^1.4.4"
-  },
-  "browserDependencies": {
-    "augmentedjs": "^1.4.0"
   },
   "bugs": {
     "url": "https://github.com/Augmentedjs/augmented-presentation/issues"
