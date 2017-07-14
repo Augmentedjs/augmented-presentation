@@ -31,3 +31,8 @@ This extension adds:
   - breadcrumb management
 * Automatic Tables generated from a JSON schema and data
 * Automatic Forms generated from a JSON schema
+* Dialog Views
+* Component UI Classes
+  - Hamburger Menu
+  - Toolbar
+  - Header

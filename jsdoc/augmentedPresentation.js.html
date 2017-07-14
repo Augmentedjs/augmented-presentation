@@ -47,7 +47,7 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Augmented.Presentation.AlertDialogView.html">Augmented.Presentation.AlertDialogView</a></li><li><a href="Augmented.Presentation.Application.html">Augmented.Presentation.Application</a></li><li><a href="Augmented.Presentation.AutomaticForm.html">Augmented.Presentation.AutomaticForm</a></li><li><a href="Augmented.Presentation.AutomaticTable.html">Augmented.Presentation.AutomaticTable</a></li><li><a href="Augmented.Presentation.AutoTable.html">Augmented.Presentation.AutoTable</a></li><li><a href="Augmented.Presentation.BigDataTable.html">Augmented.Presentation.BigDataTable</a></li><li><a href="Augmented.Presentation.Colleague.html">Augmented.Presentation.Colleague</a></li><li><a href="Augmented.Presentation.Component.HamburgerMenu.html">Augmented.Presentation.Component.HamburgerMenu</a></li><li><a href="Augmented.Presentation.ConfirmationDialogView.html">Augmented.Presentation.ConfirmationDialogView</a></li><li><a href="Augmented.Presentation.DecoratorView.html">Augmented.Presentation.DecoratorView</a></li><li><a href="Augmented.Presentation.DialogView.html">Augmented.Presentation.DialogView</a></li><li><a href="Augmented.Presentation.DirectDOMAutomaticTable.html">Augmented.Presentation.DirectDOMAutomaticTable</a></li><li><a href="Augmented.Presentation.EditableBigDataTable.html">Augmented.Presentation.EditableBigDataTable</a></li><li><a href="Augmented.Presentation.EditableLocalStorageTable.html">Augmented.Presentation.EditableLocalStorageTable</a></li><li><a href="Augmented.Presentation.EditableTable.html">Augmented.Presentation.EditableTable</a></li><li><a href="Augmented.Presentation.LocalStorageTable.html">Augmented.Presentation.LocalStorageTable</a></li><li><a href="Augmented.Presentation.Mediator.html">Augmented.Presentation.Mediator</a></li><li><a href="Augmented.Presentation.Spreadsheet.html">Augmented.Presentation.Spreadsheet</a></li><li><a href="Augmented.Presentation.ViewController.html">Augmented.Presentation.ViewController</a></li>
+					<li><a href="Augmented.Presentation.AlertDialogView.html">Augmented.Presentation.AlertDialogView</a></li><li><a href="Augmented.Presentation.Application.html">Augmented.Presentation.Application</a></li><li><a href="Augmented.Presentation.AutomaticForm.html">Augmented.Presentation.AutomaticForm</a></li><li><a href="Augmented.Presentation.AutomaticTable.html">Augmented.Presentation.AutomaticTable</a></li><li><a href="Augmented.Presentation.AutoTable.html">Augmented.Presentation.AutoTable</a></li><li><a href="Augmented.Presentation.BigDataTable.html">Augmented.Presentation.BigDataTable</a></li><li><a href="Augmented.Presentation.Colleague.html">Augmented.Presentation.Colleague</a></li><li><a href="Augmented.Presentation.Component.AbstractToolbar.html">Augmented.Presentation.Component.AbstractToolbar</a></li><li><a href="Augmented.Presentation.Component.HamburgerMenu.html">Augmented.Presentation.Component.HamburgerMenu</a></li><li><a href="Augmented.Presentation.Component.Toolbar.html">Augmented.Presentation.Component.Toolbar</a></li><li><a href="Augmented.Presentation.ConfirmationDialogView.html">Augmented.Presentation.ConfirmationDialogView</a></li><li><a href="Augmented.Presentation.DecoratorView.html">Augmented.Presentation.DecoratorView</a></li><li><a href="Augmented.Presentation.DialogView.html">Augmented.Presentation.DialogView</a></li><li><a href="Augmented.Presentation.DirectDOMAutomaticTable.html">Augmented.Presentation.DirectDOMAutomaticTable</a></li><li><a href="Augmented.Presentation.EditableBigDataTable.html">Augmented.Presentation.EditableBigDataTable</a></li><li><a href="Augmented.Presentation.EditableLocalStorageTable.html">Augmented.Presentation.EditableLocalStorageTable</a></li><li><a href="Augmented.Presentation.EditableTable.html">Augmented.Presentation.EditableTable</a></li><li><a href="Augmented.Presentation.LocalStorageTable.html">Augmented.Presentation.LocalStorageTable</a></li><li><a href="Augmented.Presentation.Mediator.html">Augmented.Presentation.Mediator</a></li><li><a href="Augmented.Presentation.Spreadsheet.html">Augmented.Presentation.Spreadsheet</a></li><li><a href="Augmented.Presentation.ViewController.html">Augmented.Presentation.ViewController</a></li>
 				</ul>
 			</li>
 			
@@ -99,7 +99,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.2.3
+* @version 1.2.7
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -123,13 +123,14 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.2.3";
+  Augmented.Presentation.VERSION = "1.2.7";
 
   /**
   * A private logger for use in the framework only
   * @private
   */
-  var logger = Augmented.Logger.LoggerFactory.getLogger(Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
+  const _logger = Augmented.Logger.LoggerFactory.getLogger(
+        Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
 
   /*
   * Mediator View
@@ -149,37 +150,66 @@
   var undelegateEvents = Augmented.View.prototype.undelegateEvents;
 
   /**
-  * Colleague View - The 'child' view.&lt;br/>
-  * Allow to define convention-based subscriptions
-  * as an 'subscriptions' hash on a view. Subscriptions
-  * can then be easily setup and cleaned.
-  *
-  * @constructor Augmented.Presentation.Colleague
-  * @name Augmented.Presentation.Colleague
-  * @memberof Augmented.Presentation
-  * @extends Augmented.View
-  */
+    * Colleague View - The 'child' view.&lt;br/>
+    * Allow to define convention-based subscriptions
+    * as an 'subscriptions' hash on a view. Subscriptions
+    * can then be easily setup and cleaned.
+    *
+    * @constructor Augmented.Presentation.Colleague
+    * @name Augmented.Presentation.Colleague
+    * @memberof Augmented.Presentation
+    * @extends Augmented.View
+    */
   Augmented.Presentation.Colleague = Augmented.View.extend({
     _mediator: null,
 
+    /**
+      * Send a message to the mediator's queue
+      * @method sendMessage
+      * @param {string} message Message to send
+      * @param {object} data Data to send with message
+      * @memberof Augmented.Presentation.Colleague
+      */
     sendMessage: function(message, data) {
       if (this._mediator) {
         this._mediator.trigger(message, data);
       } else {
-        logger.warn("AUGMENTED: No mediator is available, talking to myself.");
+        _logger.warn("AUGMENTED: No mediator is available, talking to myself.");
       }
     },
 
-    setMediatorMessageQueue: function(e) {
+    /**
+      * Set the mediator to this colleague
+      * @method setMediatorMessageQueue
+      * @param {Augmented.Presentation.Mediator} mediator The mediator
+      * @memberof Augmented.Presentation.Colleague
+      */
+    setMediatorMessageQueue: function(mediator) {
       if (this._mediator) {
         // already registered, send a dismiss message
         this._mediator._dismissMe(this);
       }
-      this._mediator = e;
+      this._mediator = mediator;
     },
 
+    /**
+      * Remove the mediator from this colleague
+      * @method removeMediatorMessageQueue
+      * @memberof Augmented.Presentation.Colleague
+      */
     removeMediatorMessageQueue: function() {
       this._mediator = null;
+    },
+
+    /**
+      * Render the template
+      * @method renderTemplate
+      * @memberof Augmented.Presentation.Colleague
+      */
+    renderTemplate: function() {
+      if (this.el &amp;&amp; this.template) {
+        Augmented.Presentation.Dom.setValue(this.el, this.template);
+      }
     }
   });
 
@@ -1197,7 +1227,7 @@
                 this.schema = parsedSchema;
               }
             } catch(e) {
-              logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
+              _logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
             }
             if (!this.schema) {
               this.retrieveSchema(options.schema);
@@ -1286,7 +1316,7 @@
           that.initialize(options);
         },
         failure: function(data, status) {
-          logger.warn("AUGMENTED: AutoTable Failed to fetch schema!");
+          _logger.warn("AUGMENTED: AutoTable Failed to fetch schema!");
         }
       });
     },
@@ -1342,7 +1372,7 @@
         var failHandler = function() {
           view.showProgressBar(false);
           view.showMessage("AutomaticTable save failed!");
-          logger.warn("AUGMENTED: AutomaticTable save failed!");
+          _logger.warn("AUGMENTED: AutomaticTable save failed!");
         };
 
         this.collection.save({
@@ -1430,7 +1460,7 @@
 
           }
         } else if (this.$el) {
-          logger.debug("AUGMENTED: AutoTable using jQuery to render.");
+          _logger.debug("AUGMENTED: AutoTable using jQuery to render.");
           if (this.sortable) {
             this.unbindSortableColumnEvents();
           }
@@ -1446,7 +1476,7 @@
           }
           this.$el("tbody").html(jh);
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
       } else {
         this.template = "&lt;progress>Please wait.&lt;/progress>" + this.compileTemplate() + "&lt;p class=\"message\">&lt;/p>";
@@ -1460,7 +1490,7 @@
         } else if (this.$el) {
           this.$el.html(this.template);
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
 
         if (this.renderPaginationControl) {
@@ -1884,7 +1914,7 @@
           cobj = (columns[dkey]) ? columns[dkey] : {};
           dobj = d[dkey];
 
-          //logger.debug("column type: " + JSON.stringify(cobj));
+          //_logger.debug("column type: " + JSON.stringify(cobj));
 
           t = (typeof dobj);
 
@@ -2064,7 +2094,7 @@
     },
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
         return this;
       }
       var e;
@@ -2109,9 +2139,9 @@
             }
           }
         } else if (this.$el) {
-          logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
       } else {
         this.template = "notused";
@@ -2140,9 +2170,9 @@
             e.appendChild(n);
           }
         } else if (this.$el) {
-          logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
 
         if (this.renderPaginationControl) {
@@ -2300,7 +2330,7 @@
                 this.schema = parsedSchema;
               }
             } catch(e) {
-              logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
+              _logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
             }
             if (!this.schema) {
               this.retrieveSchema(options.schema);
@@ -2452,7 +2482,7 @@
         var myEl = this.selector(el);
         if (myEl &amp;&amp; (myEl.nodeType === 1) &amp;&amp; (myEl.nodeName === "select" || myEl.nodeName === "SELECT")) {
           // Select box
-          logger.debug("Select box (not supported) set to - " + value);
+          _logger.debug("Select box (not supported) set to - " + value);
         } else if (myEl &amp;&amp; (myEl.nodeType === 1) &amp;&amp;
         (myEl.nodeName === "input" || myEl.nodeName === "INPUT" ||
         myEl.nodeName === "textarea" || myEl.nodeName === "TEXTAREA")) {
@@ -2932,14 +2962,14 @@
       }
       this.model.set(( (key) ? key : event.currentTarget.name ), val);
       this._func(event);
-      logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
+      _logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
     },
     _click: function(event) {
       var func = event.currentTarget.getAttribute(decoratorAttributeEnum.click);
       if (func &amp;&amp; this[func]) {
         this._executeFunctionByName(func, this, event);
       }/* else {
-        logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
+        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
       }*/
       this._func(event);
     },
@@ -2948,7 +2978,7 @@
       if (func &amp;&amp; this[func]) {
         this._executeFunctionByName(func, this, event);
       } /*else {
-        logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
+        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
       }*/
     },
     /**
@@ -3556,7 +3586,7 @@
                 this.schema = parsedSchema;
               }
             } catch(e) {
-              logger.warn("AUGMENTED: AutoForm parsing string schema failed.  URI perhaps?");
+              _logger.warn("AUGMENTED: AutoForm parsing string schema failed.  URI perhaps?");
             }
             if (!this.schema) {
               this._retrieveSchema(options.schema);
@@ -3628,7 +3658,7 @@
           that.initialize(options);
         },
         failure: function(data, status) {
-          logger.warn("AUGMENTED: AutoForm Failed to fetch schema!");
+          _logger.warn("AUGMENTED: AutoForm Failed to fetch schema!");
         }
       });
     },
@@ -3722,7 +3752,7 @@
     */
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: AutoForm Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: AutoForm Can't render yet, not initialized!");
         return this;
       }
 
@@ -3749,11 +3779,11 @@
           e.appendChild(n);
         }
       } else if (this.$el) {
-        logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
+        _logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
         this.showProgressBar(false);
         return;
       } else {
-        logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
+        _logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
         this.showProgressBar(false);
         return;
       }
@@ -3801,80 +3831,46 @@
   */
   Augmented.Presentation.Component = {};
 
-  Augmented.Presentation.Component.Header = {};
+  Augmented.Presentation.Component.Header = Augmented.Presentation.DecoratorView.extend({});
 
   Augmented.Presentation.Component.NotificationCenter = {};
 
-  Augmented.Presentation.Component.Toolbar = {};
-
   Augmented.Presentation.Component.Manager = Augmented.Presentation.Mediator.extend({});
 
-
-
   /**
-  * A Hamburger Menu View
-  * @constructor Augmented.Presentation.Component.HamburgerMenu
-  * @memberof Augmented.Presentation
-  * @extends Augmented.Presentation.DecoratorView
-  */
-  Augmented.Presentation.Component.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
-    /**
-    * The title property
-    * @property {string} title The title property
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
+    * An abstract tooldbar Component, designed to be extended
+    * @constructor Augmented.Presentation.Component.AbstractToolbar
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.DecoratorView
+    * @abstract
     */
-    title: "",
+  Augmented.Presentation.Component.AbstractToolbar = Augmented.Presentation.DecoratorView.extend({
     /**
-    * The model property
-    * @property {Augmented.Model} model The model property
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
+      * The model property
+      * @property {Augmented.Model} model The model property
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
     model: null,
     /**
-    * The initialized property
-    * @property {boolean} isInitalized The initialized property
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
+      * The initialized property
+      * @property {boolean} isInitalized The initialized property
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
     isInitalized: false,
     /**
-    * The menuitems property
-    * @property {array} menuItems The initialized property
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
+      * The menuitems property
+      * @property {array} menuItems The initialized property
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
     menuItems: [],
+
     /**
-    * @method addItem - Adds an item to the menu
-    * @param id {string} The id of the itemID
-    * @param click {string} The bound click method to call
-    * @param icon {string} The icon name (webfont)
-    * @param title {string} The title of the itemID
-    * @param spacer {boolean} Sets a spacer item vs text (not clickable)
-    * @example addItem({"itemID", "event", "web", "something", false });
-    * @example addItem({"space", null, null, null, true });
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
-    addItem: function(id, click, icon, title, spacer) {
-      if (!spacer) {
-        this.menuItems.push({ "id": id, "click": click, "icon": icon, "title": title, "spacer": spacer });
-      } else {
-        this.addSpacer();
-      }
-    },
-    /**
-    * @method addSpacer - Adds a spacer item to the menu
-    * @example addSpacer();
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
-    addSpacer: function() {
-      this.menuItems.push({ "id": null, "click": null, "icon": null, "title": null, "spacer": true });
-    },
-    /**
-    * Initialize the Hamburger menu view
-    * @method initialize
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    * @param {object} options The view options
-    * @returns {boolean} Returns true on success of initalization
-    */
+      * Initialize the view
+      * @method initialize
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      * @param {object} options The view options
+      * @returns {boolean} Returns true on success of initalization
+      */
     initialize: function(options) {
       this.init();
 
@@ -3897,18 +3893,94 @@
           this.menuItems = options.menuItems;
         }
       }
-      if (this.el &amp;&amp; this.name &amp;&amp; this.menuItems) {
+      if (this.el &amp;&amp; this.name) {
         this.isInitalized = true;
       }
-
+      logger.debug("initialized " + this.isInitalized);
+      logger.debug("name " + this.name + " el " + this.el);
       return this.isInitalized;
     },
     /**
-    * Render the Hamburger Menu
-    * @method render Renders the Hamburger
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    * @returns {object} Returns the view context ('this')
+      * @method addItem - Adds an item to the menu
+      * @param id {string} The id of the itemID
+      * @param click {string} The bound click method to call
+      * @param icon {string} The icon name (webfont)
+      * @param title {string} The title of the itemID
+      * @param spacer {boolean} Sets a spacer item vs text (not clickable)
+      * @example addItem({"itemID", "event", "web", "something", false });
+      * @example addItem({"space", null, null, null, true });
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
+    addItem: function(id, click, icon, title, spacer) {
+      if (!spacer) {
+        this.menuItems.push({ "id": id, "click": click, "icon": icon, "title": title, "spacer": spacer });
+      } else {
+        this.addSpacer();
+      }
+    },
+    /**
+      * @method addSpacer - Adds a spacer item to the menu
+      * @example addSpacer();
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
+    addSpacer: function() {
+      this.menuItems.push({ "id": null, "click": null, "icon": null, "title": null, "spacer": true });
+    }
+  });
+
+
+  /**
+    * A Hamburger Menu View
+    * @constructor Augmented.Presentation.Component.HamburgerMenu
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.AbstractToolbar
     */
+  Augmented.Presentation.Component.HamburgerMenu = Augmented.Presentation.Component.AbstractToolbar.extend({
+    /**
+      * The title property
+      * @property {string} title The title property
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+    title: "",
+
+    /**
+      * The menuitems property
+      * @property {array} menuItems The initialized property
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+
+    /**
+      * @method addItem - Adds an item to the menu
+      * @param id {string} The id of the itemID
+      * @param click {string} The bound click method to call
+      * @param icon {string} The icon name (webfont)
+      * @param title {string} The title of the itemID
+      * @param spacer {boolean} Sets a spacer item vs text (not clickable)
+      * @example addItem({"itemID", "event", "web", "something", false });
+      * @example addItem({"space", null, null, null, true });
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+
+    /**
+      * @method addSpacer - Adds a spacer item to the menu
+      * @example addSpacer();
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+
+    /**
+      * Initialize the Hamburger menu view
+      * @method initialize
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      * @param {object} options The view options
+      * @returns {boolean} Returns true on success of initalization
+      */
+
+    /**
+      * Render the Hamburger Menu
+      * @method render Renders the Hamburger
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      * @returns {object} Returns the view context ('this')
+      */
     render: function() {
       if (!this.isInitalized) {
         logger.warn("AUGMENTED: Hamburger Can't render yet, not initialized!");
@@ -3921,18 +3993,18 @@
         var e = Augmented.Presentation.Dom.selector(this.el);
         if (e) {
           // the menu
-          e.setAttribute("class", "wrapper");
+          Augmented.Presentation.Dom.addClass(e, "wrapper");
           e.setAttribute("data-" + this.name, "hamburger");
 
-          e.innerHTML = //'&lt;section id="hamburger" class="wrapper" data-' + this.name + '="hamburger">' +
-          '&lt;section class="material-design-hamburger" data-' + this.name + '="hamburgerClickRegion">' +
-          '&lt;div class="material-design-hamburger__icon" data-' + this.name + '="hamburgerIcon" data-click="hamburger">' +
-          '&lt;i class="material-icons md-light">menu&lt;/i>' +
-          '&lt;/div>&lt;/section>' +
-          '&lt;section class="menu menu--off" data-' + this.name + '="hamburgerMenu">' +
-          '&lt;div>' + this.title + '&lt;/div>' +
-          buildMenuItems(this.name, this.menuItems) +
-          '&lt;/section>';//'&lt;/section>';
+          e.innerHTML =
+            '&lt;section class="material-design-hamburger" data-' + this.name + '="hamburgerClickRegion">' +
+            '&lt;div class="material-design-hamburger__icon" data-' + this.name + '="hamburgerIcon" data-click="toggle">' +
+            '&lt;i class="material-icons md-light">menu&lt;/i>' +
+            '&lt;/div>&lt;/section>' +
+            '&lt;section class="menu menu--off" data-' + this.name + '="hamburgerMenu">' +
+            '&lt;div>' + this.title + '&lt;/div>' +
+            buildMenuItems(this.name, this.menuItems) +
+            '&lt;/section>';
         }
       } else if (this.$el) {
         logger.warn("AUGMENTED: Hamburger doesn't support jquery, sorry, not rendering.");
@@ -3951,18 +4023,90 @@
     },
 
     /**
-    * Toggle the Hamburger menu view
-    * @method hamburger
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
+      * Toggle the Hamburger menu view - deprecated
+      * @method hamburger
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      * @deprecated
+      */
     hamburger: function() {
+      this.toggle();
+    },
+    /**
+      * Toggle the Hamburger menu view
+      * @method toggle
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+    toggle: function() {
       if (!this.modal) {
-        var menu = this.boundElement("hamburgerMenu");
-        var r = this.boundElement("hamburgerClickRegion");
+        const menu = this.boundElement("hamburgerMenu");
+        const r = this.boundElement("hamburgerClickRegion");
         r.classList.toggle("model");
         menu.classList.toggle("menu--on");
       }
-    },
+    }
+  });
+
+  // data structure = { id: "itemID", "click": "event", "icon": "web", "title": "something", "spacer": false }
+  const buildToolbarItems = function(name, data) {
+    let items = "";
+    if (name &amp;&amp; data &amp;&amp; data.length !== 0) {
+      const l = data.length;
+      let i = 0;
+      for (i = 0; i &lt; l; i++) {
+        if (data[i].spacer) {
+          items = items + '&lt;div class="tools spacer">&lt;/div>';
+        } else {
+          items = items + '&lt;div id="' + data[i].id + '" data-' + name + '="' + data[i].id + '" data-click="' + data[i].click + '" class="tools" title="' + data[i].title + '">' +
+          ( (data[i].icon) ? ('&lt;i class="material-icons md-dark">' + data[i].icon + '&lt;/i>') : data[i].title ) + '&lt;/div>';
+        }
+      }
+    }
+    return items;
+  };
+
+  /**
+    * A Toolbar View
+    * @constructor Augmented.Presentation.Component.Toolbar
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.AbstractToolbar
+    */
+  Augmented.Presentation.Component.Toolbar = Augmented.Presentation.Component.AbstractToolbar.extend({
+    /**
+      * Render the Toolbar
+      * @method render Renders the Toolbar
+      * @memberof Augmented.Presentation.Component.Toolbar
+      * @returns {object} Returns the view context ('this')
+      */
+    render: function() {
+      if (!this.isInitalized) {
+        logger.warn("AUGMENTED: Toolbar Can't render yet, not initialized!");
+        return this;
+      }
+
+      this.template = null;//"notused";
+
+      if (this.el) {
+        var e = Augmented.Presentation.Dom.selector(this.el);
+        if (e) {
+          // the menu
+          Augmented.Presentation.Dom.addClass(e, "toolbar");
+          //e.setAttribute("class", "toolbar");
+          e.setAttribute("data-" + this.name, "toolbar");
+          e.innerHTML = buildToolbarItems(this.name, this.menuItems);
+        }
+      } else if (this.$el) {
+        logger.warn("AUGMENTED: Toolbar doesn't support jquery, sorry, not rendering.");
+        return;
+      } else {
+        logger.warn("AUGMENTED: Toolbar no element anchor, not rendering.");
+        return;
+      }
+
+      this.delegateEvents();
+
+      this.syncAllBoundElements();
+      return this;
+    }
   });
 
   return Augmented.Presentation;
@@ -4008,7 +4152,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
 	
-		on Sun Jul 2nd 2017
+		on Fri Jul 14th 2017
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

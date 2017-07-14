@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.2.5
+* @version 1.2.7
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.2.5";
+  Augmented.Presentation.VERSION = "1.2.7";
 
   /**
   * A private logger for use in the framework only
@@ -3749,76 +3749,42 @@
 
   Augmented.Presentation.Component.NotificationCenter = {};
 
-  Augmented.Presentation.Component.Toolbar = {};
-
   Augmented.Presentation.Component.Manager = Augmented.Presentation.Mediator.extend({});
 
-
-
   /**
-  * A Hamburger Menu View
-  * @constructor Augmented.Presentation.Component.HamburgerMenu
-  * @memberof Augmented.Presentation
-  * @extends Augmented.Presentation.DecoratorView
-  */
-  Augmented.Presentation.Component.HamburgerMenu = Augmented.Presentation.DecoratorView.extend({
-    /**
-    * The title property
-    * @property {string} title The title property
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
+    * An abstract tooldbar Component, designed to be extended
+    * @constructor Augmented.Presentation.Component.AbstractToolbar
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.DecoratorView
+    * @abstract
     */
-    title: "",
+  Augmented.Presentation.Component.AbstractToolbar = Augmented.Presentation.DecoratorView.extend({
     /**
-    * The model property
-    * @property {Augmented.Model} model The model property
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
+      * The model property
+      * @property {Augmented.Model} model The model property
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
     model: null,
     /**
-    * The initialized property
-    * @property {boolean} isInitalized The initialized property
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
+      * The initialized property
+      * @property {boolean} isInitalized The initialized property
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
     isInitalized: false,
     /**
-    * The menuitems property
-    * @property {array} menuItems The initialized property
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
+      * The menuitems property
+      * @property {array} menuItems The initialized property
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
     menuItems: [],
+
     /**
-    * @method addItem - Adds an item to the menu
-    * @param id {string} The id of the itemID
-    * @param click {string} The bound click method to call
-    * @param icon {string} The icon name (webfont)
-    * @param title {string} The title of the itemID
-    * @param spacer {boolean} Sets a spacer item vs text (not clickable)
-    * @example addItem({"itemID", "event", "web", "something", false });
-    * @example addItem({"space", null, null, null, true });
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
-    addItem: function(id, click, icon, title, spacer) {
-      if (!spacer) {
-        this.menuItems.push({ "id": id, "click": click, "icon": icon, "title": title, "spacer": spacer });
-      } else {
-        this.addSpacer();
-      }
-    },
-    /**
-    * @method addSpacer - Adds a spacer item to the menu
-    * @example addSpacer();
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
-    addSpacer: function() {
-      this.menuItems.push({ "id": null, "click": null, "icon": null, "title": null, "spacer": true });
-    },
-    /**
-    * Initialize the Hamburger menu view
-    * @method initialize
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    * @param {object} options The view options
-    * @returns {boolean} Returns true on success of initalization
-    */
+      * Initialize the view
+      * @method initialize
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      * @param {object} options The view options
+      * @returns {boolean} Returns true on success of initalization
+      */
     initialize: function(options) {
       this.init();
 
@@ -3849,11 +3815,86 @@
       return this.isInitalized;
     },
     /**
-    * Render the Hamburger Menu
-    * @method render Renders the Hamburger
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    * @returns {object} Returns the view context ('this')
+      * @method addItem - Adds an item to the menu
+      * @param id {string} The id of the itemID
+      * @param click {string} The bound click method to call
+      * @param icon {string} The icon name (webfont)
+      * @param title {string} The title of the itemID
+      * @param spacer {boolean} Sets a spacer item vs text (not clickable)
+      * @example addItem({"itemID", "event", "web", "something", false });
+      * @example addItem({"space", null, null, null, true });
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
+    addItem: function(id, click, icon, title, spacer) {
+      if (!spacer) {
+        this.menuItems.push({ "id": id, "click": click, "icon": icon, "title": title, "spacer": spacer });
+      } else {
+        this.addSpacer();
+      }
+    },
+    /**
+      * @method addSpacer - Adds a spacer item to the menu
+      * @example addSpacer();
+      * @memberof Augmented.Presentation.Component.AbstractToolbar
+      */
+    addSpacer: function() {
+      this.menuItems.push({ "id": null, "click": null, "icon": null, "title": null, "spacer": true });
+    }
+  });
+
+
+  /**
+    * A Hamburger Menu View
+    * @constructor Augmented.Presentation.Component.HamburgerMenu
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.AbstractToolbar
     */
+  Augmented.Presentation.Component.HamburgerMenu = Augmented.Presentation.Component.AbstractToolbar.extend({
+    /**
+      * The title property
+      * @property {string} title The title property
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+    title: "",
+
+    /**
+      * The menuitems property
+      * @property {array} menuItems The initialized property
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+
+    /**
+      * @method addItem - Adds an item to the menu
+      * @param id {string} The id of the itemID
+      * @param click {string} The bound click method to call
+      * @param icon {string} The icon name (webfont)
+      * @param title {string} The title of the itemID
+      * @param spacer {boolean} Sets a spacer item vs text (not clickable)
+      * @example addItem({"itemID", "event", "web", "something", false });
+      * @example addItem({"space", null, null, null, true });
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+
+    /**
+      * @method addSpacer - Adds a spacer item to the menu
+      * @example addSpacer();
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+
+    /**
+      * Initialize the Hamburger menu view
+      * @method initialize
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      * @param {object} options The view options
+      * @returns {boolean} Returns true on success of initalization
+      */
+
+    /**
+      * Render the Hamburger Menu
+      * @method render Renders the Hamburger
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      * @returns {object} Returns the view context ('this')
+      */
     render: function() {
       if (!this.isInitalized) {
         logger.warn("AUGMENTED: Hamburger Can't render yet, not initialized!");
@@ -3866,18 +3907,18 @@
         var e = Augmented.Presentation.Dom.selector(this.el);
         if (e) {
           // the menu
-          e.setAttribute("class", "wrapper");
+          Augmented.Presentation.Dom.addClass(e, "wrapper");
           e.setAttribute("data-" + this.name, "hamburger");
 
-          e.innerHTML = //'<section id="hamburger" class="wrapper" data-' + this.name + '="hamburger">' +
-          '<section class="material-design-hamburger" data-' + this.name + '="hamburgerClickRegion">' +
-          '<div class="material-design-hamburger__icon" data-' + this.name + '="hamburgerIcon" data-click="hamburger">' +
-          '<i class="material-icons md-light">menu</i>' +
-          '</div></section>' +
-          '<section class="menu menu--off" data-' + this.name + '="hamburgerMenu">' +
-          '<div>' + this.title + '</div>' +
-          buildMenuItems(this.name, this.menuItems) +
-          '</section>';//'</section>';
+          e.innerHTML =
+            '<section class="material-design-hamburger" data-' + this.name + '="hamburgerClickRegion">' +
+            '<div class="material-design-hamburger__icon" data-' + this.name + '="hamburgerIcon" data-click="toggle">' +
+            '<i class="material-icons md-light">menu</i>' +
+            '</div></section>' +
+            '<section class="menu menu--off" data-' + this.name + '="hamburgerMenu">' +
+            '<div>' + this.title + '</div>' +
+            buildMenuItems(this.name, this.menuItems) +
+            '</section>';
         }
       } else if (this.$el) {
         logger.warn("AUGMENTED: Hamburger doesn't support jquery, sorry, not rendering.");
@@ -3896,18 +3937,90 @@
     },
 
     /**
-    * Toggle the Hamburger menu view
-    * @method hamburger
-    * @memberof Augmented.Presentation.Component.HamburgerMenu
-    */
+      * Toggle the Hamburger menu view - deprecated
+      * @method hamburger
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      * @deprecated
+      */
     hamburger: function() {
+      this.toggle();
+    },
+    /**
+      * Toggle the Hamburger menu view
+      * @method toggle
+      * @memberof Augmented.Presentation.Component.HamburgerMenu
+      */
+    toggle: function() {
       if (!this.modal) {
-        var menu = this.boundElement("hamburgerMenu");
-        var r = this.boundElement("hamburgerClickRegion");
+        const menu = this.boundElement("hamburgerMenu");
+        const r = this.boundElement("hamburgerClickRegion");
         r.classList.toggle("model");
         menu.classList.toggle("menu--on");
       }
-    },
+    }
+  });
+
+  // data structure = { id: "itemID", "click": "event", "icon": "web", "title": "something", "spacer": false }
+  const buildToolbarItems = function(name, data) {
+    let items = "";
+    if (name && data && data.length !== 0) {
+      const l = data.length;
+      let i = 0;
+      for (i = 0; i < l; i++) {
+        if (data[i].spacer) {
+          items = items + '<div class="tools spacer"></div>';
+        } else {
+          items = items + '<div id="' + data[i].id + '" data-' + name + '="' + data[i].id + '" data-click="' + data[i].click + '" class="tools" title="' + data[i].title + '">' +
+          ( (data[i].icon) ? ('<i class="material-icons md-dark">' + data[i].icon + '</i>') : data[i].title ) + '</div>';
+        }
+      }
+    }
+    return items;
+  };
+
+  /**
+    * A Toolbar View
+    * @constructor Augmented.Presentation.Component.Toolbar
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.AbstractToolbar
+    */
+  Augmented.Presentation.Component.Toolbar = Augmented.Presentation.Component.AbstractToolbar.extend({
+    /**
+      * Render the Toolbar
+      * @method render Renders the Toolbar
+      * @memberof Augmented.Presentation.Component.Toolbar
+      * @returns {object} Returns the view context ('this')
+      */
+    render: function() {
+      if (!this.isInitalized) {
+        logger.warn("AUGMENTED: Toolbar Can't render yet, not initialized!");
+        return this;
+      }
+
+      this.template = null;//"notused";
+
+      if (this.el) {
+        var e = Augmented.Presentation.Dom.selector(this.el);
+        if (e) {
+          // the menu
+          Augmented.Presentation.Dom.addClass(e, "toolbar");
+          //e.setAttribute("class", "toolbar");
+          e.setAttribute("data-" + this.name, "toolbar");
+          e.innerHTML = buildToolbarItems(this.name, this.menuItems);
+        }
+      } else if (this.$el) {
+        logger.warn("AUGMENTED: Toolbar doesn't support jquery, sorry, not rendering.");
+        return;
+      } else {
+        logger.warn("AUGMENTED: Toolbar no element anchor, not rendering.");
+        return;
+      }
+
+      this.delegateEvents();
+
+      this.syncAllBoundElements();
+      return this;
+    }
   });
 
   return Augmented.Presentation;

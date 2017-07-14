@@ -67,7 +67,12 @@
 .material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
 
 /* Rules for using icons as white on a dark background. */
-.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-light {
+    color: rgba(255, 255, 255, 0.85);
+    outline: none;
+    border: 0;
+    background-color: transparent;
+}
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
 /*
@@ -628,7 +633,7 @@ h2 {
 }
 
 h3 {
-  color: rgba(0,0,0,0.85)
+  color: rgba(0,0,0,0.85);
   font-weight: 300;
   margin: 0.3em 0 5px;
 }
@@ -672,6 +677,10 @@ textarea.short {
 
 input.full, textarea.full {
     width: 100%;
+}
+
+input[type="text"], input[type="password"], textarea {
+    background-color: transparent;
 }
 
 label {
@@ -818,7 +827,16 @@ button.round {
     width: 36px;
 }
 
-button::before, div.tools i::before {
+.toolbar {
+  display: block;
+  position: relative;
+}
+
+.toolbar > .tools {
+  display: inline-block;
+}
+
+button::before, .tools i::before {
   content: "";
 
   position: absolute;
@@ -841,7 +859,7 @@ button::before, div.tools i::before {
 }
 
 
-button:active:before, div.tools i:active::before {
+button:active:before, .tools i:active::before {
   width: 120%;
   padding-top: 120%;
   transition: width .2s ease-out, padding-top .2s ease-out;
@@ -869,6 +887,7 @@ dialog {
     left: 50%;
     padding: 16px;
     z-index: auto;
+    border: none;
 }
 dialog.alert {
     height: 135px;
@@ -1072,7 +1091,7 @@ article section#header header figure#logo {
 
 
 article section#header header h1, article section#header header h2 {
-    background-color: none;
+    background-color: transparent;
     color: rgba(255, 255, 255, 0.85);
     line-height: 48px;
     margin: 0;
@@ -1445,7 +1464,7 @@ div.circle.large {
 }
 
 .vcenter {
-    vertical-align: center;
+    vertical-align: middle;
 
 }
 

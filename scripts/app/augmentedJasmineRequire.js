@@ -44,7 +44,7 @@ var specs = [ "presentation/test/presentationSpec",
               "presentation/test/viewControllerSpec",
               "presentation/test/dialogSpec",
               "presentation/test/autoFormSpec",
-              "presentation/test/dollar"
+              "presentation/test/dollarSpec"
             ];
 
 // Load Jasmine - This will still create all of the normal Jasmine browser globals unless `boot.js` is re-written to use the
