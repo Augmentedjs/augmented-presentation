@@ -43,7 +43,8 @@
   * A private logger for use in the framework only
   * @private
   */
-  var logger = Augmented.Logger.LoggerFactory.getLogger(Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
+  const _logger = Augmented.Logger.LoggerFactory.getLogger(
+        Augmented.Logger.Type.console, Augmented.Configuration.LoggerLevel);
 
   /*
   * Mediator View
@@ -63,37 +64,66 @@
   var undelegateEvents = Augmented.View.prototype.undelegateEvents;
 
   /**
-  * Colleague View - The 'child' view.<br/>
-  * Allow to define convention-based subscriptions
-  * as an 'subscriptions' hash on a view. Subscriptions
-  * can then be easily setup and cleaned.
-  *
-  * @constructor Augmented.Presentation.Colleague
-  * @name Augmented.Presentation.Colleague
-  * @memberof Augmented.Presentation
-  * @extends Augmented.View
-  */
+    * Colleague View - The 'child' view.<br/>
+    * Allow to define convention-based subscriptions
+    * as an 'subscriptions' hash on a view. Subscriptions
+    * can then be easily setup and cleaned.
+    *
+    * @constructor Augmented.Presentation.Colleague
+    * @name Augmented.Presentation.Colleague
+    * @memberof Augmented.Presentation
+    * @extends Augmented.View
+    */
   Augmented.Presentation.Colleague = Augmented.View.extend({
     _mediator: null,
 
+    /**
+      * Send a message to the mediator's queue
+      * @method sendMessage
+      * @param {string} message Message to send
+      * @param {object} data Data to send with message
+      * @memberof Augmented.Presentation.Colleague
+      */
     sendMessage: function(message, data) {
       if (this._mediator) {
         this._mediator.trigger(message, data);
       } else {
-        logger.warn("AUGMENTED: No mediator is available, talking to myself.");
+        _logger.warn("AUGMENTED: No mediator is available, talking to myself.");
       }
     },
 
-    setMediatorMessageQueue: function(e) {
+    /**
+      * Set the mediator to this colleague
+      * @method setMediatorMessageQueue
+      * @param {Augmented.Presentation.Mediator} mediator The mediator
+      * @memberof Augmented.Presentation.Colleague
+      */
+    setMediatorMessageQueue: function(mediator) {
       if (this._mediator) {
         // already registered, send a dismiss message
         this._mediator._dismissMe(this);
       }
-      this._mediator = e;
+      this._mediator = mediator;
     },
 
+    /**
+      * Remove the mediator from this colleague
+      * @method removeMediatorMessageQueue
+      * @memberof Augmented.Presentation.Colleague
+      */
     removeMediatorMessageQueue: function() {
       this._mediator = null;
+    },
+
+    /**
+      * Render the template
+      * @method renderTemplate
+      * @memberof Augmented.Presentation.Colleague
+      */
+    renderTemplate: function() {
+      if (this.el && this.template) {
+        Augmented.Presentation.Dom.setValue(this.el, this.template);
+      }
     }
   });
 
@@ -642,7 +672,7 @@
 
   // Tables and Grids
 
-  var tableDataAttributes = {
+  const tableDataAttributes = {
     name:           "data-name",
     type:           "data-type",
     description:    "data-description",
@@ -651,7 +681,7 @@
     sortClass:      "sorted"
   };
 
-  var csvTableCompile = function(name, desc, columns, data, del){
+  const csvTableCompile = function(name, desc, columns, data, del) {
     var csv = "";
     if (!del) {
       del = ",";
@@ -684,11 +714,11 @@
     return csv;
   };
 
-  var tsvTableCompile = function(name, desc, columns, data){
+  const tsvTableCompile = function(name, desc, columns, data) {
     return csvTableCompile(name, desc, columns, data, "\t");
   };
 
-  var defaultTableCompile = function(name, desc, columns, data, lineNumbers, sortKey, editable) {
+  const defaultTableCompile = function(name, desc, columns, data, lineNumbers, sortKey, editable, display) {
     var html = "<table " + tableDataAttributes.name + "=\"" + name + "\" " + tableDataAttributes.description + "=\"" + desc + "\">";
     if (name) {
       html = html + "<caption";
@@ -702,16 +732,16 @@
     html = html + "</thead><tbody>";
     if (data) {
       if (editable) {
-        html = html + editableTableBody(data, columns, lineNumbers, sortKey);
+        html = html + editableTableBody(data, columns, lineNumbers, sortKey, display);
       } else {
-        html = html + defaultTableBody(data, columns, lineNumbers, sortKey);
+        html = html + defaultTableBody(data, columns, lineNumbers, sortKey, display);
       }
     }
     html = html + "</tbody></table>";
     return html;
   };
 
-  var defaultTableHeader = function(columns, lineNumbers, sortKey) {
+  const defaultTableHeader = function(columns, lineNumbers, sortKey, display) {
     var html = "";
     if (columns) {
       html = html + "<tr>";
@@ -734,7 +764,7 @@
     return html;
   };
 
-  var defaultTableBody = function(data, columns, lineNumbers, sortKey) {
+  const defaultTableBody = function(data, columns, lineNumbers, sortKey, display) {
     var i, d, dkey, dobj, html = "", l = data.length, t;
     for (i = 0; i < l; i++) {
       d = data[i];
@@ -758,7 +788,7 @@
     return html;
   };
 
-  var editableTableBody = function(data, columns, lineNumbers, sortKey) {
+  const editableTableBody = function(data, columns, lineNumbers, sortKey, display) {
     var i, d, dkey, dobj, html = "", l = data.length, t;
     for (i = 0; i < l; i++) {
       d = data[i];
@@ -799,7 +829,7 @@
   /*
   * << First | < Previous | # | Next > | Last >>
   */
-  var defaultPaginationControl = function(currentPage, totalPages) {
+  const defaultPaginationControl = function(currentPage, totalPages) {
     return "<div class=\"paginationControl\">" +
     "<span class=\"first\"><< First</span>" +
     "<span class=\"previous\">< Previous</span>" +
@@ -808,7 +838,7 @@
     "<span class=\"last\">Last >></span></div>";
   };
 
-  var formatValidationMessages = function(messages) {
+  const formatValidationMessages = function(messages) {
     var html = "";
     if (messages && messages.length > 0) {
       html = html + "<ul class=\"errors\">";
@@ -825,13 +855,13 @@
   };
 
   /**
-  * Augmented.Presentation.AutomaticTable<br/>
-  * Creates a table automatically via a schema for defintion and a uri/json for data
-  * @constructor Augmented.Presentation.AutomaticTable
-  * @extends Augmented.Presentation.Colleague
-  * @memberof Augmented.Presentation
-  */
-  var AbstractAutoTable = Augmented.Presentation.Colleague.extend({
+    * Augmented.Presentation.AutomaticTable<br/>
+    * Creates a table automatically via a schema for defintion and a uri/json for data
+    * @constructor Augmented.Presentation.AutomaticTable
+    * @extends Augmented.Presentation.Colleague
+    * @memberof Augmented.Presentation
+    */
+  const AbstractAutoTable = Augmented.Presentation.Colleague.extend({
     // sorting
     /**
     * The sortable property - enable sorting in table
@@ -1118,7 +1148,7 @@
                 this.schema = parsedSchema;
               }
             } catch(e) {
-              logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
+              _logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
             }
             if (!this.schema) {
               this.retrieveSchema(options.schema);
@@ -1207,7 +1237,7 @@
           that.initialize(options);
         },
         failure: function(data, status) {
-          logger.warn("AUGMENTED: AutoTable Failed to fetch schema!");
+          _logger.warn("AUGMENTED: AutoTable Failed to fetch schema!");
         }
       });
     },
@@ -1263,7 +1293,7 @@
         var failHandler = function() {
           view.showProgressBar(false);
           view.showMessage("AutomaticTable save failed!");
-          logger.warn("AUGMENTED: AutomaticTable save failed!");
+          _logger.warn("AUGMENTED: AutomaticTable save failed!");
         };
 
         this.collection.save({
@@ -1351,7 +1381,7 @@
 
           }
         } else if (this.$el) {
-          logger.debug("AUGMENTED: AutoTable using jQuery to render.");
+          _logger.debug("AUGMENTED: AutoTable using jQuery to render.");
           if (this.sortable) {
             this.unbindSortableColumnEvents();
           }
@@ -1367,7 +1397,7 @@
           }
           this.$el("tbody").html(jh);
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
       } else {
         this.template = "<progress>Please wait.</progress>" + this.compileTemplate() + "<p class=\"message\"></p>";
@@ -1381,7 +1411,7 @@
         } else if (this.$el) {
           this.$el.html(this.template);
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
 
         if (this.renderPaginationControl) {
@@ -1685,10 +1715,10 @@
 
 
 
-  var directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display) {
-    var table, thead, tbody, n, t;
+  const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display) {
+    const table = document.createElement("table"), thead = document.createElement("thead"), tbody = document.createElement("tbody");
+    let n, t;
 
-    table = document.createElement("table");
     table.setAttribute(tableDataAttributes.name, name);
     table.setAttribute(tableDataAttributes.description, desc);
     if (name) {
@@ -1700,10 +1730,8 @@
       n.appendChild(t);
       table.appendChild(n);
     }
-    thead = document.createElement("thead");
-    directDOMTableHeader(thead, columns, lineNumbers, sortKey);
+    directDOMTableHeader(thead, columns, lineNumbers, sortKey, display);
     table.appendChild(thead);
-    tbody = document.createElement("tbody");
     table.appendChild(tbody);
     if (data) {
       if (editable) {
@@ -1715,11 +1743,10 @@
     el.appendChild(table);
   };
 
-  var directDOMTableHeader = function(el, columns, lineNumbers, sortKey, display) {
-    var tr, n, t;
-
-    if (columns) {
-      tr = document.createElement("tr");
+  const directDOMTableHeader = function(el, columns, lineNumbers, sortKey, display) {
+    if (columns && el) {
+      const tr = document.createElement("tr");
+      let n, t, key, obj;
       if (lineNumbers) {
         n = document.createElement("th");
         n.setAttribute(tableDataAttributes.name, "lineNumber");
@@ -1727,9 +1754,14 @@
         n.appendChild(t);
         tr.appendChild(n);
       }
-      var key, obj;
+
       for (key in columns) {
-        if (columns.hasOwnProperty(key)) {
+        let displayCol = true;
+        if (display !== null) {
+            displayCol = (display.indexOf(key) !== -1);
+        }
+
+        if (displayCol && columns.hasOwnProperty(key)) {
           obj = columns[key];
 
           n = document.createElement("th");
@@ -1749,21 +1781,28 @@
     }
   };
 
-  var directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
-    var i, d, dkey, dobj, l = data.length, t, td, tn, tr, cobj;
+  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
+    const l = data.length;
+    let i, d, dkey, dobj, t, td, tn, tr, cobj;
+
     for (i = 0; i < l; i++) {
       d = data[i];
       tr = document.createElement("tr");
 
       if (lineNumbers) {
         td = document.createElement("td");
-        tn = document.createTextNode("" + (i+1));
+        tn = document.createTextNode(String(i + 1));
         td.appendChild(tn);
         td.classList.add("label", "number");
         tr.appendChild(td);
       }
       for (dkey in d) {
-        if (d.hasOwnProperty(dkey)) {
+        let displayCol = true;
+        if (display !== null) {
+            displayCol = (display.indexOf(dkey) !== -1);
+        }
+
+        if (displayCol && d.hasOwnProperty(dkey)) {
           dobj = d[dkey];
           //cobj = columns[dkey];
           //logger.debug("AUGMENTED: AutoTable column key: " + cobj);
@@ -1785,9 +1824,9 @@
     }
   };
 
-  var directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
-    var i, d, dkey, dobj, l = data.length, t, td, tn, tr, input, cobj, ln;
-    ln = lineNumbers;
+  const directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
+    const l = data.length, ln = lineNumbers;
+    let i, d, dkey, dobj, t, td, tn, tr, input, cobj;
     for (i = 0; i < l; i++) {
       d = data[i];
       tr = document.createElement("tr");
@@ -1801,11 +1840,16 @@
       }
 
       for (dkey in d) {
-        if (d.hasOwnProperty(dkey)) {
+        let displayCol = true;
+        if (display !== null) {
+            displayCol = (display.indexOf(dkey) !== -1);
+        }
+
+        if (displayCol && d.hasOwnProperty(dkey)) {
           cobj = (columns[dkey]) ? columns[dkey] : {};
           dobj = d[dkey];
 
-          //logger.debug("column type: " + JSON.stringify(cobj));
+          //_logger.debug("column type: " + JSON.stringify(cobj));
 
           t = (typeof dobj);
 
@@ -1910,7 +1954,7 @@
   /*
   * << First | < Previous | # | Next > | Last >>
   */
-  var directDOMPaginationControl = function(el, currentPage, totalPages) {
+  const directDOMPaginationControl = function(el, currentPage, totalPages) {
     var d, n, t;
     d = document.createElement("div");
     d.classList.add("paginationControl");
@@ -1985,7 +2029,7 @@
     },
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
         return this;
       }
       var e;
@@ -2030,9 +2074,9 @@
             }
           }
         } else if (this.$el) {
-          logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
       } else {
         this.template = "notused";
@@ -2061,9 +2105,9 @@
             e.appendChild(n);
           }
         } else if (this.$el) {
-          logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
         } else {
-          logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
         }
 
         if (this.renderPaginationControl) {
@@ -2221,7 +2265,7 @@
                 this.schema = parsedSchema;
               }
             } catch(e) {
-              logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
+              _logger.warn("AUGMENTED: AutoTable parsing string schema failed.  URI perhaps?");
             }
             if (!this.schema) {
               this.retrieveSchema(options.schema);
@@ -2373,7 +2417,7 @@
         var myEl = this.selector(el);
         if (myEl && (myEl.nodeType === 1) && (myEl.nodeName === "select" || myEl.nodeName === "SELECT")) {
           // Select box
-          logger.debug("Select box (not supported) set to - " + value);
+          _logger.debug("Select box (not supported) set to - " + value);
         } else if (myEl && (myEl.nodeType === 1) &&
         (myEl.nodeName === "input" || myEl.nodeName === "INPUT" ||
         myEl.nodeName === "textarea" || myEl.nodeName === "TEXTAREA")) {
@@ -2853,14 +2897,14 @@
       }
       this.model.set(( (key) ? key : event.currentTarget.name ), val);
       this._func(event);
-      logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
+      _logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
     },
     _click: function(event) {
       var func = event.currentTarget.getAttribute(decoratorAttributeEnum.click);
       if (func && this[func]) {
         this._executeFunctionByName(func, this, event);
       }/* else {
-        logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
+        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
       }*/
       this._func(event);
     },
@@ -2869,7 +2913,7 @@
       if (func && this[func]) {
         this._executeFunctionByName(func, this, event);
       } /*else {
-        logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
+        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
       }*/
     },
     /**
@@ -3355,12 +3399,14 @@
     style: "alert"
   });
 
-  var formCompile = function(e, name, description, fields, model, required, binding) {
-    var form = document.createElement("form"), fs = document.createElement("formset"), t, i, keys = Object.keys(fields), l = keys.length, input, lb, req;
+  const formCompile = function(e, name, description, fields, model, required, binding, display) {
+    const form = document.createElement("form"), fs = document.createElement("formset"), keys = Object.keys(fields), l = keys.length;
+    let t, i, input, lb, req;
+
     form.appendChild(fs);
 
     if (name) {
-      var lg = document.createElement("legend");
+      const lg = document.createElement("legend");
       t = document.createTextNode(name);
       if (description) {
         var att = document.createAttribute("title");
@@ -3372,19 +3418,25 @@
     }
 
     for (i = 0; i < l; i++) {
-      req = (required.indexOf(keys[i]) !== -1);
-      lb = document.createElement("label");
-      lb.setAttribute("for", keys[i]);
-      t = document.createTextNode(keys[i]);
-      lb.appendChild(t);
-      fs.appendChild(lb);
+      let displayCol = true;
+      if (display !== null) {
+          displayCol = (display.indexOf(dkey) !== -1);
+      }
 
-      input = Augmented.Presentation.Widget.Input(fields[keys[i]], keys[i], model[keys[i]], keys[i], req, binding);
-      if (input) {
-        fs.appendChild(input);
+      if (displayCol) {
+        req = (required.indexOf(keys[i]) !== -1);
+        lb = document.createElement("label");
+        lb.setAttribute("for", keys[i]);
+        t = document.createTextNode(keys[i]);
+        lb.appendChild(t);
+        fs.appendChild(lb);
+
+        input = Augmented.Presentation.Widget.Input(fields[keys[i]], keys[i], model[keys[i]], keys[i], req, binding);
+        if (input) {
+          fs.appendChild(input);
+        }
       }
     }
-
     e.appendChild(form);
   };
 
@@ -3484,7 +3536,7 @@
                 this.schema = parsedSchema;
               }
             } catch(e) {
-              logger.warn("AUGMENTED: AutoForm parsing string schema failed.  URI perhaps?");
+              _logger.warn("AUGMENTED: AutoForm parsing string schema failed.  URI perhaps?");
             }
             if (!this.schema) {
               this._retrieveSchema(options.schema);
@@ -3556,7 +3608,7 @@
           that.initialize(options);
         },
         failure: function(data, status) {
-          logger.warn("AUGMENTED: AutoForm Failed to fetch schema!");
+          _logger.warn("AUGMENTED: AutoForm Failed to fetch schema!");
         }
       });
     },
@@ -3650,7 +3702,7 @@
     */
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: AutoForm Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: AutoForm Can't render yet, not initialized!");
         return this;
       }
 
@@ -3658,11 +3710,10 @@
       this.showProgressBar(true);
 
       if (this.el) {
-        var e = Augmented.Presentation.Dom.selector(this.el);
+        const e = Augmented.Presentation.Dom.selector(this.el);
         if (e) {
           // progress bar
-          var n = document.createElement("progress");
-          var t = document.createTextNode("Please wait.");
+          const n = document.createElement("progress"), t = document.createTextNode("Please wait.");
           n.appendChild(t);
           e.appendChild(n);
 
@@ -3677,11 +3728,11 @@
           e.appendChild(n);
         }
       } else if (this.$el) {
-        logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
+        _logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
         this.showProgressBar(false);
         return;
       } else {
-        logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
+        _logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
         this.showProgressBar(false);
         return;
       }

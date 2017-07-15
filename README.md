@@ -1,6 +1,6 @@
 # Augmented.js Presentation
 ## The Augmented.js Framework Presentation Module
-### Version 1.2.x
+### Version 1.3.x
 ### "Typhoon"
 **aug·ment·ed**
 /ˌôɡˈmentəd /
@@ -35,3 +35,4 @@ This extension adds:
 * Component UI Classes
   - Hamburger Menu
   - Toolbar
+  - Header
