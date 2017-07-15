@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.2.6
+* @version 1.3.0
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.2.6";
+  Augmented.Presentation.VERSION = "1.3.0";
 
   /**
   * A private logger for use in the framework only
@@ -866,6 +866,13 @@
       }
     },
 
+    /**
+      * Fields to display - null will display all
+      * @method display
+      * @memberof Augmented.Presentation.AutomaticTable
+      */
+    display: null,
+
     // pagination
     /**
     * The renderPaginationControl property - render the pagination control
@@ -1322,7 +1329,7 @@
               if (this.sortable) {
                 this.unbindSortableColumnEvents();
               }
-              h = defaultTableHeader(this._columns, this.lineNumbers, this.sortKey);
+              h = defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display);
             } else {
               h = "";
             }
@@ -1330,9 +1337,9 @@
 
             if (this.collection && (this.collection.length > 0)){
               if (this.editable) {
-                h = editableTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey);
+                h = editableTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display);
               } else {
-                h = defaultTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey);
+                h = defaultTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display);
               }
             } else {
               h = "";
@@ -1348,12 +1355,12 @@
           if (this.sortable) {
             this.unbindSortableColumnEvents();
           }
-          this.$el("thead").html(defaultTableHeader(this._columns, this.lineNumbers, this.sortKey));
+          this.$el("thead").html(defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display));
           var jh = "";
           if (this.editable) {
-            jh = editableTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey);
+            jh = editableTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
           } else {
-            jh = defaultTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey);
+            jh = defaultTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
           }
           if (this.editable) {
             this.unbindCellChangeEvents();
@@ -1587,7 +1594,7 @@
     * @returns {string} Returns the template
     */
     compileTemplate: function() {
-      var h = defaultTableCompile(this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable);
+      var h = defaultTableCompile(this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display);
       if (this.renderPaginationControl) {
         h = h + defaultPaginationControl(this.currentPage(), this.totalPages());
       }
@@ -1678,7 +1685,7 @@
 
 
 
-  var directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable) {
+  var directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display) {
     var table, thead, tbody, n, t;
 
     table = document.createElement("table");
@@ -1700,15 +1707,15 @@
     table.appendChild(tbody);
     if (data) {
       if (editable) {
-        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey);
+        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display);
       } else {
-        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey);
+        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display);
       }
     }
     el.appendChild(table);
   };
 
-  var directDOMTableHeader = function(el, columns, lineNumbers, sortKey) {
+  var directDOMTableHeader = function(el, columns, lineNumbers, sortKey, display) {
     var tr, n, t;
 
     if (columns) {
@@ -1742,7 +1749,7 @@
     }
   };
 
-  var directDOMTableBody = function(el, data, columns, lineNumbers, sortKey) {
+  var directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
     var i, d, dkey, dobj, l = data.length, t, td, tn, tr, cobj;
     for (i = 0; i < l; i++) {
       d = data[i];
@@ -1778,7 +1785,7 @@
     }
   };
 
-  var directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey) {
+  var directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
     var i, d, dkey, dobj, l = data.length, t, td, tn, tr, input, cobj, ln;
     ln = lineNumbers;
     for (i = 0; i < l; i++) {
@@ -2000,7 +2007,7 @@
               while (thead.hasChildNodes()) {
                 thead.removeChild(thead.lastChild);
               }
-              directDOMTableHeader(thead, this._columns, this.lineNumbers, this.sortKey);
+              directDOMTableHeader(thead, this._columns, this.lineNumbers, this.sortKey, this.display);
             } else {
               while (thead.hasChildNodes()) {
                 thead.removeChild(thead.lastChild);
@@ -2012,9 +2019,9 @@
                 tbody.removeChild(tbody.lastChild);
               }
               if (this.editable) {
-                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey);
+                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
               } else {
-                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey);
+                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
               }
             } else {
               while (tbody.hasChildNodes()) {
@@ -2041,7 +2048,7 @@
             e.appendChild(n);
 
             // the table
-            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable);
+            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display);
 
             // pagination control
             if (this.renderPaginationControl) {
@@ -3442,6 +3449,13 @@
     _required: [],
 
     /**
+      * Fields to display - null will display all
+      * @method display
+      * @memberof Augmented.Presentation.AutomaticForm
+      */
+    display: null,
+
+    /**
     * Initialize the form view
     * @method initialize
     * @memberof Augmented.Presentation.AutomaticForm
@@ -3653,7 +3667,7 @@
           e.appendChild(n);
 
           // the form
-          formCompile(e, this.name, this.description, this._fields, this.model.toJSON(), this._required, this.name);
+          formCompile(e, this.name, this.description, this._fields, this.model.toJSON(), this._required, this.name, this.display);
 
           this._formEl = Augmented.Presentation.Dom.query("form", this.el);
 
