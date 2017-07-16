@@ -3420,7 +3420,7 @@
     for (i = 0; i < l; i++) {
       let displayCol = true;
       if (display !== null) {
-          displayCol = (display.indexOf(dkey) !== -1);
+          displayCol = (display.indexOf(keys[i]) !== -1);
       }
 
       if (displayCol) {
@@ -3713,7 +3713,7 @@
         const e = Augmented.Presentation.Dom.selector(this.el);
         if (e) {
           // progress bar
-          const n = document.createElement("progress"), t = document.createTextNode("Please wait.");
+          let n = document.createElement("progress"), t = document.createTextNode("Please wait.");
           n.appendChild(t);
           e.appendChild(n);
 
@@ -3821,6 +3821,7 @@
       * @returns {boolean} Returns true on success of initalization
       */
     initialize: function(options) {
+      this.menuItems = [];
       this.init();
 
       if (this.model) {
@@ -3845,8 +3846,8 @@
       if (this.el && this.name) {
         this.isInitalized = true;
       }
-      logger.debug("initialized " + this.isInitalized);
-      logger.debug("name " + this.name + " el " + this.el);
+      _logger.debug("initialized " + this.isInitalized);
+      _logger.debug("name " + this.name + " el " + this.el);
       return this.isInitalized;
     },
     /**
@@ -3932,7 +3933,7 @@
       */
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: Hamburger Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: Hamburger Can't render yet, not initialized!");
         return this;
       }
 
@@ -3956,11 +3957,11 @@
             '</section>';
         }
       } else if (this.$el) {
-        logger.warn("AUGMENTED: Hamburger doesn't support jquery, sorry, not rendering.");
+        _logger.warn("AUGMENTED: Hamburger doesn't support jquery, sorry, not rendering.");
 
         return;
       } else {
-        logger.warn("AUGMENTED: Hamburger no element anchor, not rendering.");
+        _logger.warn("AUGMENTED: Hamburger no element anchor, not rendering.");
 
         return;
       }
@@ -4028,7 +4029,7 @@
       */
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: Toolbar Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: Toolbar Can't render yet, not initialized!");
         return this;
       }
 
@@ -4039,15 +4040,14 @@
         if (e) {
           // the menu
           Augmented.Presentation.Dom.addClass(e, "toolbar");
-          //e.setAttribute("class", "toolbar");
           e.setAttribute("data-" + this.name, "toolbar");
           e.innerHTML = buildToolbarItems(this.name, this.menuItems);
         }
       } else if (this.$el) {
-        logger.warn("AUGMENTED: Toolbar doesn't support jquery, sorry, not rendering.");
+        _logger.warn("AUGMENTED: Toolbar doesn't support jquery, sorry, not rendering.");
         return;
       } else {
-        logger.warn("AUGMENTED: Toolbar no element anchor, not rendering.");
+        _logger.warn("AUGMENTED: Toolbar no element anchor, not rendering.");
         return;
       }
 
