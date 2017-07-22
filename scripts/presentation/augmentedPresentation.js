@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.3.0
+* @version 1.3.1
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.3.0";
+  Augmented.Presentation.VERSION = "1.3.1";
 
   /**
   * A private logger for use in the framework only
@@ -392,7 +392,7 @@
     */
     publish: function(channel) {
       if (!channel || !this._channels[channel]) {
-        logger.warn("AUGMENTED: Mediator: channel '" + channel + "' doest exist.");
+        _logger.warn("AUGMENTED: Mediator: channel '" + channel + "' doest exist.");
         return;
       }
 
@@ -410,7 +410,7 @@
             i--;
           }
         } else {
-          logger.warn("AUGMENTED: Mediator: No subscription for channel '" + channel + "' on row " + i);
+          _logger.warn("AUGMENTED: Mediator: No subscription for channel '" + channel + "' on row " + i);
         }
       }
     },
@@ -443,7 +443,7 @@
             delete this._colleagueMap[subscription.context];
           }
         } else {
-          logger.warn("AUGMENTED: Mediator: No subscription for channel '" + channel + "' on row " + i);
+          _logger.warn("AUGMENTED: Mediator: No subscription for channel '" + channel + "' on row " + i);
           //logger.debug("AUGMENTED: Mediator: subscription " + this._channels[channel]);
         }
       }
@@ -3774,17 +3774,82 @@
   };
 
   /**
-  * Component - Large UI Components
-  * @namespace Augmented.Presentation.Component
-  * @memberof Augmented.Presentation
-  */
+    * Component - Large UI Components
+    * @namespace Augmented.Presentation.Component
+    * @memberof Augmented.Presentation
+    */
   Augmented.Presentation.Component = {};
 
-  Augmented.Presentation.Component.Header = Augmented.Presentation.DecoratorView.extend({});
+  /**
+    * A View Component
+    * @constructor Augmented.Presentation.Component.View
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.DecoratorView
+    */
+  Augmented.Presentation.Component.View = Augmented.Presentation.DecoratorView.extend({
+    /**
+      * The template property
+      * @property template
+      * @memberof Augmented.Presentation.Component.View
+      */
+    template: "",
+    /**
+      * Simple render method - renders the template
+      * @method render
+      * @memberof Augmented.Presentation.Component.View
+      */
+    render: function() {
+      Augmented.Presentation.Dom.setValue(this.el, this.template);
+  		return this;
+    }
+  });
 
-  Augmented.Presentation.Component.NotificationCenter = {};
+  /**
+    * A Header Component
+    * @constructor Augmented.Presentation.Component.Header
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.Component.View
+    */
+  Augmented.Presentation.Component.Header = Augmented.Presentation.Component.View.extend({
+    /**
+      * A title property
+      * @property title
+      * @memberof Augmented.Presentation.Component.Header
+      */
+    title: "",
+    /**
+      * A subTitle property
+      * @property subTitle
+      * @memberof Augmented.Presentation.Component.Header
+      */
+    subTitle: ""
+  });
 
-  Augmented.Presentation.Component.Manager = Augmented.Presentation.Mediator.extend({});
+  /**
+    * A Notfication Center Component
+    * @constructor Augmented.Presentation.Component.NotificationCenter
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.Component.View
+    */
+  Augmented.Presentation.Component.NotificationCenter = Augmented.Presentation.Component.View.extend({
+
+  });
+
+  /**
+    * A Component Manager
+    * @constructor Augmented.Presentation.Component.Header
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.Mediator
+    */
+  Augmented.Presentation.Component.Manager = Augmented.Presentation.Mediator.extend({
+    manageComponent: function(component) {
+      this.observeColleagueAndTrigger(component, component.name, component.name);
+    }
+    unmanageComponent: function(component) {
+      this.dismissColleagueTrigger(component, component.name, component.name);
+    }
+
+  });
 
   /**
     * An abstract tooldbar Component, designed to be extended
