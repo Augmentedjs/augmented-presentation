@@ -3843,10 +3843,10 @@
     */
   Augmented.Presentation.Component.Manager = Augmented.Presentation.Mediator.extend({
     manageComponent: function(component) {
-      this.observeColleagueAndTrigger(component, component.name, component.name);
-    }
+      return this.observeColleagueAndTrigger(component, component.name, component.name);
+    },
     unmanageComponent: function(component) {
-      this.dismissColleagueTrigger(component, component.name, component.name);
+      return this.dismissColleagueTrigger(component, component.name, component.name);
     }
 
   });
