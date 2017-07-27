@@ -47,7 +47,7 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Augmented.Presentation.AlertDialogView.html">Augmented.Presentation.AlertDialogView</a></li><li><a href="Augmented.Presentation.Application.html">Augmented.Presentation.Application</a></li><li><a href="Augmented.Presentation.AutomaticForm.html">Augmented.Presentation.AutomaticForm</a></li><li><a href="Augmented.Presentation.AutomaticTable.html">Augmented.Presentation.AutomaticTable</a></li><li><a href="Augmented.Presentation.AutoTable.html">Augmented.Presentation.AutoTable</a></li><li><a href="Augmented.Presentation.BigDataTable.html">Augmented.Presentation.BigDataTable</a></li><li><a href="Augmented.Presentation.Colleague.html">Augmented.Presentation.Colleague</a></li><li><a href="Augmented.Presentation.Component.AbstractToolbar.html">Augmented.Presentation.Component.AbstractToolbar</a></li><li><a href="Augmented.Presentation.Component.HamburgerMenu.html">Augmented.Presentation.Component.HamburgerMenu</a></li><li><a href="Augmented.Presentation.Component.Toolbar.html">Augmented.Presentation.Component.Toolbar</a></li><li><a href="Augmented.Presentation.ConfirmationDialogView.html">Augmented.Presentation.ConfirmationDialogView</a></li><li><a href="Augmented.Presentation.DecoratorView.html">Augmented.Presentation.DecoratorView</a></li><li><a href="Augmented.Presentation.DialogView.html">Augmented.Presentation.DialogView</a></li><li><a href="Augmented.Presentation.DirectDOMAutomaticTable.html">Augmented.Presentation.DirectDOMAutomaticTable</a></li><li><a href="Augmented.Presentation.EditableBigDataTable.html">Augmented.Presentation.EditableBigDataTable</a></li><li><a href="Augmented.Presentation.EditableLocalStorageTable.html">Augmented.Presentation.EditableLocalStorageTable</a></li><li><a href="Augmented.Presentation.EditableTable.html">Augmented.Presentation.EditableTable</a></li><li><a href="Augmented.Presentation.LocalStorageTable.html">Augmented.Presentation.LocalStorageTable</a></li><li><a href="Augmented.Presentation.Mediator.html">Augmented.Presentation.Mediator</a></li><li><a href="Augmented.Presentation.Spreadsheet.html">Augmented.Presentation.Spreadsheet</a></li><li><a href="Augmented.Presentation.ViewController.html">Augmented.Presentation.ViewController</a></li>
+					<li><a href="Augmented.Presentation.AlertDialogView.html">Augmented.Presentation.AlertDialogView</a></li><li><a href="Augmented.Presentation.Application.html">Augmented.Presentation.Application</a></li><li><a href="Augmented.Presentation.AutomaticForm.html">Augmented.Presentation.AutomaticForm</a></li><li><a href="Augmented.Presentation.AutomaticTable.html">Augmented.Presentation.AutomaticTable</a></li><li><a href="Augmented.Presentation.AutoTable.html">Augmented.Presentation.AutoTable</a></li><li><a href="Augmented.Presentation.BigDataTable.html">Augmented.Presentation.BigDataTable</a></li><li><a href="Augmented.Presentation.Colleague.html">Augmented.Presentation.Colleague</a></li><li><a href="Augmented.Presentation.Component.AbstractToolbar.html">Augmented.Presentation.Component.AbstractToolbar</a></li><li><a href="Augmented.Presentation.Component.HamburgerMenu.html">Augmented.Presentation.Component.HamburgerMenu</a></li><li><a href="Augmented.Presentation.Component.Header.html">Augmented.Presentation.Component.Header</a></li><li><a href="Augmented.Presentation.Component.NotificationCenter.html">Augmented.Presentation.Component.NotificationCenter</a></li><li><a href="Augmented.Presentation.Component.Toolbar.html">Augmented.Presentation.Component.Toolbar</a></li><li><a href="Augmented.Presentation.Component.View.html">Augmented.Presentation.Component.View</a></li><li><a href="Augmented.Presentation.ConfirmationDialogView.html">Augmented.Presentation.ConfirmationDialogView</a></li><li><a href="Augmented.Presentation.DecoratorView.html">Augmented.Presentation.DecoratorView</a></li><li><a href="Augmented.Presentation.DialogView.html">Augmented.Presentation.DialogView</a></li><li><a href="Augmented.Presentation.DirectDOMAutomaticTable.html">Augmented.Presentation.DirectDOMAutomaticTable</a></li><li><a href="Augmented.Presentation.EditableBigDataTable.html">Augmented.Presentation.EditableBigDataTable</a></li><li><a href="Augmented.Presentation.EditableLocalStorageTable.html">Augmented.Presentation.EditableLocalStorageTable</a></li><li><a href="Augmented.Presentation.EditableTable.html">Augmented.Presentation.EditableTable</a></li><li><a href="Augmented.Presentation.LocalStorageTable.html">Augmented.Presentation.LocalStorageTable</a></li><li><a href="Augmented.Presentation.Mediator.html">Augmented.Presentation.Mediator</a></li><li><a href="Augmented.Presentation.Spreadsheet.html">Augmented.Presentation.Spreadsheet</a></li><li><a href="Augmented.Presentation.ViewController.html">Augmented.Presentation.ViewController</a></li>
 				</ul>
 			</li>
 			
@@ -99,7 +99,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.3.0
+* @version 1.3.1
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -123,7 +123,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.3.0";
+  Augmented.Presentation.VERSION = "1.3.1";
 
   /**
   * A private logger for use in the framework only
@@ -478,7 +478,7 @@
     */
     publish: function(channel) {
       if (!channel || !this._channels[channel]) {
-        logger.warn("AUGMENTED: Mediator: channel '" + channel + "' doest exist.");
+        _logger.warn("AUGMENTED: Mediator: channel '" + channel + "' doest exist.");
         return;
       }
 
@@ -496,7 +496,7 @@
             i--;
           }
         } else {
-          logger.warn("AUGMENTED: Mediator: No subscription for channel '" + channel + "' on row " + i);
+          _logger.warn("AUGMENTED: Mediator: No subscription for channel '" + channel + "' on row " + i);
         }
       }
     },
@@ -529,7 +529,7 @@
             delete this._colleagueMap[subscription.context];
           }
         } else {
-          logger.warn("AUGMENTED: Mediator: No subscription for channel '" + channel + "' on row " + i);
+          _logger.warn("AUGMENTED: Mediator: No subscription for channel '" + channel + "' on row " + i);
           //logger.debug("AUGMENTED: Mediator: subscription " + this._channels[channel]);
         }
       }
@@ -3506,7 +3506,7 @@
     for (i = 0; i &lt; l; i++) {
       let displayCol = true;
       if (display !== null) {
-          displayCol = (display.indexOf(dkey) !== -1);
+          displayCol = (display.indexOf(keys[i]) !== -1);
       }
 
       if (displayCol) {
@@ -3799,7 +3799,7 @@
         const e = Augmented.Presentation.Dom.selector(this.el);
         if (e) {
           // progress bar
-          const n = document.createElement("progress"), t = document.createTextNode("Please wait.");
+          let n = document.createElement("progress"), t = document.createTextNode("Please wait.");
           n.appendChild(t);
           e.appendChild(n);
 
@@ -3860,17 +3860,82 @@
   };
 
   /**
-  * Component - Large UI Components
-  * @namespace Augmented.Presentation.Component
-  * @memberof Augmented.Presentation
-  */
+    * Component - Large UI Components
+    * @namespace Augmented.Presentation.Component
+    * @memberof Augmented.Presentation
+    */
   Augmented.Presentation.Component = {};
 
-  Augmented.Presentation.Component.Header = Augmented.Presentation.DecoratorView.extend({});
+  /**
+    * A View Component
+    * @constructor Augmented.Presentation.Component.View
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.DecoratorView
+    */
+  Augmented.Presentation.Component.View = Augmented.Presentation.DecoratorView.extend({
+    /**
+      * The template property
+      * @property template
+      * @memberof Augmented.Presentation.Component.View
+      */
+    template: "",
+    /**
+      * Simple render method - renders the template
+      * @method render
+      * @memberof Augmented.Presentation.Component.View
+      */
+    render: function() {
+      Augmented.Presentation.Dom.setValue(this.el, this.template);
+  		return this;
+    }
+  });
 
-  Augmented.Presentation.Component.NotificationCenter = {};
+  /**
+    * A Header Component
+    * @constructor Augmented.Presentation.Component.Header
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.Component.View
+    */
+  Augmented.Presentation.Component.Header = Augmented.Presentation.Component.View.extend({
+    /**
+      * A title property
+      * @property title
+      * @memberof Augmented.Presentation.Component.Header
+      */
+    title: "",
+    /**
+      * A subTitle property
+      * @property subTitle
+      * @memberof Augmented.Presentation.Component.Header
+      */
+    subTitle: ""
+  });
 
-  Augmented.Presentation.Component.Manager = Augmented.Presentation.Mediator.extend({});
+  /**
+    * A Notfication Center Component
+    * @constructor Augmented.Presentation.Component.NotificationCenter
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.Component.View
+    */
+  Augmented.Presentation.Component.NotificationCenter = Augmented.Presentation.Component.View.extend({
+
+  });
+
+  /**
+    * A Component Manager
+    * @constructor Augmented.Presentation.Component.Header
+    * @memberof Augmented.Presentation.Component
+    * @extends Augmented.Presentation.Mediator
+    */
+  Augmented.Presentation.Component.Manager = Augmented.Presentation.Mediator.extend({
+    manageComponent: function(component) {
+      return this.observeColleagueAndTrigger(component, component.name, component.name);
+    },
+    unmanageComponent: function(component) {
+      return this.dismissColleagueTrigger(component, component.name, component.name);
+    }
+
+  });
 
   /**
     * An abstract tooldbar Component, designed to be extended
@@ -3907,6 +3972,7 @@
       * @returns {boolean} Returns true on success of initalization
       */
     initialize: function(options) {
+      this.menuItems = [];
       this.init();
 
       if (this.model) {
@@ -3931,8 +3997,8 @@
       if (this.el &amp;&amp; this.name) {
         this.isInitalized = true;
       }
-      logger.debug("initialized " + this.isInitalized);
-      logger.debug("name " + this.name + " el " + this.el);
+      _logger.debug("initialized " + this.isInitalized);
+      _logger.debug("name " + this.name + " el " + this.el);
       return this.isInitalized;
     },
     /**
@@ -4018,7 +4084,7 @@
       */
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: Hamburger Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: Hamburger Can't render yet, not initialized!");
         return this;
       }
 
@@ -4042,11 +4108,11 @@
             '&lt;/section>';
         }
       } else if (this.$el) {
-        logger.warn("AUGMENTED: Hamburger doesn't support jquery, sorry, not rendering.");
+        _logger.warn("AUGMENTED: Hamburger doesn't support jquery, sorry, not rendering.");
 
         return;
       } else {
-        logger.warn("AUGMENTED: Hamburger no element anchor, not rendering.");
+        _logger.warn("AUGMENTED: Hamburger no element anchor, not rendering.");
 
         return;
       }
@@ -4114,7 +4180,7 @@
       */
     render: function() {
       if (!this.isInitalized) {
-        logger.warn("AUGMENTED: Toolbar Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: Toolbar Can't render yet, not initialized!");
         return this;
       }
 
@@ -4125,15 +4191,14 @@
         if (e) {
           // the menu
           Augmented.Presentation.Dom.addClass(e, "toolbar");
-          //e.setAttribute("class", "toolbar");
           e.setAttribute("data-" + this.name, "toolbar");
           e.innerHTML = buildToolbarItems(this.name, this.menuItems);
         }
       } else if (this.$el) {
-        logger.warn("AUGMENTED: Toolbar doesn't support jquery, sorry, not rendering.");
+        _logger.warn("AUGMENTED: Toolbar doesn't support jquery, sorry, not rendering.");
         return;
       } else {
-        logger.warn("AUGMENTED: Toolbar no element anchor, not rendering.");
+        _logger.warn("AUGMENTED: Toolbar no element anchor, not rendering.");
         return;
       }
 
@@ -4187,7 +4252,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a>
 	
-		on Sat Jul 15th 2017
+		on Wed Jul 26th 2017
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
