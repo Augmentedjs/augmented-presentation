@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.3.1
+* @version 1.3.2
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.3.1";
+  Augmented.Presentation.VERSION = "1.3.2";
 
   /**
   * A private logger for use in the framework only
