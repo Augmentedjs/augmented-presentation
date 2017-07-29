@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.3.2
+* @version 1.4.0
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.3.2";
+  Augmented.Presentation.VERSION = "1.4.0";
 
   /**
   * A private logger for use in the framework only
@@ -1710,6 +1710,21 @@
     */
     isValid: function() {
       return (this.collection) ? this.collection.isValid() : true;
+    },
+    /**
+    * Remove the table and all binds
+    * @method remove
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+    remove: function() {
+      /* off to unbind the events */
+      this.undelegateEvents();
+      this.off();
+      this.stopListening();
+
+      Augmented.Presentation.Dom.empty(this.el);
+
+      return this;
     }
   });
 
@@ -3752,6 +3767,21 @@
     },
     populate: function(data) {
       this.model.set(data);
+    },
+    /**
+    * Remove the table and all binds
+    * @method remove
+    * @memberof Augmented.Presentation.AutomaticForm
+    */
+    remove: function() {
+      /* off to unbind the events */
+      this.undelegateEvents();
+      this.off();
+      this.stopListening();
+
+      Augmented.Presentation.Dom.empty(this.el);
+
+      return this;
     }
   });
 
@@ -3801,6 +3831,21 @@
     render: function() {
       Augmented.Presentation.Dom.setValue(this.el, this.template);
   		return this;
+    },
+    /**
+    * Remove the table and all binds
+    * @method remove
+    * @memberof Augmented.Presentation.Component.View
+    */
+    remove: function() {
+      /* off to unbind the events */
+      this.undelegateEvents();
+      this.off();
+      this.stopListening();
+
+      Augmented.Presentation.Dom.empty(this.el);
+
+      return this;
     }
   });
 
@@ -3855,10 +3900,10 @@
     * An abstract tooldbar Component, designed to be extended
     * @constructor Augmented.Presentation.Component.AbstractToolbar
     * @memberof Augmented.Presentation.Component
-    * @extends Augmented.Presentation.DecoratorView
+    * @extends Augmented.Presentation.Component.View
     * @abstract
     */
-  Augmented.Presentation.Component.AbstractToolbar = Augmented.Presentation.DecoratorView.extend({
+  Augmented.Presentation.Component.AbstractToolbar = Augmented.Presentation.Component.View.extend({
     /**
       * The model property
       * @property {Augmented.Model} model The model property
