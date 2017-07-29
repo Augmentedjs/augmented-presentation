@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.4.1
+* @version 1.4.2
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.4.1";
+  Augmented.Presentation.VERSION = "1.4.2";
 
   /**
   * A private logger for use in the framework only
@@ -3535,7 +3535,7 @@
 
       if (this.model && options && options.clearForm) {
         this.model.clear();
-      } else {
+      } else if (!this.model) {
         this.model = new Augmented.Model();
       }
       if (options) {
