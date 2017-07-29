@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.4.0
+* @version 1.4.1
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.4.0";
+  Augmented.Presentation.VERSION = "1.4.1";
 
   /**
   * A private logger for use in the framework only
@@ -3523,16 +3523,17 @@
     display: null,
 
     /**
-    * Initialize the form view
+    * Initialize the form view<br/>
+    * pass clearForm = true to start a fresh form
     * @method initialize
     * @memberof Augmented.Presentation.AutomaticForm
     * @param {object} options The view options
     * @returns {boolean} Returns true on success of initalization
     */
     initialize: function(options) {
-      this.init();
+      this.init(options);
 
-      if (this.model) {
+      if (this.model && options && options.clearForm) {
         this.model.clear();
       } else {
         this.model = new Augmented.Model();
@@ -3544,7 +3545,7 @@
             this.schema = options.schema;
           } else {
             // is a URI?
-            var parsedSchema = null;
+            const parsedSchema = null;
             try {
               parsedSchema = JSON.parse(options.schema);
               if (parsedSchema && Augmented.isObject(parsedSchema)) {
@@ -3598,7 +3599,6 @@
           this.model.schema = this.schema;
           this.isInitalized = true;
         }
-
       } else {
         this.isInitalized = false;
         return false;
@@ -3611,8 +3611,8 @@
       var schema = null;
       Augmented.ajax({
         url: uri,
-        contentType: 'application/json',
-        dataType: 'json',
+        contentType: "application/json",
+        dataType: "json",
         success: function(data, status) {
           if (typeof data === "string") {
             schema = JSON.parse(data);
@@ -3717,7 +3717,7 @@
     */
     render: function() {
       if (!this.isInitalized) {
-        _logger.warn("AUGMENTED: AutoForm Can't render yet, not initialized!");
+        _logger.warn("AUGMENTED: AutomaticForm Can't render yet, not initialized!");
         return this;
       }
 
@@ -3743,11 +3743,11 @@
           e.appendChild(n);
         }
       } else if (this.$el) {
-        _logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
+        _logger.warn("AUGMENTED: AutomaticForm doesn't support jquery, sorry, not rendering.");
         this.showProgressBar(false);
         return;
       } else {
-        _logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
+        _logger.warn("AUGMENTED: AutomaticForm no element anchor, not rendering.");
         this.showProgressBar(false);
         return;
       }
@@ -3759,17 +3759,30 @@
       this.showProgressBar(false);
       return this;
     },
+    /**
+    * Reset the form
+    * @method reset
+    * @memberof Augmented.Presentation.AutomaticForm
+    * @returns {object} Returns the view context ('this')
+    */
     reset: function() {
       if (this._formEl) {
         this._formEl.reset();
         this.model.reset();
       }
     },
+    /**
+    * Populate the form
+    * @method populate
+    * @param {object} data Data to fill in
+    * @memberof Augmented.Presentation.AutomaticForm
+    * @returns {object} Returns the view context ('this')
+    */
     populate: function(data) {
       this.model.set(data);
     },
     /**
-    * Remove the table and all binds
+    * Remove the form and all binds
     * @method remove
     * @memberof Augmented.Presentation.AutomaticForm
     */
