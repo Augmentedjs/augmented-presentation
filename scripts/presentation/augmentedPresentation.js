@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.4.2
+* @version 1.4.3
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.4.2";
+  Augmented.Presentation.VERSION = "1.4.3";
 
   /**
   * A private logger for use in the framework only
@@ -728,7 +728,7 @@
       html = html + ">" + name + "</caption>";
     }
     html = html + "<thead>";
-    html = html + defaultTableHeader(columns, lineNumbers, sortKey);
+    html = html + defaultTableHeader(columns, lineNumbers, sortKey, display);
     html = html + "</thead><tbody>";
     if (data) {
       if (editable) {
@@ -1811,12 +1811,11 @@
         td.classList.add("label", "number");
         tr.appendChild(td);
       }
-      for (dkey in d) {
+      for (dkey in columns) {
         let displayCol = true;
         if (display !== null) {
             displayCol = (display.indexOf(dkey) !== -1);
         }
-
         if (displayCol && d.hasOwnProperty(dkey)) {
           dobj = d[dkey];
           //cobj = columns[dkey];
