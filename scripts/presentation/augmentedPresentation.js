@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.4.3
+* @version 1.4.4
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.4.3";
+  Augmented.Presentation.VERSION = "1.4.4";
 
   /**
   * A private logger for use in the framework only
@@ -3726,6 +3726,9 @@
       if (this.el) {
         const e = Augmented.Presentation.Dom.selector(this.el);
         if (e) {
+          if (this.theme) {
+            Augmented.Presentation.Dom.addClass(e, this.theme);
+          }
           // progress bar
           let n = document.createElement("progress"), t = document.createTextNode("Please wait.");
           n.appendChild(t);
