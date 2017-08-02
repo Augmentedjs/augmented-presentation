@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.4.4
+* @version 1.4.5
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.4.4";
+  Augmented.Presentation.VERSION = "1.4.5";
 
   /**
   * A private logger for use in the framework only
@@ -1728,8 +1728,6 @@
     }
   });
 
-
-
   const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display) {
     const table = document.createElement("table"), thead = document.createElement("thead"), tbody = document.createElement("tbody");
     let n, t;
@@ -1818,8 +1816,6 @@
         }
         if (displayCol && d.hasOwnProperty(dkey)) {
           dobj = d[dkey];
-          //cobj = columns[dkey];
-          //logger.debug("AUGMENTED: AutoTable column key: " + cobj);
           t = (typeof dobj);
 
           td = document.createElement("td");
@@ -1863,8 +1859,6 @@
           cobj = (columns[dkey]) ? columns[dkey] : {};
           dobj = d[dkey];
 
-          //_logger.debug("column type: " + JSON.stringify(cobj));
-
           t = (typeof dobj);
 
           td = document.createElement("td");
@@ -1878,7 +1872,7 @@
 
           if (t === "object") {
             if (Array.isArray(dobj)) {
-              var iii = 0, lll = dobj.length, option, tOption;
+              let iii = 0, lll = dobj.length, option, tOption;
               input = document.createElement("select");
               for (iii = 0; iii < lll; iii++) {
                 option = document.createElement("option");
@@ -1969,7 +1963,7 @@
   * << First | < Previous | # | Next > | Last >>
   */
   const directDOMPaginationControl = function(el, currentPage, totalPages) {
-    var d, n, t;
+    let d, n, t;
     d = document.createElement("div");
     d.classList.add("paginationControl");
 
@@ -2830,7 +2824,6 @@
         input.setAttribute("required", "true");
       }
 
-
       if (name) {
         input.setAttribute("name", name);
       }
@@ -2845,10 +2838,9 @@
 
       return input;
     }
-
   };
 
-  var decoratorAttributeEnum = {
+  const decoratorAttributeEnum = {
     "click": "data-click",
     "func": "data-function",
     "style": "data-style",
@@ -3414,7 +3406,7 @@
   });
 
   const formCompile = function(e, name, description, fields, model, required, binding, display) {
-    const form = document.createElement("form"), fs = document.createElement("formset"), keys = Object.keys(fields), l = keys.length;
+    const form = document.createElement("form"), fs = document.createElement("formset"), keys = Object.keys(fields), l = ((display) ? display.length: keys.length);
     let t, i, input, lb, req;
 
     form.appendChild(fs);
@@ -3423,29 +3415,32 @@
       const lg = document.createElement("legend");
       t = document.createTextNode(name);
       if (description) {
-        var att = document.createAttribute("title");
+        const att = document.createAttribute("title");
         att.value = description;
         lg.setAttributeNode(att);
       }
       lg.appendChild(t);
       fs.appendChild(lg);
     }
+    if (!display) {
+      display = keys;
+    }
 
     for (i = 0; i < l; i++) {
       let displayCol = true;
       if (display !== null) {
-          displayCol = (display.indexOf(keys[i]) !== -1);
+          displayCol = (keys.indexOf(display[i]) !== -1);
       }
 
       if (displayCol) {
-        req = (required.indexOf(keys[i]) !== -1);
+        req = (required.indexOf(display[i]) !== -1);
         lb = document.createElement("label");
-        lb.setAttribute("for", keys[i]);
-        t = document.createTextNode(keys[i]);
+        lb.setAttribute("for", display[i]);
+        t = document.createTextNode(display[i]);
         lb.appendChild(t);
         fs.appendChild(lb);
 
-        input = Augmented.Presentation.Widget.Input(fields[keys[i]], keys[i], model[keys[i]], keys[i], req, binding);
+        input = Augmented.Presentation.Widget.Input(fields[display[i]], display[i], model[display[i]], display[i], req, binding);
         if (input) {
           fs.appendChild(input);
         }
@@ -3494,6 +3489,12 @@
     * @memberof Augmented.Presentation.AutomaticForm
     */
     isInitalized : false,
+    /**
+    * The title property
+    * @property {string} title The title of the form
+    * @memberof Augmented.Presentation.AutomaticForm
+    */
+    title: null,
     /**
     * The name property
     * @property {string} name The name of the form
@@ -3571,6 +3572,12 @@
         if (options.data && (Augmented.isObject(options.data))) {
           this.model.set(options.data);
         }
+        if (options.title) {
+          this.title = options.title;
+        }
+        if (options.description) {
+          this.description = options.description;
+        }
       }
 
       if (this.model && this.uri) {
@@ -3583,7 +3590,7 @@
         if (this.schema.title && (!this.name)) {
           this.name = this.schema.title;
         }
-        if (this.schema.description) {
+        if (this.schema.description && !this.description) {
           this.description = this.schema.description;
         }
 
@@ -3735,7 +3742,14 @@
           e.appendChild(n);
 
           // the form
-          formCompile(e, this.name, this.description, this._fields, this.model.toJSON(), this._required, this.name, this.display);
+          formCompile(e,
+            ((this.title) ? this.title : this.name),
+            this.description,
+            this._fields,
+            this.model.toJSON(),
+            this._required,
+            this.name,
+            this.display);
 
           this._formEl = Augmented.Presentation.Dom.query("form", this.el);
 
