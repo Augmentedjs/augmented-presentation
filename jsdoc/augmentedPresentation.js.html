@@ -99,7 +99,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.4.1
+* @version 1.5.0
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -123,7 +123,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.4.1";
+  Augmented.Presentation.VERSION = "1.5.0";
 
   /**
   * A private logger for use in the framework only
@@ -814,7 +814,7 @@
       html = html + ">" + name + "&lt;/caption>";
     }
     html = html + "&lt;thead>";
-    html = html + defaultTableHeader(columns, lineNumbers, sortKey);
+    html = html + defaultTableHeader(columns, lineNumbers, sortKey, display);
     html = html + "&lt;/thead>&lt;tbody>";
     if (data) {
       if (editable) {
@@ -948,7 +948,12 @@
     * @memberof Augmented.Presentation
     */
   const AbstractAutoTable = Augmented.Presentation.Colleague.extend({
-    // sorting
+    /**
+    * The selectable property - enable selecting a row in table
+    * @property {boolean} selectable enable/disable selecting a row
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+    selectable: false,
     /**
     * The sortable property - enable sorting in table
     * @property {boolean} sortable enable sorting in the table
@@ -1261,6 +1266,10 @@
           this.renderPaginationControl = options.renderPaginationControl;
         }
 
+        if (options.selectable) {
+          this.selectable = options.selectable;
+        }
+
         if (options.sortable) {
           this.sortable = options.sortable;
         }
@@ -1445,7 +1454,7 @@
               if (this.sortable) {
                 this.unbindSortableColumnEvents();
               }
-              h = defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display);
+              h = defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
             } else {
               h = "";
             }
@@ -1453,9 +1462,9 @@
 
             if (this.collection &amp;&amp; (this.collection.length > 0)){
               if (this.editable) {
-                h = editableTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display);
+                h = editableTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display, this.selectable);
               } else {
-                h = defaultTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display);
+                h = defaultTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display, this.selectable);
               }
             } else {
               h = "";
@@ -1471,12 +1480,12 @@
           if (this.sortable) {
             this.unbindSortableColumnEvents();
           }
-          this.$el("thead").html(defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display));
+          this.$el("thead").html(defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable));
           var jh = "";
           if (this.editable) {
-            jh = editableTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
+            jh = editableTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
           } else {
-            jh = defaultTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
+            jh = defaultTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
           }
           if (this.editable) {
             this.unbindCellChangeEvents();
@@ -1814,9 +1823,7 @@
     }
   });
 
-
-
-  const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display) {
+  const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display, selectable) {
     const table = document.createElement("table"), thead = document.createElement("thead"), tbody = document.createElement("tbody");
     let n, t;
 
@@ -1831,23 +1838,31 @@
       n.appendChild(t);
       table.appendChild(n);
     }
-    directDOMTableHeader(thead, columns, lineNumbers, sortKey, display);
+    directDOMTableHeader(thead, columns, lineNumbers, sortKey, display, selectable);
     table.appendChild(thead);
     table.appendChild(tbody);
     if (data) {
       if (editable) {
-        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display);
+        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable);
       } else {
-        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display);
+        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable);
       }
     }
     el.appendChild(table);
   };
 
-  const directDOMTableHeader = function(el, columns, lineNumbers, sortKey, display) {
+  const directDOMTableHeader = function(el, columns, lineNumbers, sortKey, display, selectable) {
     if (columns &amp;&amp; el) {
       const tr = document.createElement("tr");
       let n, t, key, obj;
+      if (selectable) {
+        n = document.createElement("th");
+        n.setAttribute(tableDataAttributes.name, "select");
+        t = document.createTextNode("\u274f");
+        n.appendChild(t);
+        tr.appendChild(n);
+      }
+
       if (lineNumbers) {
         n = document.createElement("th");
         n.setAttribute(tableDataAttributes.name, "lineNumber");
@@ -1882,13 +1897,25 @@
     }
   };
 
-  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
+  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable) {
     const l = data.length;
     let i, d, dkey, dobj, t, td, tn, tr, cobj;
 
     for (i = 0; i &lt; l; i++) {
       d = data[i];
       tr = document.createElement("tr");
+
+      if (selectable) {
+        td = document.createElement("td");
+        td.setAttribute(tableDataAttributes.name, "select");
+        tn = document.createElement("input");
+        tn.type = "checkbox";
+        tn.name = String(i);
+        tn.value = String(i);
+        td.appendChild(tn);
+        td.classList.add("label", "select");
+        tr.appendChild(td);
+      }
 
       if (lineNumbers) {
         td = document.createElement("td");
@@ -1897,16 +1924,13 @@
         td.classList.add("label", "number");
         tr.appendChild(td);
       }
-      for (dkey in d) {
+      for (dkey in columns) {
         let displayCol = true;
         if (display !== null) {
             displayCol = (display.indexOf(dkey) !== -1);
         }
-
         if (displayCol &amp;&amp; d.hasOwnProperty(dkey)) {
           dobj = d[dkey];
-          //cobj = columns[dkey];
-          //logger.debug("AUGMENTED: AutoTable column key: " + cobj);
           t = (typeof dobj);
 
           td = document.createElement("td");
@@ -1925,16 +1949,28 @@
     }
   };
 
-  const directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
+  const directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable) {
     const l = data.length, ln = lineNumbers;
     let i, d, dkey, dobj, t, td, tn, tr, input, cobj;
     for (i = 0; i &lt; l; i++) {
       d = data[i];
       tr = document.createElement("tr");
 
+      if (selectable) {
+        td = document.createElement("td");
+        td.setAttribute(tableDataAttributes.name, "select");
+        tn = document.createElement("input");
+        tn.type = "checkbox";
+        tn.name = String(i);
+        tn.value = String(i);
+        td.appendChild(tn);
+        td.classList.add("label", "select");
+        tr.appendChild(td);
+      }
+
       if (ln) {
         td = document.createElement("td");
-        tn = document.createTextNode("" + (i+1));
+        tn = document.createTextNode(String(i + 1));
         td.appendChild(tn);
         td.classList.add("label", "number");
         tr.appendChild(td);
@@ -1950,8 +1986,6 @@
           cobj = (columns[dkey]) ? columns[dkey] : {};
           dobj = d[dkey];
 
-          //_logger.debug("column type: " + JSON.stringify(cobj));
-
           t = (typeof dobj);
 
           td = document.createElement("td");
@@ -1965,7 +1999,7 @@
 
           if (t === "object") {
             if (Array.isArray(dobj)) {
-              var iii = 0, lll = dobj.length, option, tOption;
+              let iii = 0, lll = dobj.length, option, tOption;
               input = document.createElement("select");
               for (iii = 0; iii &lt; lll; iii++) {
                 option = document.createElement("option");
@@ -2056,7 +2090,7 @@
   * &lt;&lt; First | &lt; Previous | # | Next > | Last >>
   */
   const directDOMPaginationControl = function(el, currentPage, totalPages) {
-    var d, n, t;
+    let d, n, t;
     d = document.createElement("div");
     d.classList.add("paginationControl");
 
@@ -2118,8 +2152,8 @@
     theme: "material",
 
     setTheme: function(theme) {
-      var el = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
-      var e = el.querySelector("table");
+      const el = ((typeof this.el === 'string') ? document.querySelector(this.el) : this.el),
+      e = el.querySelector("table");
       if (e) {
         e.setAttribute("class", theme);
       }
@@ -2133,13 +2167,13 @@
         _logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
         return this;
       }
-      var e;
+      let e;
       if (this.template) {
         // refresh the table body only
         this.showProgressBar(true);
         if (this.el) {
           e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
-          var tbody = e.querySelector("tbody"), thead = e.querySelector("thead");
+          let tbody = e.querySelector("tbody"), thead = e.querySelector("thead");
           if (e) {
             if (this.sortable) {
               this.unbindSortableColumnEvents();
@@ -2148,11 +2182,10 @@
               this.unbindCellChangeEvents();
             }
             if (this._columns &amp;&amp; (Object.keys(this._columns).length > 0)){
-
               while (thead.hasChildNodes()) {
                 thead.removeChild(thead.lastChild);
               }
-              directDOMTableHeader(thead, this._columns, this.lineNumbers, this.sortKey, this.display);
+              directDOMTableHeader(thead, this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
             } else {
               while (thead.hasChildNodes()) {
                 thead.removeChild(thead.lastChild);
@@ -2164,9 +2197,9 @@
                 tbody.removeChild(tbody.lastChild);
               }
               if (this.editable) {
-                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
+                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
               } else {
-                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
+                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
               }
             } else {
               while (tbody.hasChildNodes()) {
@@ -2187,13 +2220,13 @@
           e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
           if (e) {
             // progress bar
-            var n = document.createElement("progress");
-            var t = document.createTextNode("Please wait.");
+            let n = document.createElement("progress"),
+            t = document.createTextNode("Please wait.");
             n.appendChild(t);
             e.appendChild(n);
 
             // the table
-            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display);
+            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable);
 
             // pagination control
             if (this.renderPaginationControl) {
@@ -2460,11 +2493,7 @@
         for (ii = 0; ii &lt; this.rows; ii++) {
           obj = {};
           for (i = 0; i &lt; l; i++) {
-            obj[keys[i]] = ""; /*this._makeUpData(
-              this.schema.properties[keys[i]].type,
-              this.schema.properties[keys[i]].format,
-              this.schema.properties[keys[i]].enum
-            );*/
+            obj[keys[i]] = "";
           }
           this.data.push(obj);
         }
@@ -2917,7 +2946,6 @@
         input.setAttribute("required", "true");
       }
 
-
       if (name) {
         input.setAttribute("name", name);
       }
@@ -2932,10 +2960,9 @@
 
       return input;
     }
-
   };
 
-  var decoratorAttributeEnum = {
+  const decoratorAttributeEnum = {
     "click": "data-click",
     "func": "data-function",
     "style": "data-style",
@@ -3501,7 +3528,7 @@
   });
 
   const formCompile = function(e, name, description, fields, model, required, binding, display) {
-    const form = document.createElement("form"), fs = document.createElement("formset"), keys = Object.keys(fields), l = keys.length;
+    const form = document.createElement("form"), fs = document.createElement("formset"), keys = Object.keys(fields), l = ((display) ? display.length: keys.length);
     let t, i, input, lb, req;
 
     form.appendChild(fs);
@@ -3510,29 +3537,32 @@
       const lg = document.createElement("legend");
       t = document.createTextNode(name);
       if (description) {
-        var att = document.createAttribute("title");
+        const att = document.createAttribute("title");
         att.value = description;
         lg.setAttributeNode(att);
       }
       lg.appendChild(t);
       fs.appendChild(lg);
     }
+    if (!display) {
+      display = keys;
+    }
 
     for (i = 0; i &lt; l; i++) {
       let displayCol = true;
       if (display !== null) {
-          displayCol = (display.indexOf(keys[i]) !== -1);
+          displayCol = (keys.indexOf(display[i]) !== -1);
       }
 
       if (displayCol) {
-        req = (required.indexOf(keys[i]) !== -1);
+        req = (required.indexOf(display[i]) !== -1);
         lb = document.createElement("label");
-        lb.setAttribute("for", keys[i]);
-        t = document.createTextNode(keys[i]);
+        lb.setAttribute("for", display[i]);
+        t = document.createTextNode(display[i]);
         lb.appendChild(t);
         fs.appendChild(lb);
 
-        input = Augmented.Presentation.Widget.Input(fields[keys[i]], keys[i], model[keys[i]], keys[i], req, binding);
+        input = Augmented.Presentation.Widget.Input(fields[display[i]], display[i], model[display[i]], display[i], req, binding);
         if (input) {
           fs.appendChild(input);
         }
@@ -3582,6 +3612,12 @@
     */
     isInitalized : false,
     /**
+    * The title property
+    * @property {string} title The title of the form
+    * @memberof Augmented.Presentation.AutomaticForm
+    */
+    title: null,
+    /**
     * The name property
     * @property {string} name The name of the form
     * @memberof Augmented.Presentation.AutomaticForm
@@ -3621,7 +3657,7 @@
 
       if (this.model &amp;&amp; options &amp;&amp; options.clearForm) {
         this.model.clear();
-      } else {
+      } else if (!this.model) {
         this.model = new Augmented.Model();
       }
       if (options) {
@@ -3658,6 +3694,12 @@
         if (options.data &amp;&amp; (Augmented.isObject(options.data))) {
           this.model.set(options.data);
         }
+        if (options.title) {
+          this.title = options.title;
+        }
+        if (options.description) {
+          this.description = options.description;
+        }
       }
 
       if (this.model &amp;&amp; this.uri) {
@@ -3670,7 +3712,7 @@
         if (this.schema.title &amp;&amp; (!this.name)) {
           this.name = this.schema.title;
         }
-        if (this.schema.description) {
+        if (this.schema.description &amp;&amp; !this.description) {
           this.description = this.schema.description;
         }
 
@@ -3813,13 +3855,23 @@
       if (this.el) {
         const e = Augmented.Presentation.Dom.selector(this.el);
         if (e) {
+          if (this.theme) {
+            Augmented.Presentation.Dom.addClass(e, this.theme);
+          }
           // progress bar
           let n = document.createElement("progress"), t = document.createTextNode("Please wait.");
           n.appendChild(t);
           e.appendChild(n);
 
           // the form
-          formCompile(e, this.name, this.description, this._fields, this.model.toJSON(), this._required, this.name, this.display);
+          formCompile(e,
+            ((this.title) ? this.title : this.name),
+            this.description,
+            this._fields,
+            this.model.toJSON(),
+            this._required,
+            this.name,
+            this.display);
 
           this._formEl = Augmented.Presentation.Dom.query("form", this.el);
 
@@ -4310,7 +4362,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a>
 	
-		on Sat Jul 29th 2017
+		on Thu Aug 3rd 2017
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

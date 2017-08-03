@@ -1,6 +1,6 @@
 # Augmented.js Presentation
 ## The Augmented.js Framework Presentation Module
-### Version 1.4.x
+### Version 1.5.x
 ### "Typhoon"
 **aug·ment·ed**
 /ˌôɡˈmentəd /
