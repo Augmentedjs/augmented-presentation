@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.4.5
+* @version 1.5.0
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.4.5";
+  Augmented.Presentation.VERSION = "1.5.0";
 
   /**
   * A private logger for use in the framework only
@@ -862,7 +862,12 @@
     * @memberof Augmented.Presentation
     */
   const AbstractAutoTable = Augmented.Presentation.Colleague.extend({
-    // sorting
+    /**
+    * The selectable property - enable selecting a row in table
+    * @property {boolean} selectable enable/disable selecting a row
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+    selectable: false,
     /**
     * The sortable property - enable sorting in table
     * @property {boolean} sortable enable sorting in the table
@@ -1175,6 +1180,10 @@
           this.renderPaginationControl = options.renderPaginationControl;
         }
 
+        if (options.selectable) {
+          this.selectable = options.selectable;
+        }
+
         if (options.sortable) {
           this.sortable = options.sortable;
         }
@@ -1359,7 +1368,7 @@
               if (this.sortable) {
                 this.unbindSortableColumnEvents();
               }
-              h = defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display);
+              h = defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
             } else {
               h = "";
             }
@@ -1367,9 +1376,9 @@
 
             if (this.collection && (this.collection.length > 0)){
               if (this.editable) {
-                h = editableTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display);
+                h = editableTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display, this.selectable);
               } else {
-                h = defaultTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display);
+                h = defaultTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display, this.selectable);
               }
             } else {
               h = "";
@@ -1385,12 +1394,12 @@
           if (this.sortable) {
             this.unbindSortableColumnEvents();
           }
-          this.$el("thead").html(defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display));
+          this.$el("thead").html(defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable));
           var jh = "";
           if (this.editable) {
-            jh = editableTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
+            jh = editableTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
           } else {
-            jh = defaultTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
+            jh = defaultTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
           }
           if (this.editable) {
             this.unbindCellChangeEvents();
@@ -1728,7 +1737,7 @@
     }
   });
 
-  const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display) {
+  const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display, selectable) {
     const table = document.createElement("table"), thead = document.createElement("thead"), tbody = document.createElement("tbody");
     let n, t;
 
@@ -1743,23 +1752,31 @@
       n.appendChild(t);
       table.appendChild(n);
     }
-    directDOMTableHeader(thead, columns, lineNumbers, sortKey, display);
+    directDOMTableHeader(thead, columns, lineNumbers, sortKey, display, selectable);
     table.appendChild(thead);
     table.appendChild(tbody);
     if (data) {
       if (editable) {
-        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display);
+        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable);
       } else {
-        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display);
+        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable);
       }
     }
     el.appendChild(table);
   };
 
-  const directDOMTableHeader = function(el, columns, lineNumbers, sortKey, display) {
+  const directDOMTableHeader = function(el, columns, lineNumbers, sortKey, display, selectable) {
     if (columns && el) {
       const tr = document.createElement("tr");
       let n, t, key, obj;
+      if (selectable) {
+        n = document.createElement("th");
+        n.setAttribute(tableDataAttributes.name, "select");
+        t = document.createTextNode("\u274f");
+        n.appendChild(t);
+        tr.appendChild(n);
+      }
+
       if (lineNumbers) {
         n = document.createElement("th");
         n.setAttribute(tableDataAttributes.name, "lineNumber");
@@ -1794,13 +1811,25 @@
     }
   };
 
-  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
+  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable) {
     const l = data.length;
     let i, d, dkey, dobj, t, td, tn, tr, cobj;
 
     for (i = 0; i < l; i++) {
       d = data[i];
       tr = document.createElement("tr");
+
+      if (selectable) {
+        td = document.createElement("td");
+        td.setAttribute(tableDataAttributes.name, "select");
+        tn = document.createElement("input");
+        tn.type = "checkbox";
+        tn.name = String(i);
+        tn.value = String(i);
+        td.appendChild(tn);
+        td.classList.add("label", "select");
+        tr.appendChild(td);
+      }
 
       if (lineNumbers) {
         td = document.createElement("td");
@@ -1834,16 +1863,28 @@
     }
   };
 
-  const directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey, display) {
+  const directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable) {
     const l = data.length, ln = lineNumbers;
     let i, d, dkey, dobj, t, td, tn, tr, input, cobj;
     for (i = 0; i < l; i++) {
       d = data[i];
       tr = document.createElement("tr");
 
+      if (selectable) {
+        td = document.createElement("td");
+        td.setAttribute(tableDataAttributes.name, "select");
+        tn = document.createElement("input");
+        tn.type = "checkbox";
+        tn.name = String(i);
+        tn.value = String(i);
+        td.appendChild(tn);
+        td.classList.add("label", "select");
+        tr.appendChild(td);
+      }
+
       if (ln) {
         td = document.createElement("td");
-        tn = document.createTextNode("" + (i+1));
+        tn = document.createTextNode(String(i + 1));
         td.appendChild(tn);
         td.classList.add("label", "number");
         tr.appendChild(td);
@@ -2025,8 +2066,8 @@
     theme: "material",
 
     setTheme: function(theme) {
-      var el = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
-      var e = el.querySelector("table");
+      const el = ((typeof this.el === 'string') ? document.querySelector(this.el) : this.el),
+      e = el.querySelector("table");
       if (e) {
         e.setAttribute("class", theme);
       }
@@ -2040,13 +2081,13 @@
         _logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
         return this;
       }
-      var e;
+      let e;
       if (this.template) {
         // refresh the table body only
         this.showProgressBar(true);
         if (this.el) {
           e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
-          var tbody = e.querySelector("tbody"), thead = e.querySelector("thead");
+          let tbody = e.querySelector("tbody"), thead = e.querySelector("thead");
           if (e) {
             if (this.sortable) {
               this.unbindSortableColumnEvents();
@@ -2055,11 +2096,10 @@
               this.unbindCellChangeEvents();
             }
             if (this._columns && (Object.keys(this._columns).length > 0)){
-
               while (thead.hasChildNodes()) {
                 thead.removeChild(thead.lastChild);
               }
-              directDOMTableHeader(thead, this._columns, this.lineNumbers, this.sortKey, this.display);
+              directDOMTableHeader(thead, this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
             } else {
               while (thead.hasChildNodes()) {
                 thead.removeChild(thead.lastChild);
@@ -2071,9 +2111,9 @@
                 tbody.removeChild(tbody.lastChild);
               }
               if (this.editable) {
-                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
+                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
               } else {
-                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display);
+                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
               }
             } else {
               while (tbody.hasChildNodes()) {
@@ -2094,13 +2134,13 @@
           e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
           if (e) {
             // progress bar
-            var n = document.createElement("progress");
-            var t = document.createTextNode("Please wait.");
+            let n = document.createElement("progress"),
+            t = document.createTextNode("Please wait.");
             n.appendChild(t);
             e.appendChild(n);
 
             // the table
-            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display);
+            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable);
 
             // pagination control
             if (this.renderPaginationControl) {
@@ -2367,11 +2407,7 @@
         for (ii = 0; ii < this.rows; ii++) {
           obj = {};
           for (i = 0; i < l; i++) {
-            obj[keys[i]] = ""; /*this._makeUpData(
-              this.schema.properties[keys[i]].type,
-              this.schema.properties[keys[i]].format,
-              this.schema.properties[keys[i]].enum
-            );*/
+            obj[keys[i]] = "";
           }
           this.data.push(obj);
         }
