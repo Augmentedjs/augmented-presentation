@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.5.0
+* @version 1.5.1
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.5.0";
+  Augmented.Presentation.VERSION = "1.5.1";
 
   /**
   * A private logger for use in the framework only
@@ -520,6 +520,375 @@
     }
   });
 
+  const decoratorAttributeEnum = {
+    "click": "data-click",
+    "func": "data-function",
+    "style": "data-style",
+    "appendTemplate": "data-append-template",
+    "prependTemplate": "data-prepend-template",
+    // TODO: not implimented yet
+    "appendTemplateEach": "data-append-template-each",
+    "prependTemplateEach": "data-prepend-template-each"
+  };
+
+  /**
+  * Augmented.Presentation.DecoratorView<br/>
+  * An MVVM view designed around decorating the DOM with bindings.
+  * This concept is designed to decouple the view from the backend contract.
+  * Although this is achieved via views in general, the idea is:<br/>
+  * <blockquote>As a Javascript Developer, I'd like the ability to decorate HTML and control view rendering without the use of CSS selectors</blockquote>
+  * <em>Important to note: This view <strong>gives up</strong> it's template and events!
+  * This is because all events and templates are used on the DOM directly.</em><br/>
+  * To add custom events, use customEvents instead of 'events'<br/>
+  * supported annotations:<br/>
+  * <ul>
+  * <li>data-click</li>
+  * <li>data-function</li>
+  * <li>data-style</li>
+  * <li>data-append-template</li>
+  * <li>data-prepend-template</li>
+  * </ul>
+  * @constructor Augmented.Presentation.DecoratorView
+  * @memberof Augmented.Presentation
+  * @extends Augmented.Presentation.Colleague
+  */
+  Augmented.Presentation.DecoratorView = Augmented.Presentation.Colleague.extend({
+    /**
+    * Custom Events Property - merge into built-in events
+    * @property customEvents
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    customEvents: {},
+    /**
+    * Events Property - Do Not Override
+    * @property events
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    events: function(){
+      let _events = (this.customEvents) ? this.customEvents : {};
+      if (this.name) {
+        _events["change input[" + this.bindingAttribute() + "]"] = "_changed";
+        _events["change textarea[" + this.bindingAttribute() + "]"] = "_changed";
+        _events["change select[" + this.bindingAttribute() + "]"] = "_changed";
+        // regular elements with click bindings
+        _events["click *[" + this.bindingAttribute() + "][" + decoratorAttributeEnum.click + "]"] = "_click";
+      }
+      return _events;
+    },
+    _changed: function(event) {
+      var key = event.currentTarget.getAttribute(this.bindingAttribute());
+      var val = event.currentTarget.value;
+      if(event.currentTarget.type === "checkbox") {
+        val = (event.currentTarget.checked) ? true : false;
+      }
+      this.model.set(( (key) ? key : event.currentTarget.name ), val);
+      this._func(event);
+      _logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
+    },
+    _click: function(event) {
+      var func = event.currentTarget.getAttribute(decoratorAttributeEnum.click);
+      if (func && this[func]) {
+        this._executeFunctionByName(func, this, event);
+      }/* else {
+        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
+      }*/
+      this._func(event);
+    },
+    _func: function(event) {
+      var func = event.currentTarget.getAttribute(decoratorAttributeEnum.func);
+      if (func && this[func]) {
+        this._executeFunctionByName(func, this, event);
+      } /*else {
+        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
+      }*/
+    },
+    /**
+    * Initialize method - Do Not Override
+    * @memberof Augmented.Presentation.DecoratorView
+    * @method initialize
+    */
+    initialize: function(options) {
+      this.init(options);
+
+      if (!this.model) {
+        this.model = new Augmented.Model();
+      }
+    },
+    /**
+    * Remove method - Does not remove DOM elements only bindings.
+    * @method remove
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    remove: function() {
+      /* off to unbind the events */
+      this.undelegateEvents();
+      this.off();
+      this.stopListening();
+      return this;
+    },
+    /**
+    * _executeFunctionByName method - Private
+    * @method _executeFunctionByName
+    * @memberof Augmented.Presentation.DecoratorView
+    * @private
+    */
+    _executeFunctionByName: function(functionName, context /*, args */) {
+      var args = Array.prototype.slice.call(arguments, 2);
+      var namespaces = functionName.split(".");
+      var func = namespaces.pop();
+      for (var i = 0; i < namespaces.length; i++) {
+        context = context[namespaces[i]];
+      }
+      return context[func].apply(context, args);
+      //return Augmented.exec(arguments);
+    },
+    /**
+    * bindingAttribute method - Returns the binging data attribute name
+    * @method bindingAttribute
+    * @memberof Augmented.Presentation.DecoratorView
+    * @returns {string} Binding attribute name
+    */
+    bindingAttribute: function() {
+      return "data-" + this.name;
+    },
+    /**
+    * injectTemplate method - Injects a template at a mount point
+    * @method injectTemplate
+    * @param {string} template The template to inject
+    * @param {Element} mount The mount point as Document.Element or String
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    injectTemplate: function(template, mount) {
+      var m = mount;
+      if (!mount) {
+        mount = this.el;
+      }
+      if (Augmented.isString(mount)) {
+        mount = document.querySelector(mount);
+      }
+      if (Augmented.isString(template)) {
+        // html
+        var currentHTML = mount.innerHTML;
+        mount.innerHTML = currentHTML + template;
+      } else if ((template.nodeType && template.nodeName) &&
+      template.nodeType > 0 && !(template.nodeName === "template" || template.nodeName === "TEMPLATE")) {
+        // DOM
+        mount.appendChild(template);
+      } else if (template instanceof DocumentFragment  || template.nodeName === "template" || template.nodeName === "TEMPLATE") {
+        // Document Fragment
+        Augmented.Presentation.Dom.injectTemplate(template, mount);
+      }
+      this.delegateEvents();
+    },
+    /**
+    * removeTemplate method - Removes a template (children) at a mount point
+    * @method removeTemplate
+    * @param {Element} mount The mount point as Document.Element or String
+    * @param {boolean} onlyContent Only remove the content not the mount point
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    removeTemplate: function(mount, onlyContent) {
+      if (mount) {
+        while (mount.firstChild) {
+          mount.removeChild(mount.firstChild);
+        }
+        if (!onlyContent) {
+          var p = mount.parentNode;
+          if (p) {
+            p.removeChild(mount);
+          }
+        }
+        this.delegateEvents();
+      }
+    },
+    /**
+    * boundElement method - returns the bound element from identifier
+    * @method boundElement
+    * @param {string} id The identifier (not id attribute) of the element
+    * @memberof Augmented.Presentation.DecoratorView
+    * @example
+    * from HTML: <div data-myMountedView="something" id="anything"></div>
+    * from JavaScript: var el = this.boundElement("something");
+    */
+    boundElement: function(id) {
+      if (this.el && id) {
+        return this.el.querySelector("[" + this.bindingAttribute() + "=" + id + "]");
+      }
+      return null;
+    },
+    /**
+    * syncBoundElement - Syncs the data of a bound element by firing a change event
+    * @method syncBoundElement
+    * @param {string} id The identifier (not id attribute) of the element
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    syncBoundElement: function(id) {
+      if (id) {
+        var event = new UIEvent("change", {
+          "view": window,
+          "bubbles": true,
+          "cancelable": true
+        }), sel = this.boundElement(id);
+        if (sel) {
+          sel.dispatchEvent(event);
+        }
+      }
+    },
+    /**
+    * syncAllBoundElements - Syncs the data of all bound elements by firing a change events
+    * @method syncAllBoundElements
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    syncAllBoundElements: function() {
+      var elements = this.el.querySelectorAll("[" + this.bindingAttribute() + "]");
+      if (elements && elements.length > 0) {
+        var i = 0, l = elements.length, event = new UIEvent("change", {
+          "view": window,
+          "bubbles": true,
+          "cancelable": true
+        });
+        for (i = 0; i < l; i++) {
+          elements[i].dispatchEvent(event);
+        }
+      }
+    },
+    /**
+    * addClass - adds a class to a bount element
+    * @method addClass
+    * @param {string} id The identifier (not id attribute) of the element
+    * @param {string} cls The class to add
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    addClass: function(id, cls) {
+      var myEl = this.boundElement(id);
+      myEl.classList.add(cls);
+    },
+    /**
+    * removeClass - remove a class to a bount element
+    * @method removeClass
+    * @param {string} id The identifier (not id attribute) of the element
+    * @param {string} cls The class to remove
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    removeClass: function(id, cls) {
+      var myEl = this.boundElement(id);
+      myEl.classList.remove(cls);
+    },
+    /**
+    * bindModelChange method - binds the model changes to functions
+    * @method bindModelChange
+    * @param {func} func The function to call when changing (normally render)
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    bindModelChange: function(func) {
+      if (!this.model) {
+        this.model = new Augmented.Model();
+      }
+      this.model.on('change', func, this);
+    },
+    /**
+    * syncModelChange method - binds the model changes to a specified bound element
+    * @method syncModelChange
+    * @param {Element} element The element to bind as Document.Element or string
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    syncModelChange: function(element) {
+      if (!this.model) {
+        this.model = new Augmented.Model();
+      }
+      if (element) {
+        this.model.on('change:' + element, this._syncData.bind(this, element), this);
+      } else {
+        this.model.on('change', this._syncAllData.bind(this, element), this);
+      }
+    },
+    /**
+    * _syncData method - syncs the model changes to a specified bound element
+    * @method _syncData
+    * @param {Element} element The element to bind as Document.Element or string
+    * @memberof Augmented.Presentation.DecoratorView
+    * @private
+    */
+    _syncData: function(element) {
+      var e = this.boundElement(element);
+      if (e) {
+        var d = this.model.get(element),
+        renderStyle = e.getAttribute(decoratorAttributeEnum.style),
+        prependTemplate = e.getAttribute(decoratorAttributeEnum.prependTemplate),
+        appendTemplate = e.getAttribute(decoratorAttributeEnum.appendTemplate),
+        mount, template;
+
+        if (prependTemplate) {
+          mount = document.createElement("div");
+          template = Augmented.Presentation.Dom.selector("#" + prependTemplate);
+          e.appendChild(mount);
+          this.injectTemplate(template, mount);
+        }
+
+        if (renderStyle) {
+          var ee;
+          /*,
+          prependTemplateEach = e.getAttribute(decoratorAttributeEnum.prependTemplateEach),
+          appendTemplateEach = e.getAttribute(decoratorAttributeEnum.appendTemplateEach),
+          pEach = prependTemplateEach ? prependTemplateEach : null,
+          aEach = appendTemplateEach ? appendTemplateEach : null;*/
+
+          if (renderStyle === "list" || renderStyle === "unordered-list") {
+            ee = Augmented.Presentation.Widget.List(null, d, false);
+            Augmented.Presentation.Dom.empty(e);
+            e.appendChild(ee);
+          } else if (renderStyle === "ordered-list") {
+            ee = Augmented.Presentation.Widget.List(null, d, true);
+            Augmented.Presentation.Dom.empty(e);
+            e.appendChild(ee);
+          } else if (renderStyle === "description-list") {
+            ee = Augmented.Presentation.Widget.DescriptionList(null, d);
+            Augmented.Presentation.Dom.empty(e);
+            e.appendChild(ee);
+          }
+        } else {
+          Augmented.Presentation.Dom.setValue(e, ((d) ? d : ""));
+        }
+
+        if (appendTemplate) {
+          mount = document.createElement("div");
+          template = Augmented.Presentation.Dom.selector("#" + appendTemplate);
+          e.appendChild(mount);
+
+          this.injectTemplate(template, mount);
+        }
+      }
+    },
+    _syncAllData: function() {
+      // get all model properties
+      var attr = this.model.attributes;
+      if (attr) {
+        var i = 0, keys = Object.keys(attr), l = keys.length;
+        for (i = 0; i < l; i++) {
+          this._syncData(keys[i]);
+        }
+      }
+    },
+    /**
+    * unbindModelChange method - unbinds the model changes to elements
+    * @method unbindModelChange
+    * @param {func} func The function to call when changing (normally render)
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    unbindModelChange: function(func) {
+      this.model.unBind('change', func, this);
+    },
+    /**
+    * unbindModelSync method - unbinds the model changes to a specified bound element
+    * @method unbindModelSync
+    * @param {Element} element The element to bind as Document.Element or string
+    * @memberof Augmented.Presentation.DecoratorView
+    */
+    unbindModelSync: function(element) {
+      this.model.unBind('change:' + element, this._syncData, this);
+    }
+  });
+
   /**
   * Presentation Application - extension of Augmented.Application</br/>
   * Add registration of mediators to the application, breadcrumbs, and stylesheet registration
@@ -527,7 +896,7 @@
   * @memberof Augmented.Presentation
   * @extends Augmented.Application
   */
-  var app = Augmented.Presentation.Application = function() {
+  const app = Augmented.Presentation.Application = function() {
     Augmented.Application.apply(this, arguments);
     this.Mediators = [];
     this.Stylesheets = [];
@@ -858,10 +1227,10 @@
     * Augmented.Presentation.AutomaticTable<br/>
     * Creates a table automatically via a schema for defintion and a uri/json for data
     * @constructor Augmented.Presentation.AutomaticTable
-    * @extends Augmented.Presentation.Colleague
+    * @extends Augmented.Presentation.DecoratorView
     * @memberof Augmented.Presentation
     */
-  const AbstractAutoTable = Augmented.Presentation.Colleague.extend({
+  const AbstractAutoTable = Augmented.Presentation.DecoratorView.extend({
     /**
     * The selectable property - enable selecting a row in table
     * @property {boolean} selectable enable/disable selecting a row
@@ -1124,6 +1493,10 @@
     initialize: function(options) {
       this.init();
 
+      if (!this.model) {
+        this.model = new Augmented.Model();
+      }
+
       if (this.collection) {
         this.collection.reset();
       }
@@ -1146,7 +1519,7 @@
             this.schema = options.schema;
           } else {
             // is a URI?
-            var parsedSchema = null;
+            let parsedSchema = null;
             try {
               parsedSchema = JSON.parse(options.schema);
               if (parsedSchema && Augmented.isObject(parsedSchema)) {
@@ -1158,7 +1531,6 @@
             if (!this.schema) {
               this.retrieveSchema(options.schema);
               this.isInitalized = false;
-              //return false;
             }
           }
         }
@@ -1209,7 +1581,7 @@
         this.collection.crossOrigin = this.crossOrigin;
       }
       if (this.schema) {
-        if (this.schema.title) {
+        if (this.schema.title && this.name === "") {
           this.name = this.schema.title;
         }
         if (this.schema.description) {
@@ -1229,9 +1601,16 @@
 
       return this.isInitalized;
     },
+
+    /**
+    * Fetch the schema from the source URI
+    * @method retrieveSchema
+    * @param uri {string} the URI to fetch from
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
     retrieveSchema: function(uri){
-      var that = this;
-      var schema = null;
+      const that = this;
+      let schema = null;
       Augmented.ajax({
         url: uri,
         contentType: 'application/json',
@@ -1242,7 +1621,7 @@
           } else {
             schema = data;
           }
-          var options = { "schema": schema };
+          const options = { "schema": schema };
           that.initialize(options);
         },
         failure: function(data, status) {
@@ -1256,18 +1635,19 @@
     * @memberof Augmented.Presentation.AutomaticTable
     */
     fetch: function() {
+      // TODO: should be a promise
       this.showProgressBar(true);
 
-      var view = this;
+      const view = this;
 
-      var successHandler = function() {
+      const successHandler = function() {
         view.showProgressBar(false);
         view.sortKey = null;
         view.populate(view.collection.toJSON());
         view.refresh();
       };
 
-      var failHandler = function() {
+      const failHandler = function() {
         view.showProgressBar(false);
         view.showMessage("AutomaticTable fetch failed!");
       };
@@ -1293,13 +1673,13 @@
       if (this.editable) {
         this.showProgressBar(true);
 
-        var view = this;
+        const view = this;
 
-        var successHandler = function() {
+        const successHandler = function() {
           view.showProgressBar(false);
         };
 
-        var failHandler = function() {
+        const failHandler = function() {
           view.showProgressBar(false);
           view.showMessage("AutomaticTable save failed!");
           _logger.warn("AUGMENTED: AutomaticTable save failed!");
@@ -1446,9 +1826,8 @@
     * @private
     */
     saveCell: function(event) {
-      var key = event.target;
-      var model = this.collection.at(parseInt(key.getAttribute(tableDataAttributes.index)));
-      var value = key.value;
+      const key = event.target, model = this.collection.at(parseInt(key.getAttribute(tableDataAttributes.index)));
+      let value = key.value;
       if ((key.getAttribute("type")) === "number") {
         value = parseInt(key.value);
       }
@@ -1741,6 +2120,9 @@
     const table = document.createElement("table"), thead = document.createElement("thead"), tbody = document.createElement("tbody");
     let n, t;
 
+    // Binding
+    table.setAttribute("data-" + name, name);
+
     table.setAttribute(tableDataAttributes.name, name);
     table.setAttribute(tableDataAttributes.description, desc);
     if (name) {
@@ -1811,7 +2193,7 @@
     }
   };
 
-  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable) {
+  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable, name) {
     const l = data.length;
     let i, d, dkey, dobj, t, td, tn, tr, cobj;
 
@@ -1826,6 +2208,9 @@
         tn.type = "checkbox";
         tn.name = String(i);
         tn.value = String(i);
+        // Binding
+        tn.setAttribute("data-" + name, "row-" + i);
+
         td.appendChild(tn);
         td.classList.add("label", "select");
         tr.appendChild(td);
@@ -1863,7 +2248,7 @@
     }
   };
 
-  const directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable) {
+  const directDOMEditableTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable, name) {
     const l = data.length, ln = lineNumbers;
     let i, d, dkey, dobj, t, td, tn, tr, input, cobj;
     for (i = 0; i < l; i++) {
@@ -1991,6 +2376,9 @@
           input.setAttribute(tableDataAttributes.name, dkey);
           input.setAttribute(tableDataAttributes.index, i);
 
+          // Binding
+          input.setAttribute("data-" + name, name);
+
           td.appendChild(input);
 
           tr.appendChild(td);
@@ -2111,9 +2499,9 @@
                 tbody.removeChild(tbody.lastChild);
               }
               if (this.editable) {
-                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
+                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name);
               } else {
-                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
+                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name);
               }
             } else {
               while (tbody.hasChildNodes()) {
@@ -2140,7 +2528,7 @@
             e.appendChild(n);
 
             // the table
-            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable);
+            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable, this.name);
 
             // pagination control
             if (this.renderPaginationControl) {
@@ -2177,6 +2565,18 @@
       this.setTheme(this.theme);
 
       return this;
+    },
+    getSelected: function() {
+      const keys = Object.keys(this.attributes), l = keys.length, selected = [];
+      let i = 0;
+      for (i = 0; i< l; i++) {
+        const value = t;
+
+        if (keys[i].includes("row-") && his.attributes[keys[i]] === true) {
+          selected.push(keys[i]);
+        }
+      }
+      return selected;
     }
   });
 
@@ -2876,374 +3276,7 @@
     }
   };
 
-  const decoratorAttributeEnum = {
-    "click": "data-click",
-    "func": "data-function",
-    "style": "data-style",
-    "appendTemplate": "data-append-template",
-    "prependTemplate": "data-prepend-template",
-    // TODO: not implimented yet
-    "appendTemplateEach": "data-append-template-each",
-    "prependTemplateEach": "data-prepend-template-each"
-  };
 
-  /**
-  * Augmented.Presentation.DecoratorView<br/>
-  * An MVVM view designed around decorating the DOM with bindings.
-  * This concept is designed to decouple the view from the backend contract.
-  * Although this is achieved via views in general, the idea is:<br/>
-  * <blockquote>As a Javascript Developer, I'd like the ability to decorate HTML and control view rendering without the use of CSS selectors</blockquote>
-  * <em>Important to note: This view <strong>gives up</strong> it's template and events!
-  * This is because all events and templates are used on the DOM directly.</em><br/>
-  * To add custom events, use customEvents instead of 'events'<br/>
-  * supported annotations:<br/>
-  * <ul>
-  * <li>data-click</li>
-  * <li>data-function</li>
-  * <li>data-style</li>
-  * <li>data-append-template</li>
-  * <li>data-prepend-template</li>
-  * </ul>
-  * @constructor Augmented.Presentation.DecoratorView
-  * @memberof Augmented.Presentation
-  * @extends Augmented.Presentation.Colleague
-  */
-  Augmented.Presentation.DecoratorView = Augmented.Presentation.Colleague.extend({
-    /**
-    * Custom Events Property - merge into built-in events
-    * @property customEvents
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    customEvents: {},
-    /**
-    * Events Property - Do Not Override
-    * @property events
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    events: function(){
-      var _events = (this.customEvents) ? this.customEvents : {};
-      if (this.name) {
-        _events["change input[" + this.bindingAttribute() + "]"] = "_changed";
-        _events["change textarea[" + this.bindingAttribute() + "]"] = "_changed";
-        _events["change select[" + this.bindingAttribute() + "]"] = "_changed";
-        // regular elements with click bindings
-        _events["click *[" + this.bindingAttribute() + "][" + decoratorAttributeEnum.click + "]"] = "_click";
-      }
-      return _events;
-    },
-    _changed: function(event) {
-      var key = event.currentTarget.getAttribute(this.bindingAttribute());
-      var val = event.currentTarget.value;
-      if(event.currentTarget.type === "checkbox") {
-        val = (event.currentTarget.checked) ? true : false;
-      }
-      this.model.set(( (key) ? key : event.currentTarget.name ), val);
-      this._func(event);
-      _logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
-    },
-    _click: function(event) {
-      var func = event.currentTarget.getAttribute(decoratorAttributeEnum.click);
-      if (func && this[func]) {
-        this._executeFunctionByName(func, this, event);
-      }/* else {
-        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
-      }*/
-      this._func(event);
-    },
-    _func: function(event) {
-      var func = event.currentTarget.getAttribute(decoratorAttributeEnum.func);
-      if (func && this[func]) {
-        this._executeFunctionByName(func, this, event);
-      } /*else {
-        _logger.debug("AUGMENTED: DecoratorView No function bound or no function exists! " + func);
-      }*/
-    },
-    /**
-    * Initialize method - Do Not Override
-    * @memberof Augmented.Presentation.DecoratorView
-    * @method initialize
-    */
-    initialize: function(options) {
-      this.init(options);
-
-      if (!this.model) {
-        this.model = new Augmented.Model();
-      }
-    },
-    /**
-    * Remove method - Does not remove DOM elements only bindings.
-    * @method remove
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    remove: function() {
-      /* off to unbind the events */
-      this.undelegateEvents();
-      this.off();
-      this.stopListening();
-      return this;
-    },
-    /**
-    * _executeFunctionByName method - Private
-    * @method _executeFunctionByName
-    * @memberof Augmented.Presentation.DecoratorView
-    * @private
-    */
-    _executeFunctionByName: function(functionName, context /*, args */) {
-      var args = Array.prototype.slice.call(arguments, 2);
-      var namespaces = functionName.split(".");
-      var func = namespaces.pop();
-      for (var i = 0; i < namespaces.length; i++) {
-        context = context[namespaces[i]];
-      }
-      return context[func].apply(context, args);
-      //return Augmented.exec(arguments);
-    },
-    /**
-    * bindingAttribute method - Returns the binging data attribute name
-    * @method bindingAttribute
-    * @memberof Augmented.Presentation.DecoratorView
-    * @returns {string} Binding attribute name
-    */
-    bindingAttribute: function() {
-      return "data-" + this.name;
-    },
-    /**
-    * injectTemplate method - Injects a template at a mount point
-    * @method injectTemplate
-    * @param {string} template The template to inject
-    * @param {Element} mount The mount point as Document.Element or String
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    injectTemplate: function(template, mount) {
-      var m = mount;
-      if (!mount) {
-        mount = this.el;
-      }
-      if (Augmented.isString(mount)) {
-        mount = document.querySelector(mount);
-      }
-      if (Augmented.isString(template)) {
-        // html
-        var currentHTML = mount.innerHTML;
-        mount.innerHTML = currentHTML + template;
-      } else if ((template.nodeType && template.nodeName) &&
-      template.nodeType > 0 && !(template.nodeName === "template" || template.nodeName === "TEMPLATE")) {
-        // DOM
-        mount.appendChild(template);
-      } else if (template instanceof DocumentFragment  || template.nodeName === "template" || template.nodeName === "TEMPLATE") {
-        // Document Fragment
-        Augmented.Presentation.Dom.injectTemplate(template, mount);
-      }
-      this.delegateEvents();
-    },
-    /**
-    * removeTemplate method - Removes a template (children) at a mount point
-    * @method removeTemplate
-    * @param {Element} mount The mount point as Document.Element or String
-    * @param {boolean} onlyContent Only remove the content not the mount point
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    removeTemplate: function(mount, onlyContent) {
-      if (mount) {
-        while (mount.firstChild) {
-          mount.removeChild(mount.firstChild);
-        }
-        if (!onlyContent) {
-          var p = mount.parentNode;
-          if (p) {
-            p.removeChild(mount);
-          }
-        }
-        this.delegateEvents();
-      }
-    },
-    /**
-    * boundElement method - returns the bound element from identifier
-    * @method boundElement
-    * @param {string} id The identifier (not id attribute) of the element
-    * @memberof Augmented.Presentation.DecoratorView
-    * @example
-    * from HTML: <div data-myMountedView="something" id="anything"></div>
-    * from JavaScript: var el = this.boundElement("something");
-    */
-    boundElement: function(id) {
-      if (this.el && id) {
-        return this.el.querySelector("[" + this.bindingAttribute() + "=" + id + "]");
-      }
-      return null;
-    },
-    /**
-    * syncBoundElement - Syncs the data of a bound element by firing a change event
-    * @method syncBoundElement
-    * @param {string} id The identifier (not id attribute) of the element
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    syncBoundElement: function(id) {
-      if (id) {
-        var event = new UIEvent("change", {
-          "view": window,
-          "bubbles": true,
-          "cancelable": true
-        }), sel = this.boundElement(id);
-        if (sel) {
-          sel.dispatchEvent(event);
-        }
-      }
-    },
-    /**
-    * syncAllBoundElements - Syncs the data of all bound elements by firing a change events
-    * @method syncAllBoundElements
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    syncAllBoundElements: function() {
-      var elements = this.el.querySelectorAll("[" + this.bindingAttribute() + "]");
-      if (elements && elements.length > 0) {
-        var i = 0, l = elements.length, event = new UIEvent("change", {
-          "view": window,
-          "bubbles": true,
-          "cancelable": true
-        });
-        for (i = 0; i < l; i++) {
-          elements[i].dispatchEvent(event);
-        }
-      }
-    },
-    /**
-    * addClass - adds a class to a bount element
-    * @method addClass
-    * @param {string} id The identifier (not id attribute) of the element
-    * @param {string} cls The class to add
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    addClass: function(id, cls) {
-      var myEl = this.boundElement(id);
-      myEl.classList.add(cls);
-    },
-    /**
-    * removeClass - remove a class to a bount element
-    * @method removeClass
-    * @param {string} id The identifier (not id attribute) of the element
-    * @param {string} cls The class to remove
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    removeClass: function(id, cls) {
-      var myEl = this.boundElement(id);
-      myEl.classList.remove(cls);
-    },
-    /**
-    * bindModelChange method - binds the model changes to functions
-    * @method bindModelChange
-    * @param {func} func The function to call when changing (normally render)
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    bindModelChange: function(func) {
-      if (!this.model) {
-        this.model = new Augmented.Model();
-      }
-      this.model.on('change', func, this);
-    },
-    /**
-    * syncModelChange method - binds the model changes to a specified bound element
-    * @method syncModelChange
-    * @param {Element} element The element to bind as Document.Element or string
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    syncModelChange: function(element) {
-      if (!this.model) {
-        this.model = new Augmented.Model();
-      }
-      if (element) {
-        this.model.on('change:' + element, this._syncData.bind(this, element), this);
-      } else {
-        this.model.on('change', this._syncAllData.bind(this, element), this);
-      }
-    },
-    /**
-    * _syncData method - syncs the model changes to a specified bound element
-    * @method _syncData
-    * @param {Element} element The element to bind as Document.Element or string
-    * @memberof Augmented.Presentation.DecoratorView
-    * @private
-    */
-    _syncData: function(element) {
-      var e = this.boundElement(element);
-      if (e) {
-        var d = this.model.get(element),
-        renderStyle = e.getAttribute(decoratorAttributeEnum.style),
-        prependTemplate = e.getAttribute(decoratorAttributeEnum.prependTemplate),
-        appendTemplate = e.getAttribute(decoratorAttributeEnum.appendTemplate),
-        mount, template;
-
-        if (prependTemplate) {
-          mount = document.createElement("div");
-          template = Augmented.Presentation.Dom.selector("#" + prependTemplate);
-          e.appendChild(mount);
-          this.injectTemplate(template, mount);
-        }
-
-        if (renderStyle) {
-          var ee;
-          /*,
-          prependTemplateEach = e.getAttribute(decoratorAttributeEnum.prependTemplateEach),
-          appendTemplateEach = e.getAttribute(decoratorAttributeEnum.appendTemplateEach),
-          pEach = prependTemplateEach ? prependTemplateEach : null,
-          aEach = appendTemplateEach ? appendTemplateEach : null;*/
-
-          if (renderStyle === "list" || renderStyle === "unordered-list") {
-            ee = Augmented.Presentation.Widget.List(null, d, false);
-            Augmented.Presentation.Dom.empty(e);
-            e.appendChild(ee);
-          } else if (renderStyle === "ordered-list") {
-            ee = Augmented.Presentation.Widget.List(null, d, true);
-            Augmented.Presentation.Dom.empty(e);
-            e.appendChild(ee);
-          } else if (renderStyle === "description-list") {
-            ee = Augmented.Presentation.Widget.DescriptionList(null, d);
-            Augmented.Presentation.Dom.empty(e);
-            e.appendChild(ee);
-          }
-        } else {
-          Augmented.Presentation.Dom.setValue(e, ((d) ? d : ""));
-        }
-
-        if (appendTemplate) {
-          mount = document.createElement("div");
-          template = Augmented.Presentation.Dom.selector("#" + appendTemplate);
-          e.appendChild(mount);
-
-          this.injectTemplate(template, mount);
-        }
-      }
-    },
-    _syncAllData: function() {
-      // get all model properties
-      var attr = this.model.attributes;
-      if (attr) {
-        var i = 0, keys = Object.keys(attr), l = keys.length;
-        for (i = 0; i < l; i++) {
-          this._syncData(keys[i]);
-        }
-      }
-    },
-    /**
-    * unbindModelChange method - unbinds the model changes to elements
-    * @method unbindModelChange
-    * @param {func} func The function to call when changing (normally render)
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    unbindModelChange: function(func) {
-      this.model.unBind('change', func, this);
-    },
-    /**
-    * unbindModelSync method - unbinds the model changes to a specified bound element
-    * @method unbindModelSync
-    * @param {Element} element The element to bind as Document.Element or string
-    * @memberof Augmented.Presentation.DecoratorView
-    */
-    unbindModelSync: function(element) {
-      this.model.unBind('change:' + element, this._syncData, this);
-    }
-  });
 
   /**
   * A controller to handle a group of views.  The api is handled simular to views for use in a router.
