@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.5.1
+* @version 1.5.2
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.5.1";
+  Augmented.Presentation.VERSION = "1.5.2";
 
   /**
   * A private logger for use in the framework only
@@ -2567,13 +2567,22 @@
       return this;
     },
     getSelected: function() {
-      const keys = Object.keys(this.attributes), l = keys.length, selected = [];
+      const keys = Object.keys(this.model.attributes), l = keys.length, selected = [];
       let i = 0;
-      for (i = 0; i< l; i++) {
-        const value = t;
-
-        if (keys[i].includes("row-") && his.attributes[keys[i]] === true) {
-          selected.push(keys[i]);
+      for (i = 0; i < l; i++) {
+        if (keys[i].includes("row-") && this.model.attributes[keys[i]] === true) {
+          const n = Number(keys[i].substring(4));
+          selected.push(this.collection.at(n));
+        }
+      }
+      return selected;
+    },
+    getSelectedIndex: function() {
+      const keys = Object.keys(this.model.attributes), l = keys.length, selected = [];
+      let i = 0;
+      for (i = 0; i < l; i++) {
+        if (keys[i].includes("row-") && this.model.attributes[keys[i]] === true) {
+          selected.push(Number(keys[i].substring(4)));
         }
       }
       return selected;
@@ -4019,7 +4028,7 @@
       * @property {array} menuItems The initialized property
       * @memberof Augmented.Presentation.Component.AbstractToolbar
       */
-    menuItems: [],
+    menuItems: null,
 
     /**
       * Initialize the view
@@ -4029,7 +4038,9 @@
       * @returns {boolean} Returns true on success of initalization
       */
     initialize: function(options) {
-      this.menuItems = [];
+      if (!this.menuItems) {
+        this.menuItems = [];
+      }
       this.init();
 
       if (this.model) {
