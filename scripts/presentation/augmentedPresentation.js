@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.5.2
+* @version 1.5.3
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.5.2";
+  Augmented.Presentation.VERSION = "1.5.3";
 
   /**
   * A private logger for use in the framework only
@@ -2113,6 +2113,61 @@
       Augmented.Presentation.Dom.empty(this.el);
 
       return this;
+    },
+    /**
+    * Gets the selected models
+    * @method getSelected
+    * @memberof Augmented.Presentation.AutomaticTable
+    * @returns {Array} Returns array of selected rows (models)
+    */
+    getSelected: function() {
+      const keys = Object.keys(this.model.attributes), l = keys.length, selected = [];
+      let i = 0;
+      for (i = 0; i < l; i++) {
+        if (keys[i].includes("row-") && this.model.attributes[keys[i]] === true) {
+          const n = Number(keys[i].substring(4));
+          selected.push(this.collection.at(n));
+        }
+      }
+      return selected;
+    },
+    /**
+    * Gets the selected row indexes
+    * @method getSelectedIndex
+    * @memberof Augmented.Presentation.AutomaticTable
+    * @returns {Array} Returns array of selected rows (indexes)
+    */
+    getSelectedIndex: function() {
+      const keys = Object.keys(this.model.attributes), l = keys.length, selected = [];
+      let i = 0;
+      for (i = 0; i < l; i++) {
+        if (keys[i].includes("row-") && this.model.attributes[keys[i]] === true) {
+          selected.push(Number(keys[i].substring(4)));
+        }
+      }
+      return selected;
+    },
+    /**
+    * Removes the rows by index (iterates, encurage using removeRows instead)
+    * @method removeRowsByIndex
+    * @param {Array} rows Indexes of the rows to remove
+    * @memberof Augmented.Presentation.AutomaticTable\
+    */
+    removeRowsByIndex: function(rows) {
+      const keys = Object.keys(this.model.attributes), l = keys.length, selected = rows;
+      let i = 0;
+      for (i = 0; i < l; i++) {
+        this.collection.remove(this.collection.at(i));
+      }
+    },
+    /**
+    * Removes the models
+    * @method removeRows
+    * @param {Array} rows Models of the rows to remove
+    * @memberof Augmented.Presentation.AutomaticTable\
+    */
+    removeRows: function(rows) {
+      this.collection.remove(rows);
     }
   });
 
@@ -2565,27 +2620,6 @@
       this.setTheme(this.theme);
 
       return this;
-    },
-    getSelected: function() {
-      const keys = Object.keys(this.model.attributes), l = keys.length, selected = [];
-      let i = 0;
-      for (i = 0; i < l; i++) {
-        if (keys[i].includes("row-") && this.model.attributes[keys[i]] === true) {
-          const n = Number(keys[i].substring(4));
-          selected.push(this.collection.at(n));
-        }
-      }
-      return selected;
-    },
-    getSelectedIndex: function() {
-      const keys = Object.keys(this.model.attributes), l = keys.length, selected = [];
-      let i = 0;
-      for (i = 0; i < l; i++) {
-        if (keys[i].includes("row-") && this.model.attributes[keys[i]] === true) {
-          selected.push(Number(keys[i].substring(4)));
-        }
-      }
-      return selected;
     }
   });
 
