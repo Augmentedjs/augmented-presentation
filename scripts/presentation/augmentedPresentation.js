@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.5.4
+* @version 1.5.5
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.5.4";
+  Augmented.Presentation.VERSION = "1.5.5";
 
   /**
   * A private logger for use in the framework only
@@ -2153,26 +2153,19 @@
       return selected;
     },
     /**
-    * Removes the rows by index (iterates, encurage using removeRows instead)
-    * @method removeRowsByIndex
-    * @param {Array} rows Indexes of the rows to remove
-    * @memberof Augmented.Presentation.AutomaticTable\
-    */
-    removeRowsByIndex: function(rows) {
-      const keys = Object.keys(this.model.attributes), l = keys.length, selected = rows;
-      let i = 0;
-      for (i = 0; i < l; i++) {
-        this.collection.remove(this.collection.at(i));
-      }
-    },
-    /**
     * Removes the models
     * @method removeRows
     * @param {Array} rows Models of the rows to remove
-    * @memberof Augmented.Presentation.AutomaticTable\
+    * @memberof Augmented.Presentation.AutomaticTable
     */
     removeRows: function(rows) {
-      this.collection.remove(rows);
+      const l = rows.length;
+      let i = 0;
+      for (i = 0; i < l; i++) {
+        const model = rows[i];
+        model.url = this.uri + "/" + model.id;
+        model.destroy();
+      }
     }
   });
 
