@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.5.5
+* @version 1.5.6
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.5.5";
+  Augmented.Presentation.VERSION = "1.5.6";
 
   /**
   * A private logger for use in the framework only
@@ -2163,7 +2163,9 @@
       let i = 0;
       for (i = 0; i < l; i++) {
         const model = rows[i];
-        model.url = this.uri + "/" + model.id;
+        if (!model.url) {
+          model.url = this.uri + "/" + model.id;
+        }
         model.destroy();
       }
     }
