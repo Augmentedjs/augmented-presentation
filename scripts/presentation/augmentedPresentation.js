@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.5.3
+* @version 1.5.4
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.5.3";
+  Augmented.Presentation.VERSION = "1.5.4";
 
   /**
   * A private logger for use in the framework only
@@ -1667,22 +1667,26 @@
     * Save the data to the source
     * This only functions if the table is editable
     * @method save
+    * @param {boolean} override Save even if not editable
+    * @returns Returns true if succesfull
     * @memberof Augmented.Presentation.AutomaticTable
     */
-    save: function() {
-      if (this.editable) {
+    save: function(override) {
+      if (this.editable || override) {
         this.showProgressBar(true);
 
         const view = this;
 
         const successHandler = function() {
           view.showProgressBar(false);
+          return true;
         };
 
         const failHandler = function() {
           view.showProgressBar(false);
           view.showMessage("AutomaticTable save failed!");
           _logger.warn("AUGMENTED: AutomaticTable save failed!");
+          return false;
         };
 
         this.collection.save({
@@ -1695,6 +1699,7 @@
           }
         });
       }
+      return false;
     },
 
     /**
