@@ -1,6 +1,6 @@
 {
   "name": "augmentedjs-presentation",
-  "version": "1.5.8",
+  "version": "1.5.9",
   "description": "The Augmented.js Framework Presentation Module.",
   "main": "scripts/presentation/augmentedPresentation.js",
   "scripts": {

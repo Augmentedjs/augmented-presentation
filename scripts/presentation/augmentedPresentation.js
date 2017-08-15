@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.5.8
+* @version 1.5.9
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.5.8";
+  Augmented.Presentation.VERSION = "1.5.9";
 
   /**
   * A private logger for use in the framework only
@@ -1729,10 +1729,11 @@
     * Refresh the table (Same as render)
     * @method refresh Refresh the table
     * @memberof Augmented.Presentation.AutomaticTable
+    * @returns {object} Returns the view context ('this')
     * @see Augmented.Presentation.AutomaticTable.render
     */
     refresh: function() {
-      this.render();
+      return this.render();
     },
     /**
     * Render the table
