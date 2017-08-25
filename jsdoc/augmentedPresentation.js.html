@@ -99,7 +99,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.5.5
+* @version 1.6.0
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -123,7 +123,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.5.5";
+  Augmented.Presentation.VERSION = "1.6.0";
 
   /**
   * A private logger for use in the framework only
@@ -227,7 +227,7 @@
   * @memberof Augmented.Presentation
   * @extends Augmented.Presentation.Colleague
   */
-  var abstractMediator = Augmented.Presentation.Mediator = Augmented.Presentation.Colleague.extend({
+  const abstractMediator = Augmented.Presentation.Mediator = Augmented.Presentation.Colleague.extend({
     /**
     * Default Channel Property
     * @property {string} defaultChannel The default channel for the view
@@ -1243,63 +1243,14 @@
     return html;
   };
 
-  const editableTableBody = function(data, columns, lineNumbers, sortKey, display) {
-    var i, d, dkey, dobj, html = "", l = data.length, t;
-    for (i = 0; i &lt; l; i++) {
-      d = data[i];
-      html = html + "&lt;tr>";
-      if (lineNumbers) {
-        html = html + "&lt;td class=\"label number\">" + (i+1) + "&lt;/td>";
-      }
-      for (dkey in d) {
-        if (d.hasOwnProperty(dkey)) {
-          dobj = d[dkey];
-          t = (typeof dobj);
-          html = html + "&lt;td " + tableDataAttributes.type + "=\"" + t + "\" class=\"" + t;
-          if (sortKey === dkey) {
-            html = html + " " + tableDataAttributes.sortClass;
-          }
-          html = html + "\">";
-          var myType = "text";
-          if (t === "boolean") {
-            myType = "checkbox";
-          } else if (t === "number") {
-            myType = "number";
-          } else if (t === "array") {
-            myType = "radio";
-          }
-
-          html = html + "&lt;input type=\"" + myType + "\" " +
-          (dobj === true ? "checked=\"checked\"" : "") +
-          " value=\"" + dobj + "\"" +
-          tableDataAttributes.name + "=\"" + dkey + "\" " +
-          tableDataAttributes.index + "=\"" + i + "\"/>&lt;/td>";
-        }
-      }
-      html = html + "&lt;/tr>";
-    }
-    return html;
-  };
-
-  /*
-  * &lt;&lt; First | &lt; Previous | # | Next > | Last >>
-  */
-  const defaultPaginationControl = function(currentPage, totalPages) {
-    return "&lt;div class=\"paginationControl\">" +
-    "&lt;span class=\"first\">&lt;&lt; First&lt;/span>" +
-    "&lt;span class=\"previous\">&lt; Previous&lt;/span>" +
-    "&lt;span class=\"current\">" + currentPage + " of " + totalPages + "&lt;/span>" +
-    "&lt;span class=\"next\">Next >&lt;/span>" +
-    "&lt;span class=\"last\">Last >>&lt;/span>&lt;/div>";
-  };
-
   const formatValidationMessages = function(messages) {
-    var html = "";
+    let html = "";
     if (messages &amp;&amp; messages.length > 0) {
       html = html + "&lt;ul class=\"errors\">";
-      var i = 0, l = messages.length;
+      const l = messages.length;
+      let i = 0, ii = 0;
       for (i = 0; i &lt; l; i++) {
-        var ii = 0, ll = messages[i].errors.length;
+        const ll = messages[i].errors.length;
         for (ii = 0; ii &lt; ll; ii++) {
           html = html + "&lt;li>" + messages[i].errors[ii] + "&lt;/li>";
         }
@@ -1309,14 +1260,28 @@
     return html;
   };
 
-  /**
-    * Augmented.Presentation.AutomaticTable&lt;br/>
-    * Creates a table automatically via a schema for defintion and a uri/json for data
-    * @constructor Augmented.Presentation.AutomaticTable
-    * @extends Augmented.Presentation.DecoratorView
-    * @memberof Augmented.Presentation
-    */
   const AbstractAutoTable = Augmented.Presentation.DecoratorView.extend({
+    /**
+    * The linkable property - enable links in a row (only works in non-editable tables)
+    * @property {boolean} linkable enable/disable linking a row
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+    linkable: false,
+    /**
+    * The links property - setup linking structure for links in a row
+    * @property {boolean} linkable enable/disable linking a row
+    * @example &lt;p>links: {&lt;/br>
+    * wholeRow: false, &lt;em>// link whole row vs column&lt;/em>&lt;/br>
+    * column: "name", &lt;/em>// name of column&lt;/em>&lt;/br>
+  	*	link: "rowLink" &lt;em>// callback&lt;/em>&lt;/br>
+  	* }&lt;/p>
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+  	links: {
+      wholeRow: true,
+      column: "",
+  		link: "rowLink"
+  	},
     /**
     * The selectable property - enable selecting a row in table
     * @property {boolean} selectable enable/disable selecting a row
@@ -1815,10 +1780,11 @@
     * Refresh the table (Same as render)
     * @method refresh Refresh the table
     * @memberof Augmented.Presentation.AutomaticTable
+    * @returns {object} Returns the view context ('this')
     * @see Augmented.Presentation.AutomaticTable.render
     */
     refresh: function() {
-      this.render();
+      return this.render();
     },
     /**
     * Render the table
@@ -1827,88 +1793,6 @@
     * @returns {object} Returns the view context ('this')
     */
     render: function() {
-      var e;
-      if (this.template) {
-        // refresh the table body only
-        this.showProgressBar(true);
-        if (this.el) {
-          e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
-          var tbody = e.querySelector("tbody"), thead = e.querySelector("thead"), h;
-          if (e) {
-            if (this._columns &amp;&amp; (Object.keys(this._columns).length > 0)){
-              if (this.sortable) {
-                this.unbindSortableColumnEvents();
-              }
-              h = defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
-            } else {
-              h = "";
-            }
-            thead.innerHTML = h;
-
-            if (this.collection &amp;&amp; (this.collection.length > 0)){
-              if (this.editable) {
-                h = editableTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display, this.selectable);
-              } else {
-                h = defaultTableBody(this.collection.toJSON(), this.lineNumbers, this.sortKey, this.display, this.selectable);
-              }
-            } else {
-              h = "";
-            }
-            if (this.editable) {
-              this.unbindCellChangeEvents();
-            }
-            tbody.innerHTML = h;
-
-          }
-        } else if (this.$el) {
-          _logger.debug("AUGMENTED: AutoTable using jQuery to render.");
-          if (this.sortable) {
-            this.unbindSortableColumnEvents();
-          }
-          this.$el("thead").html(defaultTableHeader(this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable));
-          var jh = "";
-          if (this.editable) {
-            jh = editableTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
-          } else {
-            jh = defaultTableBody(this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
-          }
-          if (this.editable) {
-            this.unbindCellChangeEvents();
-          }
-          this.$el("tbody").html(jh);
-        } else {
-          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
-        }
-      } else {
-        this.template = "&lt;progress>Please wait.&lt;/progress>" + this.compileTemplate() + "&lt;p class=\"message\">&lt;/p>";
-        this.showProgressBar(true);
-
-        if (this.el) {
-          e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
-          if (e) {
-            e.innerHTML = this.template;
-          }
-        } else if (this.$el) {
-          this.$el.html(this.template);
-        } else {
-          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
-        }
-
-        if (this.renderPaginationControl) {
-          this.bindPaginationControlEvents();
-        }
-      }
-      this.delegateEvents();
-
-      if (this.sortable) {
-        this.bindSortableColumnEvents();
-      }
-
-      if (this.editable) {
-        this.bindCellChangeEvents();
-      }
-
-      this.showProgressBar(false);
       return this;
     },
 
@@ -2103,11 +1987,7 @@
     * @returns {string} Returns the template
     */
     compileTemplate: function() {
-      var h = defaultTableCompile(this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display);
-      if (this.renderPaginationControl) {
-        h = h + defaultPaginationControl(this.currentPage(), this.totalPages());
-      }
-      return h;
+      return "";
     },
     /**
     * Sets the URI
@@ -2249,13 +2129,15 @@
       let i = 0;
       for (i = 0; i &lt; l; i++) {
         const model = rows[i];
-        model.url = this.uri + "/" + model.id;
+        if (!model.url) {
+          model.url = this.uri + "/" + model.id;
+        }
         model.destroy();
       }
     }
   });
 
-  const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display, selectable) {
+  const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display, selectable, linkable, linksConfig, linkCallback) {
     const table = document.createElement("table"), thead = document.createElement("thead"), tbody = document.createElement("tbody");
     let n, t;
 
@@ -2278,9 +2160,9 @@
     table.appendChild(tbody);
     if (data) {
       if (editable) {
-        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable);
+        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable, linkable, linksConfig, linkCallback);
       } else {
-        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable);
+        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable, linkable, linksConfig, linkCallback);
       }
     }
     el.appendChild(table);
@@ -2332,7 +2214,7 @@
     }
   };
 
-  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable, name) {
+  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable, name, linkable, linksConfig, linkCallback) {
     const l = data.length;
     let i, d, dkey, dobj, t, td, tn, tr, cobj;
 
@@ -2370,16 +2252,25 @@
         if (displayCol &amp;&amp; d.hasOwnProperty(dkey)) {
           dobj = d[dkey];
           t = (typeof dobj);
-
           td = document.createElement("td");
           tn = document.createTextNode(dobj);
-          td.appendChild(tn);
+
+          if (linkable &amp;&amp; ((linksConfig.column === dkey) || (linksConfig.wholeRow))) {
+            const a = document.createElement("a");
+            //a.title = "my title text";
+            a.href = linkCallback(d);
+            a.appendChild(tn);
+            td.appendChild(a);
+          } else {
+            td.appendChild(tn);
+          }
+
           td.classList.add(t);
           if (sortKey === dkey) {
             td.classList.add(tableDataAttributes.sortClass);
           }
           td.setAttribute(tableDataAttributes.type, t);
-
+          td.setAttribute(tableDataAttributes.label, dkey);
           tr.appendChild(td);
         }
       }
@@ -2432,7 +2323,7 @@
             td.classList.add(tableDataAttributes.sortClass);
           }
           td.setAttribute(tableDataAttributes.type, t);
-
+          td.setAttribute(tableDataAttributes.label, dkey);
           // input field
 
           if (t === "object") {
@@ -2600,9 +2491,6 @@
       }
       this.theme = theme;
     },
-    compileTemplate: function() {
-      return "";
-    },
     render: function() {
       if (!this.isInitalized) {
         _logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
@@ -2638,8 +2526,9 @@
                 tbody.removeChild(tbody.lastChild);
               }
               if (this.editable) {
-                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name);
+                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name, this.linkable, this.links, this[this.links.link]);
               } else {
+                // links not supported
                 directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name);
               }
             } else {
@@ -2667,7 +2556,7 @@
             e.appendChild(n);
 
             // the table
-            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable, this.name);
+            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable, this.name, this.linkable, this.links);
 
             // pagination control
             if (this.renderPaginationControl) {
@@ -2706,6 +2595,14 @@
       return this;
     }
   });
+
+  /**
+    * Augmented.Presentation.AutomaticTable&lt;br/>
+    * Creates a table automatically via a schema for defintion and a uri/json for data
+    * @constructor Augmented.Presentation.AutomaticTable
+    * @extends Augmented.Presentation.DecoratorView
+    * @memberof Augmented.Presentation
+    */
 
   /**
   * Augmented.Presentation.AutoTable
@@ -4436,9 +4333,9 @@
 
 
 <span class="jsdoc-message">
-	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a>
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
 	
-		on Sun Aug 13th 2017
+		on Fri Aug 25th 2017
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

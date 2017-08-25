@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.5.10
+* @version 1.6.0
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.5.10";
+  Augmented.Presentation.VERSION = "1.6.0";
 
   /**
   * A private logger for use in the framework only
@@ -141,7 +141,7 @@
   * @memberof Augmented.Presentation
   * @extends Augmented.Presentation.Colleague
   */
-  var abstractMediator = Augmented.Presentation.Mediator = Augmented.Presentation.Colleague.extend({
+  const abstractMediator = Augmented.Presentation.Mediator = Augmented.Presentation.Colleague.extend({
     /**
     * Default Channel Property
     * @property {string} defaultChannel The default channel for the view
@@ -1174,14 +1174,28 @@
     return html;
   };
 
-  /**
-    * Augmented.Presentation.AutomaticTable<br/>
-    * Creates a table automatically via a schema for defintion and a uri/json for data
-    * @constructor Augmented.Presentation.AutomaticTable
-    * @extends Augmented.Presentation.DecoratorView
-    * @memberof Augmented.Presentation
-    */
   const AbstractAutoTable = Augmented.Presentation.DecoratorView.extend({
+    /**
+    * The linkable property - enable links in a row (only works in non-editable tables)
+    * @property {boolean} linkable enable/disable linking a row
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+    linkable: false,
+    /**
+    * The links property - setup linking structure for links in a row
+    * @property {boolean} linkable enable/disable linking a row
+    * @example <p>links: {</br>
+    * wholeRow: false, <em>// link whole row vs column</em></br>
+    * column: "name", </em>// name of column</em></br>
+  	*	link: "rowLink" <em>// callback</em></br>
+  	* }</p>
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+  	links: {
+      wholeRow: true,
+      column: "",
+  		link: "rowLink"
+  	},
     /**
     * The selectable property - enable selecting a row in table
     * @property {boolean} selectable enable/disable selecting a row
@@ -2037,7 +2051,7 @@
     }
   });
 
-  const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display, selectable) {
+  const directDOMTableCompile = function(el, name, desc, columns, data, lineNumbers, sortKey, editable, display, selectable, linkable, linksConfig, linkCallback) {
     const table = document.createElement("table"), thead = document.createElement("thead"), tbody = document.createElement("tbody");
     let n, t;
 
@@ -2060,9 +2074,9 @@
     table.appendChild(tbody);
     if (data) {
       if (editable) {
-        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable);
+        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable, linkable, linksConfig, linkCallback);
       } else {
-        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable);
+        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable, linkable, linksConfig, linkCallback);
       }
     }
     el.appendChild(table);
@@ -2114,7 +2128,7 @@
     }
   };
 
-  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable, name) {
+  const directDOMTableBody = function(el, data, columns, lineNumbers, sortKey, display, selectable, name, linkable, linksConfig, linkCallback) {
     const l = data.length;
     let i, d, dkey, dobj, t, td, tn, tr, cobj;
 
@@ -2152,10 +2166,19 @@
         if (displayCol && d.hasOwnProperty(dkey)) {
           dobj = d[dkey];
           t = (typeof dobj);
-
           td = document.createElement("td");
           tn = document.createTextNode(dobj);
-          td.appendChild(tn);
+
+          if (linkable && ((linksConfig.column === dkey) || (linksConfig.wholeRow))) {
+            const a = document.createElement("a");
+            //a.title = "my title text";
+            a.href = linkCallback(d);
+            a.appendChild(tn);
+            td.appendChild(a);
+          } else {
+            td.appendChild(tn);
+          }
+
           td.classList.add(t);
           if (sortKey === dkey) {
             td.classList.add(tableDataAttributes.sortClass);
@@ -2382,11 +2405,6 @@
       }
       this.theme = theme;
     },
-    /*
-    compileTemplate: function() {
-      return "";
-    },
-    */
     render: function() {
       if (!this.isInitalized) {
         _logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
@@ -2422,8 +2440,9 @@
                 tbody.removeChild(tbody.lastChild);
               }
               if (this.editable) {
-                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name);
+                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name, this.linkable, this.links, this[this.links.link]);
               } else {
+                // links not supported
                 directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name);
               }
             } else {
@@ -2451,7 +2470,7 @@
             e.appendChild(n);
 
             // the table
-            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable, this.name);
+            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable, this.name, this.linkable, this.links);
 
             // pagination control
             if (this.renderPaginationControl) {
@@ -2490,6 +2509,14 @@
       return this;
     }
   });
+
+  /**
+    * Augmented.Presentation.AutomaticTable<br/>
+    * Creates a table automatically via a schema for defintion and a uri/json for data
+    * @constructor Augmented.Presentation.AutomaticTable
+    * @extends Augmented.Presentation.DecoratorView
+    * @memberof Augmented.Presentation
+    */
 
   /**
   * Augmented.Presentation.AutoTable
