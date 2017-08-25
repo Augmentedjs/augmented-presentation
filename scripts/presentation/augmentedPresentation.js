@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.6.0
+* @version 1.6.1
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.6.0";
+  Augmented.Presentation.VERSION = "1.6.1";
 
   /**
   * A private logger for use in the framework only
@@ -1184,11 +1184,11 @@
     /**
     * The links property - setup linking structure for links in a row
     * @property {boolean} linkable enable/disable linking a row
-    * @example <p>links: {</br>
-    * wholeRow: false, <em>// link whole row vs column</em></br>
-    * column: "name", </em>// name of column</em></br>
-  	*	link: "rowLink" <em>// callback</em></br>
-  	* }</p>
+    * @example links: {
+    * wholeRow: false, // link whole row vs column
+    * column: "name", // name of column
+  	*	link: "rowLink" // callback
+  	* }
     * @memberof Augmented.Presentation.AutomaticTable
     */
   	links: {
@@ -1196,6 +1196,16 @@
       column: "",
   		link: "rowLink"
   	},
+    /**
+    * The default rowlink function callback called by row to format a link
+    * @method rowlink
+    * @param {array} row The row data
+    * @returns {string} Returns the link uri
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+    rowLink: function(row) {
+      return "";
+    },
     /**
     * The selectable property - enable selecting a row in table
     * @property {boolean} selectable enable/disable selecting a row
@@ -2169,7 +2179,8 @@
           td = document.createElement("td");
           tn = document.createTextNode(dobj);
 
-          if (linkable && ((linksConfig.column === dkey) || (linksConfig.wholeRow))) {
+          if (linkable && linksConfig && linkCallback &&
+              ((linksConfig.column === dkey) || (linksConfig.wholeRow)) ) {
             const a = document.createElement("a");
             //a.title = "my title text";
             a.href = linkCallback(d);
