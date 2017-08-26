@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.6.1
+* @version 1.6.2
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.6.1";
+  Augmented.Presentation.VERSION = "1.6.2";
 
   /**
   * A private logger for use in the framework only
@@ -1174,7 +1174,65 @@
     return html;
   };
 
-  const AbstractAutoTable = Augmented.Presentation.DecoratorView.extend({
+  /**
+  * Augmented.Presentation.DirectDOMAutomaticTable<br/>
+  * Uses direct DOM methods vs cached HTML<br/>
+  * Creates a table automatically via a schema for defintion and a uri/json for data
+  * @constructor Augmented.Presentation.DirectDOMAutomaticTable
+  * @extends Augmented.Presentation.AutomaticTable
+  * @memberof Augmented.Presentation
+  * @example
+  * var myAt = Augmented.Presentation.AutomaticTable.extend({ ... });
+  * var at = new myAt({
+  *     schema : schema,
+  *     el: "#autoTable",
+  *     crossOrigin: false,
+  *     sortable: true,
+  *     lineNumbers: true,
+  *     editable: true,
+  *     uri: "/example/data/table.json"
+  * });
+  */
+
+  /**
+    * Augmented.Presentation.AutomaticTable<br/>
+    * Creates a table automatically via a schema for defintion and a uri/json for data
+    * @constructor Augmented.Presentation.AutomaticTable
+    * @extends Augmented.Presentation.DecoratorView
+    * @memberof Augmented.Presentation
+    */
+
+  /**
+  * Augmented.Presentation.AutoTable
+  * Shorthand for Augmented.Presentation.AutomaticTable
+  * @constructor Augmented.Presentation.AutoTable
+  * @extends Augmented.Presentation.AutomaticTable
+  * @memberof Augmented.Presentation
+  */
+  Augmented.Presentation.AutoTable =
+  Augmented.Presentation.AutomaticTable =
+  Augmented.Presentation.DirectDOMAutomaticTable = Augmented.Presentation.DecoratorView.extend({
+    /**
+    * The theme property - The theme of this table (default is 'material')
+    * @property {string} theme The theme of this table
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+    theme: "material",
+    /**
+    * The setTheme method
+    * @method setTheme sets the theme of this table
+    * @param {string} theme name of the theme
+    * @memberof Augmented.Presentation.AutomaticTable
+    */
+    setTheme: function(theme) {
+      const el = ((typeof this.el === 'string') ? document.querySelector(this.el) : this.el),
+      e = el.querySelector("table");
+      if (e) {
+        e.setAttribute("class", theme);
+      }
+      this.theme = theme;
+    },
+
     /**
     * The linkable property - enable links in a row (only works in non-editable tables)
     * @property {boolean} linkable enable/disable linking a row
@@ -1578,6 +1636,116 @@
     },
 
     /**
+    * Render the table
+    * @method render Renders the table
+    * @memberof Augmented.Presentation.AutomaticTable
+    * @returns {object} Returns the view context ('this')
+    */
+    render: function() {
+      if (!this.isInitalized) {
+        _logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
+        return this;
+      }
+      let e;
+      if (this.template) {
+        // refresh the table body only
+        this.showProgressBar(true);
+        if (this.el) {
+          e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
+          let tbody = e.querySelector("tbody"), thead = e.querySelector("thead");
+          if (e) {
+            if (this.sortable) {
+              this.unbindSortableColumnEvents();
+            }
+            if (this.editable) {
+              this.unbindCellChangeEvents();
+            }
+            if (this._columns && (Object.keys(this._columns).length > 0)){
+              while (thead.hasChildNodes()) {
+                thead.removeChild(thead.lastChild);
+              }
+              directDOMTableHeader(thead, this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
+            } else {
+              while (thead.hasChildNodes()) {
+                thead.removeChild(thead.lastChild);
+              }
+            }
+
+            if (this.collection && (this.collection.length > 0)){
+              while (tbody.hasChildNodes()) {
+                tbody.removeChild(tbody.lastChild);
+              }
+              if (this.editable) {
+                // links not supported
+                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name);
+              } else {
+                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name, this.linkable, this.links, this[this.links.link]);
+              }
+            } else {
+              while (tbody.hasChildNodes()) {
+                tbody.removeChild(tbody.lastChild);
+              }
+            }
+          }
+        } else if (this.$el) {
+          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
+        } else {
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+        }
+      } else {
+        this.template = "notused";
+        this.showProgressBar(true);
+
+        if (this.el) {
+          e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
+          if (e) {
+            // progress bar
+            let n = document.createElement("progress"),
+            t = document.createTextNode("Please wait.");
+            n.appendChild(t);
+            e.appendChild(n);
+
+            // the table
+            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable, this.linkable, this.links, this[this.links.link]);
+
+            // pagination control
+            if (this.renderPaginationControl) {
+              directDOMPaginationControl(e, this.currentPage(), this.totalPages());
+            }
+
+            // message
+            n = document.createElement("p");
+            n.classList.add("message");
+            e.appendChild(n);
+          }
+        } else if (this.$el) {
+          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
+        } else {
+          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
+        }
+
+        if (this.renderPaginationControl) {
+          this.bindPaginationControlEvents();
+        }
+      }
+      this.delegateEvents();
+
+      if (this.sortable) {
+        this.bindSortableColumnEvents();
+      }
+
+      if (this.editable) {
+        this.bindCellChangeEvents();
+      }
+
+      this.showProgressBar(false);
+
+      this.setTheme(this.theme);
+
+      return this;
+    },
+
+    /**
     * Fetch the schema from the source URI
     * @method retrieveSchema
     * @param uri {string} the URI to fetch from
@@ -1710,15 +1878,7 @@
     refresh: function() {
       return this.render();
     },
-    /**
-    * Render the table
-    * @method render Renders the table
-    * @memberof Augmented.Presentation.AutomaticTable
-    * @returns {object} Returns the view context ('this')
-    */
-    render: function() {
-      return this;
-    },
+
 
     /**
     * Save Cell Event
@@ -2084,9 +2244,9 @@
     table.appendChild(tbody);
     if (data) {
       if (editable) {
-        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable, linkable, linksConfig, linkCallback);
+        directDOMEditableTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable, name, linkable, linksConfig, linkCallback);
       } else {
-        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable, linkable, linksConfig, linkCallback);
+        directDOMTableBody(tbody, data, columns, lineNumbers, sortKey, display, selectable, name, linkable, linksConfig, linkCallback);
       }
     }
     el.appendChild(table);
@@ -2384,159 +2544,6 @@
     el.appendChild(d);
   };
 
-  /**
-  * Augmented.Presentation.DirectDOMAutomaticTable<br/>
-  * Uses direct DOM methods vs cached HTML<br/>
-  * Creates a table automatically via a schema for defintion and a uri/json for data
-  * @constructor Augmented.Presentation.DirectDOMAutomaticTable
-  * @extends Augmented.Presentation.AutomaticTable
-  * @memberof Augmented.Presentation
-  * @example
-  * var myAt = Augmented.Presentation.AutomaticTable.extend({ ... });
-  * var at = new myAt({
-  *     schema : schema,
-  *     el: "#autoTable",
-  *     crossOrigin: false,
-  *     sortable: true,
-  *     lineNumbers: true,
-  *     editable: true,
-  *     uri: "/example/data/table.json"
-  * });
-  */
-  Augmented.Presentation.AutomaticTable =
-  Augmented.Presentation.DirectDOMAutomaticTable =
-  AbstractAutoTable.extend({
-    theme: "material",
-
-    setTheme: function(theme) {
-      const el = ((typeof this.el === 'string') ? document.querySelector(this.el) : this.el),
-      e = el.querySelector("table");
-      if (e) {
-        e.setAttribute("class", theme);
-      }
-      this.theme = theme;
-    },
-    render: function() {
-      if (!this.isInitalized) {
-        _logger.warn("AUGMENTED: AutoTable Can't render yet, not initialized!");
-        return this;
-      }
-      let e;
-      if (this.template) {
-        // refresh the table body only
-        this.showProgressBar(true);
-        if (this.el) {
-          e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
-          let tbody = e.querySelector("tbody"), thead = e.querySelector("thead");
-          if (e) {
-            if (this.sortable) {
-              this.unbindSortableColumnEvents();
-            }
-            if (this.editable) {
-              this.unbindCellChangeEvents();
-            }
-            if (this._columns && (Object.keys(this._columns).length > 0)){
-              while (thead.hasChildNodes()) {
-                thead.removeChild(thead.lastChild);
-              }
-              directDOMTableHeader(thead, this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable);
-            } else {
-              while (thead.hasChildNodes()) {
-                thead.removeChild(thead.lastChild);
-              }
-            }
-
-            if (this.collection && (this.collection.length > 0)){
-              while (tbody.hasChildNodes()) {
-                tbody.removeChild(tbody.lastChild);
-              }
-              if (this.editable) {
-                directDOMEditableTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name, this.linkable, this.links, this[this.links.link]);
-              } else {
-                // links not supported
-                directDOMTableBody(tbody, this.collection.toJSON(), this._columns, this.lineNumbers, this.sortKey, this.display, this.selectable, this.name);
-              }
-            } else {
-              while (tbody.hasChildNodes()) {
-                tbody.removeChild(tbody.lastChild);
-              }
-            }
-          }
-        } else if (this.$el) {
-          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
-        } else {
-          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
-        }
-      } else {
-        this.template = "notused";
-        this.showProgressBar(true);
-
-        if (this.el) {
-          e = (typeof this.el === 'string') ? document.querySelector(this.el) : this.el;
-          if (e) {
-            // progress bar
-            let n = document.createElement("progress"),
-            t = document.createTextNode("Please wait.");
-            n.appendChild(t);
-            e.appendChild(n);
-
-            // the table
-            directDOMTableCompile(e, this.name, this.description, this._columns, this.collection.toJSON(), this.lineNumbers, this.sortKey, this.editable, this.display, this.selectable, this.name, this.linkable, this.links);
-
-            // pagination control
-            if (this.renderPaginationControl) {
-              directDOMPaginationControl(e, this.currentPage(), this.totalPages());
-            }
-
-            // message
-            n = document.createElement("p");
-            n.classList.add("message");
-            e.appendChild(n);
-          }
-        } else if (this.$el) {
-          _logger.warn("AUGMENTED: AutoTable doesn't support jquery, sorry, not rendering.");
-        } else {
-          _logger.warn("AUGMENTED: AutoTable no element anchor, not rendering.");
-        }
-
-        if (this.renderPaginationControl) {
-          this.bindPaginationControlEvents();
-        }
-      }
-      this.delegateEvents();
-
-      if (this.sortable) {
-        this.bindSortableColumnEvents();
-      }
-
-      if (this.editable) {
-        this.bindCellChangeEvents();
-      }
-
-      this.showProgressBar(false);
-
-      this.setTheme(this.theme);
-
-      return this;
-    }
-  });
-
-  /**
-    * Augmented.Presentation.AutomaticTable<br/>
-    * Creates a table automatically via a schema for defintion and a uri/json for data
-    * @constructor Augmented.Presentation.AutomaticTable
-    * @extends Augmented.Presentation.DecoratorView
-    * @memberof Augmented.Presentation
-    */
-
-  /**
-  * Augmented.Presentation.AutoTable
-  * Shorthand for Augmented.Presentation.AutomaticTable
-  * @constructor Augmented.Presentation.AutoTable
-  * @extends Augmented.Presentation.AutomaticTable
-  * @memberof Augmented.Presentation
-  */
-  Augmented.Presentation.AutoTable = Augmented.Presentation.AutomaticTable;
 
   /**
   * Augmented.Presentation.BigDataTable
