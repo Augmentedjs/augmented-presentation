@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.6.3
+* @version 1.6.4
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.6.3";
+  Augmented.Presentation.VERSION = "1.6.4";
 
   /**
   * A private logger for use in the framework only
@@ -1614,10 +1614,10 @@
         this.collection.crossOrigin = this.crossOrigin;
       }
       if (this.schema) {
-        if (this.schema.title && this.name === "") {
+        if ((!this.name || this.name === "") && this.schema.title) {
           this.name = this.schema.title;
         }
-        if (this.schema.description) {
+        if ((!this.description || this.description === "") && this.schema.description) {
           this.description = this.schema.description;
         }
 
