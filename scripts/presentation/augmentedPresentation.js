@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.6.4
+* @version 1.6.5
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.6.4";
+  Augmented.Presentation.VERSION = "1.6.5";
 
   /**
   * A private logger for use in the framework only
@@ -1617,6 +1617,7 @@
         if ((!this.name || this.name === "") && this.schema.title) {
           this.name = this.schema.title;
         }
+
         if ((!this.description || this.description === "") && this.schema.description) {
           this.description = this.schema.description;
         }
@@ -2230,12 +2231,12 @@
 
     table.setAttribute(tableDataAttributes.name, name);
     table.setAttribute(tableDataAttributes.description, desc);
-    if (name) {
+    if (desc) {
       n = document.createElement("caption");
-      if (desc) {
-        n.setAttribute("title", desc);
+      if (name) {
+        n.setAttribute("title", name);
       }
-      t = document.createTextNode(name);
+      t = document.createTextNode(desc);
       n.appendChild(t);
       table.appendChild(n);
     }
@@ -2713,10 +2714,10 @@
         this.collection.crossOrigin = this.crossOrigin;
       }
       if (this.schema) {
-        if (this.schema.title) {
+        if ((!this.name || this.name === "") && this.schema.title) {
           this.name = this.schema.title;
         }
-        if (this.schema.description) {
+        if ((!this.description || this.description === "") && this.schema.description) {
           this.description = this.schema.description;
         }
 
@@ -3612,10 +3613,10 @@
         this.model.crossOrigin = this.crossOrigin;
       }
       if (this.schema) {
-        if (this.schema.title && (!this.name)) {
+        if ((!this.name || this.name === "") && this.schema.title) {
           this.name = this.schema.title;
         }
-        if (this.schema.description && !this.description) {
+        if ((!this.description || this.description === "") && this.schema.description) {
           this.description = this.schema.description;
         }
 
