@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.6.5
+* @version 1.6.6
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.6.5";
+  Augmented.Presentation.VERSION = "1.6.6";
 
   /**
   * A private logger for use in the framework only
@@ -1524,7 +1524,7 @@
     * @returns {boolean} Returns true on success of initalization
     */
     initialize: function(options) {
-      this.init();
+      this.init(options);
 
       if (!this.model) {
         this.model = new Augmented.Model();
@@ -3023,10 +3023,9 @@
     * List widget - renders a standard list
     * @method List
     * @param {string} id The id of the parent to attach the list
-    * @param {Object} data The data to render
     * @param {Array} data The data to render
-    * @param {string} binding The binding (used for decorator and optional)
     * @param {boolean} ordered True if the list should be ordered
+    * @param {string} binding The binding (used for decorator and optional)
     * @returns {Element} Returns a DOM element as a list
     * @memberof Augmented.Presentation.Widget
     */
