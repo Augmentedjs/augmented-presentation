@@ -13,7 +13,7 @@
 *
 * @requires augmentedjs
 * @module Augmented.Presentation
-* @version 1.6.6
+* @version 1.7.0
 * @license Apache-2.0
 */
 (function(moduleFactory) {
@@ -37,7 +37,7 @@
   * The standard version property
   * @constant VERSION
   */
-  Augmented.Presentation.VERSION = "1.6.6";
+  Augmented.Presentation.VERSION = "1.7.0";
 
   /**
   * A private logger for use in the framework only
@@ -3290,6 +3290,116 @@
     */
     getViews: function () {
       return this._views;
+    },
+    /**
+    * Permissions in the controller
+    * @property permissions
+    * @memberof Augmented.Presentation.ViewController
+    */
+    permissions: {
+      include: [],
+      exclude: []
+    },
+    /**
+    * Adds a permission to the controller
+    * @method addPermission
+    * @param {string} permission The permission to add
+    * @param {boolean} negative Flag to set a nagative permission (optional)
+    * @memberof Augmented.Presentation.ViewController
+    */
+    addPermission: function(permission, negative) {
+      if (!negative) {
+        negative = false;
+      }
+      if (permission !== null && !Array.isArray(permission)) {
+        const p = (negative) ? this.permissions.exclude : this.permissions.include;
+        p.push(permission);
+      }
+    },
+    /**
+    * Removes a permission to the controller
+    * @method removePermission
+    * @param {string} permission The permission to remove
+    * @param {boolean} negative Flag to set a nagative permission (optional)
+    * @memberof Augmented.Presentation.ViewController
+    */
+    removePermission: function(permission, negative) {
+      if (!negative) {
+        negative = false;
+      }
+      if (permission !== null && !Array.isArray(permission)) {
+        const p = (negative) ? this.permissions.exclude : this.permissions.include;
+        p.splice((p.indexOf(permission)), 1);
+      }
+    },
+    /**
+    * Sets the permissions to the controller
+    * @method setPermissions
+    * @param {array} permissions The permissions to set
+    * @param {boolean} negative Flag to set a nagative permission (optional)
+    * @memberof Augmented.Presentation.ViewController
+    */
+    setPermissions: function(permissions, negative) {
+      if (!negative) {
+        negative = false;
+      }
+      if (permissions !== null && Array.isArray(permissions)) {
+        if (negative) {
+          this.permissions.exclude = permissions;
+        } else {
+          this.permissions.include = permissions;
+        }
+      }
+    },
+    /**
+    * Gets the permissions to the controller<br/>
+    * Return format:<br/>
+    * <pre>{
+    *     include: [],
+    *     exclude: []
+    * }</pre>
+    *
+    * @method getPermissions
+    * @returns {object} The permissions in the controller
+    * @memberof Augmented.Presentation.ViewController
+    */
+    getPermissions: function() {
+      return this.permissions;
+    },
+    /**
+    * Clears the permissions in the controller
+    * @method clearPermissions
+    * @memberof Augmented.Presentation.ViewController
+    */
+    clearPermissions: function() {
+      this.permissions = {
+        include: [],
+        exclude: []
+      };
+    },
+    /**
+    * Matches a permission in the controller
+    * @method matchesPermission
+    * @param {string} match The permissions to match
+    * @param {boolean} negative Flag to set a nagative permission (optional)
+    * @returns {boolean} Returns true if the match exists
+    * @memberof Augmented.Presentation.ViewController
+    */
+    matchesPermission: function(match, negative) {
+      if (!negative) {
+        negative = false;
+      }
+      const p = (negative) ? this.permissions.exclude : this.permissions.include;
+      return (p.indexOf(match) !== -1);
+    },
+    /**
+    * Callback to return if this controller can display
+    * @method canDisplay
+    * @returns {boolean} Returns true if this controller can display
+    * @memberof Augmented.Presentation.ViewController
+    */
+    canDisplay: function() {
+      return true;
     }
   });
 
