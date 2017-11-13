@@ -1,6 +1,6 @@
 # Augmented.js Presentation
 ## The Augmented.js Framework Presentation Module
-### Version 1.6.x
+### Version 1.7.x
 ### Faridah Malik
 **aug·ment·ed**
 /ˌôɡˈmentəd /
